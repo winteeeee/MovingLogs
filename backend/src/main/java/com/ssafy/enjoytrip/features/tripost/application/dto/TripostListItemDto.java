@@ -23,6 +23,6 @@ public class TripostListItemDto {
     private Long commentCount;
     private Long viewCount;
     private Long likeCount;
-    private List<WaypointDto> waypoints;
+    private List<WaypointSnapshotDto> waypoints;
     private List<WaypointImageDto> images;
 }

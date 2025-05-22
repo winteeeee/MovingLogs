@@ -36,13 +36,13 @@ public class TripostMapper {
     }
 
     public static CreateTripostUseCase.Command toCreateTripostCommand(String uid, CreateTripostRequest request) {
-        List<WaypointSnapshot> waypointSnapshots = request.getRoutes().stream().map(routeVo -> WaypointSnapshot.of(
-                new AttractionId(routeVo.attractionId()),
-                routeVo.images().stream().map(routeImageVo -> new WaypointSnapshotImage(
-                        new ImageId(routeImageVo.imageId()),
-                        routeImageVo.seq()
+        List<WaypointSnapshot> waypointSnapshots = request.getWaypoints().stream().map(waypointVo -> WaypointSnapshot.of(
+                new AttractionId(waypointVo.attractionId()),
+                waypointVo.images().stream().map(waypointImageVo -> new WaypointSnapshotImage(
+                        new ImageId(waypointImageVo.imageId()),
+                        waypointImageVo.seq()
                 )).toList(),
-                routeVo.seq()
+                waypointVo.seq()
         )).toList();
 
         return CreateTripostUseCase.Command.builder()

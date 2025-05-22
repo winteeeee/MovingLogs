@@ -3,7 +3,8 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.RouteSnapshotDao.java">
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotDao.java">
+    <!--  TODO: 위치 등 부가정보 추가 필요  -->
     <insert id="bulkUpsert">
         INSERT INTO ROUTE_SNAPSHOT (
             ID,
@@ -12,12 +13,11 @@
             SEQ
         )
         VALUES
-        <foreach collection="routeSnapshots" item="snapshot" separator=",">
+        <foreach collection="waypointSnapshots" item="snapshot" separator=",">
             (#{snapshot.id.id}, #{tripostId.id}, #{snapshot.attractionId.id}, #{snapshot.seq})
         </foreach>
         ON DUPLICATE KEY UPDATE
-            attraction_id = VALUES(attraction_id),
-            seq = VALUES(seq)
+            attraction_id = VALUES(attraction_id)
     </insert>
 
     <delete id="deleteBySeqGreaterThan">

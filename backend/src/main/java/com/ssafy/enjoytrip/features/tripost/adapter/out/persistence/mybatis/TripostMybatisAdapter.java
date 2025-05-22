@@ -6,7 +6,7 @@ import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotDao;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostDao;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotImageDao;
-import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointDto;
+import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointSnapshotDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointImageDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
@@ -31,7 +31,7 @@ import java.util.*;
 public class TripostMybatisAdapter implements
         TripostPort {
     private static final Type WAYPOINT_SNAPSHOT_LIST_TYPE = new TypeToken<List<WaypointSnapshot>>(){}.getType();
-    private static final Type WAYPOINT_DTO_LIST_TYPE = new TypeToken<List<WaypointDto>>(){}.getType();
+    private static final Type WAYPOINT_SNAPSHOT_DTO_LIST_TYPE = new TypeToken<List<WaypointSnapshotDto>>(){}.getType();
     private static final Type WAYPOINT_IMAGE_DTO_LIST_TYPE = new TypeToken<List<WaypointImageDto>>(){}.getType();
 
     private final TripostDao tripostDao;
@@ -46,7 +46,7 @@ public class TripostMybatisAdapter implements
         PageDto<Map<String, Object>> resultPage = tripostDao.toPage(page, size, new TripostDao.Criteria(type, query));
 
         List<TripostListItemDto> content = resultPage.getContent().stream().map(item->{
-            List<WaypointDto> waypoints = gson.fromJson((String) item.get("waypoints"), WAYPOINT_DTO_LIST_TYPE);
+            List<WaypointSnapshotDto> waypoints = gson.fromJson((String) item.get("waypoints"), WAYPOINT_SNAPSHOT_DTO_LIST_TYPE);
             List<WaypointImageDto> images = gson.fromJson((String) item.get("images"), WAYPOINT_IMAGE_DTO_LIST_TYPE);
             return TripostListItemDto.builder()
                             .id((String) item.get("tripost_id"))
@@ -104,15 +104,15 @@ public class TripostMybatisAdapter implements
     public Optional<TripostDetailDto> getTripostDetailDto(TripostId tripostId) {
         Map<String, Object> resultMap = tripostDao.findTripostDetailById(tripostId);
 
-        List<WaypointDto> waypoints = Collections.emptyList();
+        List<WaypointSnapshotDto> waypoints = Collections.emptyList();
         if (resultMap.get("waypoints") != null && !((String) resultMap.get("waypoints")).isBlank()) {
-            waypoints = gson.fromJson((String) resultMap.get("waypoints"), WAYPOINT_DTO_LIST_TYPE);
+            waypoints = gson.fromJson((String) resultMap.get("waypoints"), WAYPOINT_SNAPSHOT_DTO_LIST_TYPE);
         }
 
         TripostDetailDto dto = TripostDetailDto.builder()
                 .id((String) resultMap.get("tripost_id"))
                 .uid((String) resultMap.get("uid"))
-                .name((String) resultMap.get("nickname"))
+                .name((String) resultMap.get("name"))
                 .title((String) resultMap.get("title"))
                 .content((String) resultMap.get("content"))
                 .waypoints(waypoints)

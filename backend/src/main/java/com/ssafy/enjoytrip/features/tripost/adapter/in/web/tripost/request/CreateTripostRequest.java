@@ -11,15 +11,15 @@ public class CreateTripostRequest {
     private String title;
     private String description;
     private String content;
-    private List<RouteVo> routes;
+    private List<WaypointVo> waypoints;
 
-    public record RouteVo(
+    public record WaypointVo(
             String attractionId,
-            List<RouteImageVo> images,
+            List<WaypointImageVo> images,
             Integer seq
     ) {  }
 
-    public record RouteImageVo(
+    public record WaypointImageVo(
             String imageId,
             Integer seq
     ) {  }

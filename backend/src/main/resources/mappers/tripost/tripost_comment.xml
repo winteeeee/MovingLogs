@@ -3,6 +3,73 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com/ssafy/enjoytrip/features/tripost/adapter/out/persistence/mybatis/dao/TripostDao.java">
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostCommentDao.java">
+    <insert id="insert">
+        INSERT INTO TRIPOST_COMMENT (
+            ID,
+            TRIPOST_ID,
+            UID,
+            CONTENT,
+            IS_DELETED,
+            CREATED_AT,
+            UPDATED_AT
+        )
+        VALUES
+        (
+            #{tripostComment.id.id},
+            #{tripostComment.tripostId.id},
+            #{tripostComment.author.uid.id},
+            #{tripostComment.content},
+            #{tripostComment.isDeleted},
+            #{tripostComment.createdAt},
+            #{tripostComment.updatedAt},
+        )
+    </insert>
 
+    <update id="update">
+        UPDATE TRIPOST_COMMENT
+        SET
+            CONTENT = #{tripostComment.content},
+            IS_DELETED = #{tripostComment.isDeleted},
+            UPDATED_AT = #{tripostComment.updatedAt}
+        WHERE ID = #{tripostComment.id.id}
+    </update>
+
+    <select id="findById">
+        SELECT
+            TC.ID AS id,
+            TC.TRIPOST_ID AS tripost_id,
+            TC.UID AS uid,
+            U.NICKNAME AS name,
+            TC.CONTENT AS content,
+            TC.IS_DELETED AS is_deleted,
+            TC.CREATED_AT AS created_at,
+            TC.UPDATED_AT AS updated_at
+        FROM TRIPOST_COMMENT TC
+            JOIN USER U ON TC.UID = U.UID
+        WHERE TC.ID = #{id.id}
+    </select>
+
+    <select id="selectPage">
+        SELECT
+            TC.ID AS id,
+            TC.TRIPOST_ID AS tripost_id,
+            TC.UID AS uid,
+            U.NICKNAME AS name,
+            TC.CONTENT AS content,
+            TC.IS_DELETED AS is_deleted,
+            TC.CREATED_AT AS created_at,
+            TC.UPDATED_AT AS updated_at
+        FROM TRIPOST_COMMENT TC
+            JOIN USER U ON TC.UID = U.UID
+        WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
+        LIMIT #{limit}
+        OFFSET #{offset}
+    </select>
+
+    <select id="selectTotalCount">
+        SELECT COUNT(*)
+        FROM TRIPOST_COMMENT
+        WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
+    </select>
 </mapper>
