@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com/ssafy/enjoytrip/features/attraction/adapter/out/persistence/mybatis/dao/AttractionDao.java">
+ 	<select id="findByContentByIdAndAreaCodeAndSiGunGuCode">
+		SELECT *
+		FROM attraction a
+		JOIN content_type t ON a.content_type_id = t.content_type_id
+		JOIN sido s ON a.area_code = s.sido_code
+		JOIN gugun g ON a.area_code = g.sido_code AND a.si_gun_gu_code = g.gugun_code
+		WHERE 1=1
+		<if test="contentTypeId != null">
+			AND a.content_type_id = #{contentTypeId}
+		</if>
+		<if test="areaCode != null">
+			AND a.area_code = #{areaCode}
+		</if>
+		<if test="siGunGuCode != null">
+			AND a.si_gun_gu_code = #{siGunGuCode}
+		</if>
+		LIMIT #{limit} OFFSET #{offset}
+ 	</select>
+
+	<select id="countByContentByIdAndAreaCodeAndSiGunGuCode">
+		SELECT count(*)
+		FROM attraction a
+		JOIN content_type t ON a.content_type_id = t.content_type_id
+		JOIN sido s ON a.area_code = s.sido_code
+		JOIN gugun g ON a.area_code = g.sido_code AND a.si_gun_gu_code = g.gugun_code
+		WHERE 1=1
+		<if test="contentTypeId != null">
+			AND a.content_type_id = #{contentTypeId}
+		</if>
+		<if test="areaCode != null">
+			AND a.area_code = #{areaCode}
+		</if>
+		<if test="siGunGuCode != null">
+			AND a.si_gun_gu_code = #{siGunGuCode}
+		</if>
+	</select>
+	<select id="findByContentByIdAndAreaCodeAndSiGunGuCodeLimit">
+		SELECT *
+		FROM attraction a
+		JOIN content_type t ON a.content_type_id = t.content_type_id
+		JOIN sido s ON a.area_code = s.sido_code
+		JOIN gugun g ON a.area_code = g.sido_code AND a.si_gun_gu_code = g.gugun_code
+		WHERE 1=1
+		<if test="contentTypeId != null">
+			AND a.content_type_id = #{contentTypeId}
+		</if>
+		<if test="areaCode != null">
+			AND a.area_code = #{areaCode}
+		</if>
+		<if test="siGunGuCode != null">
+			AND a.si_gun_gu_code = #{siGunGuCode}
+		</if>
+		LIMIT #{limit}
+	</select>
+</mapper>

@@ -1,0 +1,27 @@
+package com.ssafy.enjoytrip.features.tripost.application.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+@Setter
+@Builder
+@AllArgsConstructor
+public class TripostDetailDto {
+    private String id;
+    private String uid;
+    private String nickname;
+    private String title;
+    private String content;
+    private List<RouteDto> routes;
+    private Long commentCount;
+    private Long likeCount;
+    private Long viewCount;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+}

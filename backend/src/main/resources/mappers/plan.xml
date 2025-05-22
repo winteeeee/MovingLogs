@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.plan.dao.PlanDao">
+    <select id="findByUid">
+        SELECT *
+        FROM plan
+        WHERE uid = #{uid};
+    </select>
+
+    <insert id="insert">
+        INSERT INTO plan(uid, title, description, start_date, end_date)
+        VALUES (#{plan.uid}, #{plan.title}, #{plan.description}, #{plan.startDate}, #{plan.endDate})
+    </insert>
+
+    <update id="update">
+        UPDATE plan
+        <set>
+            <if test="plan.title != null">title = #{plan.title},</if>
+            <if test="plan.description != null">description = #{plan.description},</if>
+            <if test="plan.startDate != null">start_date = #{plan.startDate},</if>
+            <if test="plan.endDate != null">end_date = #{plan.endDate},</if>
+        </set>
+        WHERE uid = #{uid}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM plan
+        WHERE plan_id = #{id}
+    </delete>
+</mapper>

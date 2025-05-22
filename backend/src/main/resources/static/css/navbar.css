@@ -1,0 +1,36 @@
+.none {
+  display: none;
+}
+
+.navbar-brand {
+  width: 75%;
+}
+
+#navbar-brand-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 20%;
+  height: 5%;
+}
+
+#logo {
+  width: 30%;
+}
+
+.nav-item-btn {
+  font-weight: bold;
+}
+
+.modal-title {
+  font-weight: bold;
+}
+
+.input-group-text {
+  justify-content: center;
+  width: 30%;
+}
+
+#email-middle-label {
+  width: 5%;
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.feed.dao.FeedCommentDao">
+	 <select id="searchWithPaging">
+		SELECT 
+			f.id as feedId, 
+		    u.id as userId,
+		    u.name as userName,
+		    u.email as userEmail,
+		    u.role as userRole,
+		    f.content as content,
+		    f.created_at as createdAt,
+		    f.updated_at as updatedAt
+		FROM feed_comment f
+		JOIN User u ON f.uid = u.uid
+		WHERE f.feed_id = #{feedId} AND deleted = 0
+		ORDER BY f.ID DESC
+	    LIMIT #{size}
+		OFFSET #{offset}
+	</select>
+	
+	<select id="count">
+		SELECT count(*)
+		FROM feed_comment
+		WHERE feed_id = #{feedId} AND deleted = 0
+	</select>
+	
+	<insert id="insert">
+		INSERT INTO feed_comment(feed_id, uid, content)
+		VALUES (#{feedId}, #{uid}, #{content})
+	</insert>
+	
+	<update id="update">
+		UPDATE feed_comment
+		SET content = #{content}
+		WHERE id = #{id} AND uid = #{uid}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM feed_comment
+		WHERE id = #{id} AND uid = #{uid}
+	</delete>
+</mapper>

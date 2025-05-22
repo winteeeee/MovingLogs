@@ -1,0 +1,13 @@
+package com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao;
+
+import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshotId;
+import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshotImage;
+
+import java.util.List;
+
+public interface RouteSnapshotImageDao {
+    int bulkUpsert(RouteSnapshotId routeSnapshotId, List<RouteSnapshotImage> routeSnapshotImages);
+    int bulkDeleteBySeqGreaterThan(List<Param> params);
+
+    record Param(RouteSnapshotId routeSnapshotId, Integer seq) {}
+}

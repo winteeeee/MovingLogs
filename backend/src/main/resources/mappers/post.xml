@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+ <mapper namespace="com.ssafy.enjoytrip.post.dao.PostDao">
+	<select id="searchWithPaging">
+		SELECT ID, TITLE, CREATED_AT, UPDATED_AT, NAME AS USER_NAME
+		FROM POST JOIN USER ON POST.UID = USER.UID
+	    <where>
+	    	DELETED = 0
+	        <if test="keyword != null and keyword != ''">
+	            AND TITLE LIKE CONCAT('%', #{keyword}, '%')
+	        </if>
+	    </where>
+	    
+		ORDER BY ID DESC
+		OFFSET #{offset}
+	    LIMIT #{size}
+	</select>
+	
+    <select id="count">
+        SELECT COUNT(*) 
+        FROM POST
+        <where>
+            <if test="keyword != null and keyword != ''">
+                (TITLE   LIKE CONCAT('%', #{keyword}, '%')
+                 OR CONTENT LIKE CONCAT('%', #{keyword}, '%'))
+            </if>
+        </where>
+    </select>
+	
+	<select id="findById">
+		SELECT *
+		FROM POST
+		WHERE ID = #{id}
+	</select>
+	
+	<select id="checkOwner">
+		SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
+		FROM POST
+		WHERE ID = #{id} AND UID = #{uid}
+	</select>
+	
+	<insert id="insert" useGeneratedKeys="true">
+		INSERT INTO POST(UID, TITLE, CONTENT, POST_TYPE, UUID)
+		VALUES (#{uid}, #{title}, #{content}, #{postType}, #{uuid})
+	</insert>
+	
+	<update id="update">
+		UPDATE POST
+		SET 
+		TITLE = #{title}, 
+		CONTENT = #{content}, 
+		POST_TYPE = #{postType}
+		WHERE ID = #{id}
+	</update>
+	
+	<update id="delete">
+		UPDATE POST
+		SET DELETED = 1
+		WHERE ID = #{id}
+	</update>
+</mapper>

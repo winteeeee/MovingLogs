@@ -1,0 +1,45 @@
+package com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis;
+
+import com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.PlanDao;
+import com.ssafy.enjoytrip.features.plan.application.port.out.*;
+import com.ssafy.enjoytrip.features.plan.domain.Plan;
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, SearchPlanPort, UpdatePlanPort, CountPlanPort {
+    @Value("${paging.size}")
+    private Integer pageSize;
+    private final PlanDao planDao;
+
+    @Override
+    public PlanId createPlan(Plan plan) {
+        return planDao.insert(plan);
+    }
+
+    @Override
+    public List<Plan> searchPlanByUid(Long uid, Integer page) {
+        return planDao.findByUid(uid, pageSize, (long) (page - 1) * pageSize);
+    }
+
+    @Override
+    public Long countPlanByUid(Long uid) {
+        //TODO 쿼리 작성
+        return 0L;
+    }
+
+    @Override
+    public void updatePlan(Plan plan) {
+        //TODO 쿼리 작성
+    }
+
+    @Override
+    public void deletePlan(String id) {
+        //TODO 쿼리 작성
+    }
+}
