@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.jwt;
 
 import com.ssafy.enjoytrip.common.util.JwtTokenProvider;
 import com.ssafy.enjoytrip.common.util.UuidFactory;
+import com.ssafy.enjoytrip.features.auth.application.port.out.DeleteRefreshTokenPort;
 import com.ssafy.enjoytrip.features.auth.application.port.out.SaveRefreshTokenPort;
 import com.ssafy.enjoytrip.features.auth.application.port.out.SearchRefreshTokenPort;
 import com.ssafy.enjoytrip.features.user.domain.Role;
@@ -23,6 +24,8 @@ public class JwtTest {
     SearchRefreshTokenPort searchRefreshTokenPort;
     @Autowired
     StringRedisTemplate stringRedisTemplate;
+    @Autowired
+    DeleteRefreshTokenPort deleteRefreshTokenPort;
 
     @Test
     void 리프레시_토큰_저장() {
@@ -44,5 +47,23 @@ public class JwtTest {
     void 리프레시_토큰_찾기() {
         String refreshToken = searchRefreshTokenPort.searchRefreshToken("").orElse(null);
         System.out.println(refreshToken);
+    }
+
+    @Test
+    void 로그아웃() {
+        User dummyUser = User.builder()
+                .id("ssafy")
+                .uid(UuidFactory.newId(Uid::new))
+                .name("김싸피")
+                .role(Role.ROLE_USER)
+                .build();
+
+        String accessToken = jwtTokenProvider.createAccessToken(dummyUser);
+        String refreshToken = jwtTokenProvider.createRefreshToken(dummyUser);
+        saveRefreshTokenPort.saveRefreshToken(accessToken, refreshToken);
+        Assertions.assertEquals(searchRefreshTokenPort.searchRefreshToken(accessToken).orElse(null), refreshToken);
+
+        deleteRefreshTokenPort.deleteRefreshToken(accessToken);
+        Assertions.assertNull(searchRefreshTokenPort.searchRefreshToken(accessToken).orElse(null));
     }
 }
