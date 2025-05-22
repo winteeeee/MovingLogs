@@ -4,9 +4,7 @@ import com.ssafy.enjoytrip.security.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,23 +29,17 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-        @Bean
-        public DaoAuthenticationProvider authenticationProvider() {
-            DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-            provider.setUserDetailsService(customUserDetailsService);
-            provider.setPasswordEncoder(passwordEncoder());
-            return provider;
-        }
-
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setUserDetailsService(customUserDetailsService);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JWTAuthenticationFilter authFilter,
             JWTVerificationFilter jwtVerifyFilter,
             SecurityExceptionHandlingFilter exceptionFilter) throws Exception {
         //시큐리티 컨텍스트 홀더를 매번 초기화 (stateless)
@@ -61,7 +53,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/v1/users").permitAll()
                 .anyRequest().authenticated())
         .addFilterBefore(jwtVerifyFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterAt(authFilter, UsernamePasswordAuthenticationFilter.class)
         .addFilterBefore(exceptionFilter, JWTVerificationFilter.class)
         .authenticationProvider(authenticationProvider())
         .oauth2Login(oauth2 -> oauth2
