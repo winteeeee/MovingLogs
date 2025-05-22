@@ -43,9 +43,9 @@ public class TripostMybatisAdapter implements
 
     @Override
     public Optional<PageDto<TripostListItemDto>> getPagedTripostListItemDto(SearchTripostPagedQuery.QueryType type, String query, int page, int size) {
-        PageDto<Map<String, Object>> resultMap = tripostDao.toPage(page, size, new TripostDao.Criteria(type, query));
+        PageDto<Map<String, Object>> resultPage = tripostDao.toPage(page, size, new TripostDao.Criteria(type, query));
 
-        List<TripostListItemDto> content = resultMap.getContent().stream().map(item->{
+        List<TripostListItemDto> content = resultPage.getContent().stream().map(item->{
             List<RouteDto> routes = gson.fromJson((String) item.get("routes"), ROUTE_DTO_LIST_TYPE);
             List<RouteImageDto> images = gson.fromJson((String) item.get("images"), ROUTE_IMAGE_DTO_LIST_TYPE);
             return TripostListItemDto.builder()
@@ -64,12 +64,12 @@ public class TripostMybatisAdapter implements
         }).toList();
         PageDto<TripostListItemDto> tripostPage = PageDto.<TripostListItemDto>builder()
                 .content(content)
-                .page(resultMap.getPage())
-                .size(resultMap.getSize())
-                .totalPages(resultMap.getTotalPages())
-                .totalElements(resultMap.getTotalElements())
-                .hasPrevious(resultMap.getHasPrevious())
-                .hasNext(resultMap.getHasNext())
+                .page(resultPage.getPage())
+                .size(resultPage.getSize())
+                .totalPages(resultPage.getTotalPages())
+                .totalElements(resultPage.getTotalElements())
+                .hasPrevious(resultPage.getHasPrevious())
+                .hasNext(resultPage.getHasNext())
                 .build();
         return Optional.of(tripostPage);
     }
