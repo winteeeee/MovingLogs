@@ -8,7 +8,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class UpdateUserRequest {
-    private String pw;
     private String name;
     private String email;
 }

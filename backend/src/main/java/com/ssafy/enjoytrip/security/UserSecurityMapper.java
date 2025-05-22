@@ -14,7 +14,6 @@ public class UserSecurityMapper {
     public static User toUser(SearchUserUseCase.Result searchUserResult) {
         return User.builder()
                 .id(searchUserResult.getId())
-                .pw(searchUserResult.getPw())
                 .role(Role.valueOf(searchUserResult.getRole()))
                 .build();
     }
