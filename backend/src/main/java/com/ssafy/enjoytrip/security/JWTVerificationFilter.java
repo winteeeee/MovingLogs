@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.security;
 
 import com.ssafy.enjoytrip.common.util.JwtTokenProvider;
 import com.ssafy.enjoytrip.common.util.JwtUtils;
+import com.ssafy.enjoytrip.common.util.WebUtils;
 import com.ssafy.enjoytrip.features.auth.application.port.out.SaveRefreshTokenPort;
 import com.ssafy.enjoytrip.features.auth.application.port.out.SearchRefreshTokenPort;
 import com.ssafy.enjoytrip.features.user.application.exception.UserNotFoundException;
@@ -37,7 +38,7 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
         String token = null;
         try {
             //토큰을 추출해보고
-            token = extractToken(request);
+            token = WebUtils.extractToken(request);
             if (token != null) {
                 //토큰이 있고, 유효하다면 유저 정보를 context holder에 저장
                 Map<String, Object> claims = jwtTokenProvider.getClaims(token);
@@ -63,15 +64,6 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
             }
         } finally {
             filterChain.doFilter(request, response);
-        }
-    }
-
-    private String extractToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
-        } else {
-            return null;
         }
     }
 
