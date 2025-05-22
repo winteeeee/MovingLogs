@@ -49,7 +49,7 @@ class TripostService implements
 				command.getTitle(),
 				command.getDescription(),
 				command.getContent(),
-				command.getRouteSnapshots(),
+				command.getWaypointSnapshots(),
 				clock
 		);
 		tripost = tripostPort.save(tripost);

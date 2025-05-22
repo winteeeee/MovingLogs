@@ -5,6 +5,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PlanDetailId {
+public class WaypointId {
     private String id;
 }

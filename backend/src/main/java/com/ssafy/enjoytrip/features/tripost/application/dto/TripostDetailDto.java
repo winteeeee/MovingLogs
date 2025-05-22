@@ -15,10 +15,10 @@ import java.util.List;
 public class TripostDetailDto {
     private String id;
     private String uid;
-    private String nickname;
+    private String name;
     private String title;
     private String content;
-    private List<RouteDto> routes;
+    private List<WaypointDto> waypoints;
     private Long commentCount;
     private Long likeCount;
     private Long viewCount;

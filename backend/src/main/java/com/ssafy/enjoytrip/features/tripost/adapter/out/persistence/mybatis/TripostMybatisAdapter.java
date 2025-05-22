@@ -3,11 +3,11 @@ package com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.ssafy.enjoytrip.common.dto.PageDto;
-import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.RouteSnapshotDao;
+import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotDao;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostDao;
-import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.RouteSnapshotImageDao;
-import com.ssafy.enjoytrip.features.tripost.application.dto.RouteDto;
-import com.ssafy.enjoytrip.features.tripost.application.dto.RouteImageDto;
+import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotImageDao;
+import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointDto;
+import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointImageDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.SearchTripostPagedQuery;
@@ -15,9 +15,9 @@ import com.ssafy.enjoytrip.features.tripost.application.port.out.*;
 import com.ssafy.enjoytrip.features.tripost.domain.Tripost;
 import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.features.tripost.domain.component.Author;
-import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshot;
-import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshotId;
-import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshotImage;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshot;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshotId;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshotImage;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -30,13 +30,13 @@ import java.util.*;
 @RequiredArgsConstructor
 public class TripostMybatisAdapter implements
         TripostPort {
-    private static final Type ROUTE_SNAPSHOT_LIST_TYPE = new TypeToken<List<RouteSnapshot>>(){}.getType();
-    private static final Type ROUTE_DTO_LIST_TYPE = new TypeToken<List<RouteDto>>(){}.getType();
-    private static final Type ROUTE_IMAGE_DTO_LIST_TYPE = new TypeToken<List<RouteImageDto>>(){}.getType();
+    private static final Type WAYPOINT_SNAPSHOT_LIST_TYPE = new TypeToken<List<WaypointSnapshot>>(){}.getType();
+    private static final Type WAYPOINT_DTO_LIST_TYPE = new TypeToken<List<WaypointDto>>(){}.getType();
+    private static final Type WAYPOINT_IMAGE_DTO_LIST_TYPE = new TypeToken<List<WaypointImageDto>>(){}.getType();
 
     private final TripostDao tripostDao;
-    private final RouteSnapshotImageDao routeSnapshotImageDao;
-    private final RouteSnapshotDao routeSnapshotDao;
+    private final WaypointSnapshotImageDao waypointSnapshotImageDao;
+    private final WaypointSnapshotDao waypointSnapshotDao;
 
     // TODO: final 선언하고 GSON 컨픽 만들기
     private Gson gson = new Gson();
@@ -46,19 +46,19 @@ public class TripostMybatisAdapter implements
         PageDto<Map<String, Object>> resultPage = tripostDao.toPage(page, size, new TripostDao.Criteria(type, query));
 
         List<TripostListItemDto> content = resultPage.getContent().stream().map(item->{
-            List<RouteDto> routes = gson.fromJson((String) item.get("routes"), ROUTE_DTO_LIST_TYPE);
-            List<RouteImageDto> images = gson.fromJson((String) item.get("images"), ROUTE_IMAGE_DTO_LIST_TYPE);
+            List<WaypointDto> waypoints = gson.fromJson((String) item.get("waypoints"), WAYPOINT_DTO_LIST_TYPE);
+            List<WaypointImageDto> images = gson.fromJson((String) item.get("images"), WAYPOINT_IMAGE_DTO_LIST_TYPE);
             return TripostListItemDto.builder()
                             .id((String) item.get("tripost_id"))
                             .title((String) item.get("title"))
                             .description((String) item.get("description"))
                             .uid((String) item.get("uid"))
-                            .nickname((String) item.get("nickname"))
+                            .name((String) item.get("name"))
                             .createdAt((LocalDateTime) item.get("created_at"))
                             .commentCount((Long) item.get("comment_count"))
                             .viewCount((Long) item.get("view_count"))
                             .likeCount((Long) item.get("like_count"))
-                            .routes(routes)
+                            .waypoints(waypoints)
                             .images(images)
                             .build();
         }).toList();
@@ -77,18 +77,18 @@ public class TripostMybatisAdapter implements
     @Override
     public Optional<Tripost> getTripost(TripostId tripostId) {
         Map<String, Object> resultMap = tripostDao.findById(tripostId);
-        List<RouteSnapshot> routeSnapshots = gson.fromJson((String) resultMap.get("routes"), ROUTE_SNAPSHOT_LIST_TYPE);
+        List<WaypointSnapshot> waypointSnapshots = gson.fromJson((String) resultMap.get("waypoints"), WAYPOINT_SNAPSHOT_LIST_TYPE);
 
         Tripost tripost = Tripost.builder()
                 .id(new TripostId((String) resultMap.get("tripost_id")))
                 .author(new Author(
                         new Uid((String) resultMap.get("uid")),
-                        (String) resultMap.get("nickname")
+                        (String) resultMap.get("name")
                 ))
                 .title((String) resultMap.get("title"))
                 .description((String) resultMap.get("description"))
                 .content((String) resultMap.get("content"))
-                .routeSnapshots(routeSnapshots)
+                .waypointSnapshots(waypointSnapshots)
                 .commentCount((Long) resultMap.get("comment_count"))
                 .likeCount((Long) resultMap.get("like_count"))
                 .viewCount((Long) resultMap.get("view_count"))
@@ -104,18 +104,18 @@ public class TripostMybatisAdapter implements
     public Optional<TripostDetailDto> getTripostDetailDto(TripostId tripostId) {
         Map<String, Object> resultMap = tripostDao.findTripostDetailById(tripostId);
 
-        List<RouteDto> routes = Collections.emptyList();
-        if (resultMap.get("routers") != null && !((String) resultMap.get("routers")).isBlank()) {
-            routes = gson.fromJson((String) resultMap.get("routers"), ROUTE_DTO_LIST_TYPE);
+        List<WaypointDto> waypoints = Collections.emptyList();
+        if (resultMap.get("waypoints") != null && !((String) resultMap.get("waypoints")).isBlank()) {
+            waypoints = gson.fromJson((String) resultMap.get("waypoints"), WAYPOINT_DTO_LIST_TYPE);
         }
 
         TripostDetailDto dto = TripostDetailDto.builder()
                 .id((String) resultMap.get("tripost_id"))
                 .uid((String) resultMap.get("uid"))
-                .nickname((String) resultMap.get("nickname"))
+                .name((String) resultMap.get("nickname"))
                 .title((String) resultMap.get("title"))
                 .content((String) resultMap.get("content"))
-                .routes(routes)
+                .waypoints(waypoints)
                 .commentCount((Long) resultMap.get("comment_count"))
                 .likeCount((Long) resultMap.get("like_count"))
                 .viewCount((Long) resultMap.get("view_count"))
@@ -127,10 +127,10 @@ public class TripostMybatisAdapter implements
 
     @Override
     public Tripost save(Tripost tripost) {
-        // TODO: RouteSnapshotImage는 RouteSnapshot에 케스케이드 걸기
+        // TODO: WaypointSnapshotImage는 WaypointSnapshot에 케스케이드 걸기
         saveOrUpdateTripost(tripost);
         cleanUpObsoleteSnapshotImages(tripost);
-        saveOrUpdateRouteSnapshots(tripost);
+        saveOrUpdateWaypointSnapshots(tripost);
         return tripost;
     }
 
@@ -142,29 +142,29 @@ public class TripostMybatisAdapter implements
     }
 
     private void cleanUpObsoleteSnapshotImages(Tripost tripost) {
-        Map<RouteSnapshotId, Integer> maxSeqBySnapshot = new HashMap<>();
-        tripost.getRouteSnapshots().forEach(snapshot->{
+        Map<WaypointSnapshotId, Integer> maxSeqBySnapshot = new HashMap<>();
+        tripost.getWaypointSnapshots().forEach(snapshot->{
             int maxSeq = snapshot.getImages().stream()
-                    .mapToInt(RouteSnapshotImage::getSeq).max()
+                    .mapToInt(WaypointSnapshotImage::getSeq).max()
                     .orElse(0);
             maxSeqBySnapshot.put(snapshot.getId(), maxSeq);
-            routeSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
+            waypointSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
         });
-        List<RouteSnapshotImageDao.Param> deleteParams = new ArrayList<>();
+        List<WaypointSnapshotImageDao.Param> deleteParams = new ArrayList<>();
         maxSeqBySnapshot.forEach((snapshotId, seq) ->
-                deleteParams.add(new RouteSnapshotImageDao.Param(snapshotId, seq))
+                deleteParams.add(new WaypointSnapshotImageDao.Param(snapshotId, seq))
         );
         if (!deleteParams.isEmpty()) {
-            routeSnapshotImageDao.bulkDeleteBySeqGreaterThan(deleteParams);
+            waypointSnapshotImageDao.bulkDeleteBySeqGreaterThan(deleteParams);
         }
     }
 
-    private void saveOrUpdateRouteSnapshots(Tripost tripost) {
-        int maxSeq = tripost.getRouteSnapshots().stream()
-                .mapToInt(RouteSnapshot::getSeq).max()
+    private void saveOrUpdateWaypointSnapshots(Tripost tripost) {
+        int maxSeq = tripost.getWaypointSnapshots().stream()
+                .mapToInt(WaypointSnapshot::getSeq).max()
                 .orElse(0);
-        routeSnapshotDao.bulkUpsert(tripost.getId(), tripost.getRouteSnapshots());
-        routeSnapshotDao.deleteBySeqGreaterThan(tripost.getId(), maxSeq);
+        waypointSnapshotDao.bulkUpsert(tripost.getId(), tripost.getWaypointSnapshots());
+        waypointSnapshotDao.deleteBySeqGreaterThan(tripost.getId(), maxSeq);
     }
 
     @Override

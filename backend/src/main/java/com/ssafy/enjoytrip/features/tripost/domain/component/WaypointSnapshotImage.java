@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class RouteSnapshotImage {
+public class WaypointSnapshotImage {
     private ImageId imageId;
     private Integer seq;
 }

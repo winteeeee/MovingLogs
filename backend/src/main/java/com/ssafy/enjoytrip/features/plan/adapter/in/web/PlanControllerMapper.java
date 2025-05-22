@@ -70,7 +70,7 @@ public class PlanControllerMapper {
                 .startDate(result.getStartDate())
                 .endDate(result.getEndDate())
                 .updatedAt(result.getUpdatedAt())
-                .planDetailLength(result.getPlanDetails().size())
+                .WaypointLength(result.getWaypoints().size())
                 .dDay((int) dDay)
                 .build();
     }

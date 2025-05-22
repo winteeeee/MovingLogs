@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 import com.ssafy.enjoytrip.common.util.UuidFactory;
 import com.ssafy.enjoytrip.features.tripost.domain.component.Author;
-import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshot;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshot;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 
 import lombok.AccessLevel;
@@ -24,7 +24,7 @@ public class Tripost {
 	private String title;
 	private String description;
 	private String content;
-	private List<RouteSnapshot> routeSnapshots;
+	private List<WaypointSnapshot> waypointSnapshots;
 	private Long commentCount;
 	private Long likeCount;
 	private Long viewCount;
@@ -86,7 +86,7 @@ public class Tripost {
 			String title,
 			String description,
 			String content,
-			List<RouteSnapshot> routes,
+			List<WaypointSnapshot> routes,
 			Clock clock
 	) {
 		return Tripost.of(
@@ -106,7 +106,7 @@ public class Tripost {
 			String title,
 			String description,
 			String content,
-			List<RouteSnapshot> routeSnapshots,
+			List<WaypointSnapshot> waypointSnapshots,
 			Clock clock
 	) {
 		return Tripost.builder()
@@ -115,7 +115,7 @@ public class Tripost {
 				.title(title)
 				.description(description)
 				.content(content)
-				.routeSnapshots(routeSnapshots)
+				.waypointSnapshots(waypointSnapshots)
 				.commentCount(0L)
 				.viewCount(0L)
 				.likeCount(0L)

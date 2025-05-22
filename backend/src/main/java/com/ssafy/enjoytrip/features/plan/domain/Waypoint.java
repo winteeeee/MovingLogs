@@ -9,8 +9,8 @@ import lombok.Setter;
 @Getter
 @Builder
 @AllArgsConstructor
-public class PlanDetail {
-    private PlanDetailId id;
+public class Waypoint {
+    private WaypointId id;
     @Setter
     private PlanId planId;
     private AttractionId attractionId;

@@ -1,7 +1,7 @@
 package com.ssafy.enjoytrip.features.plan.application.port.in;
 
 import com.ssafy.enjoytrip.common.dto.PageDto;
-import com.ssafy.enjoytrip.features.plan.domain.PlanDetail;
+import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,7 +28,7 @@ public interface SearchPlanUseCase {
     class Result {
         private PlanId id;
         private String title;
-        private List<PlanDetail> planDetails;
+        private List<Waypoint> waypoints;
         private LocalDate startDate;
         private LocalDate endDate;
         private LocalDateTime updatedAt;

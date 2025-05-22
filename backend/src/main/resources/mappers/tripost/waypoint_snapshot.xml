@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.RouteSnapshotDao.java">
+    <insert id="bulkUpsert">
+        INSERT INTO ROUTE_SNAPSHOT (
+            ID,
+            TRIPOST_ID,
+            ATTRACTION_ID,
+            SEQ
+        )
+        VALUES
+        <foreach collection="routeSnapshots" item="snapshot" separator=",">
+            (#{snapshot.id.id}, #{tripostId.id}, #{snapshot.attractionId.id}, #{snapshot.seq})
+        </foreach>
+        ON DUPLICATE KEY UPDATE
+            attraction_id = VALUES(attraction_id),
+            seq = VALUES(seq)
+    </insert>
+
+    <delete id="deleteBySeqGreaterThan">
+        DELETE FROM ROUTE_SNAPSHOT
+        WHERE TRIPOST_ID = #{tripostId.id}
+            AND SEQ > #{seq}
+    </delete>
+</mapper>

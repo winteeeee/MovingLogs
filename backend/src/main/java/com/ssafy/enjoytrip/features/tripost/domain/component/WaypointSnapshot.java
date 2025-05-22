@@ -10,32 +10,32 @@ import java.util.List;
 @Builder(access = AccessLevel.PRIVATE)
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class RouteSnapshot {
-    private RouteSnapshotId id;
+public class WaypointSnapshot {
+    private WaypointSnapshotId id;
     private AttractionId attractionId;
-    private List<RouteSnapshotImage> images;
+    private List<WaypointSnapshotImage> images;
     private Integer seq;
 
-    public static RouteSnapshot of(
+    public static WaypointSnapshot of(
             AttractionId attractionId,
-            List<RouteSnapshotImage> images,
+            List<WaypointSnapshotImage> images,
             Integer seq
     ) {
-        return RouteSnapshot.of(
-                UuidFactory.newId(RouteSnapshotId::new),
+        return WaypointSnapshot.of(
+                UuidFactory.newId(WaypointSnapshotId::new),
                 attractionId,
                 images,
                 seq
         );
     }
 
-    public static RouteSnapshot of(
-            RouteSnapshotId id,
+    public static WaypointSnapshot of(
+            WaypointSnapshotId id,
             AttractionId attractionId,
-            List<RouteSnapshotImage> images,
+            List<WaypointSnapshotImage> images,
             Integer seq
     ) {
-        return RouteSnapshot.builder()
+        return WaypointSnapshot.builder()
                 .id(id)
                 .attractionId(attractionId)
                 .images(images)

@@ -9,5 +9,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Author {
 	private Uid uid;
-	private String nickname;
+	private String name;
 }

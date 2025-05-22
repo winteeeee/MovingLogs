@@ -10,8 +10,8 @@ import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.response.*;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
-import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshot;
-import com.ssafy.enjoytrip.features.tripost.domain.component.RouteSnapshotImage;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshot;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshotImage;
 import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 
@@ -36,9 +36,9 @@ public class TripostMapper {
     }
 
     public static CreateTripostUseCase.Command toCreateTripostCommand(String uid, CreateTripostRequest request) {
-        List<RouteSnapshot> routeSnapshots = request.getRoutes().stream().map(routeVo -> RouteSnapshot.of(
+        List<WaypointSnapshot> waypointSnapshots = request.getRoutes().stream().map(routeVo -> WaypointSnapshot.of(
                 new AttractionId(routeVo.attractionId()),
-                routeVo.images().stream().map(routeImageVo -> new RouteSnapshotImage(
+                routeVo.images().stream().map(routeImageVo -> new WaypointSnapshotImage(
                         new ImageId(routeImageVo.imageId()),
                         routeImageVo.seq()
                 )).toList(),
@@ -50,7 +50,7 @@ public class TripostMapper {
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .content(request.getContent())
-                .routeSnapshots(routeSnapshots)
+                .waypointSnapshots(waypointSnapshots)
                 .build();
     }
 
