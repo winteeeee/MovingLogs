@@ -11,13 +11,11 @@ import com.ssafy.enjoytrip.features.user.application.port.out.SearchUserPort;
 import com.ssafy.enjoytrip.features.user.application.port.out.UpdateUserPort;
 import com.ssafy.enjoytrip.features.user.domain.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 class UserService implements CreateUserUseCase, DeleteUserUseCase, SearchUserUseCase, UpdateUserUseCase {
-    private final PasswordEncoder passwordEncoder;
     private final CreateUserPort createUserPort;
     private final DeleteUserPort deleteUserPort;
     private final SearchUserPort searchUserPort;
@@ -31,7 +29,7 @@ class UserService implements CreateUserUseCase, DeleteUserUseCase, SearchUserUse
 
     @Override
     public CreateUserUseCase.Result createUser(CreateUserUseCase.Command command) {
-        Boolean isCreated = createUserPort.createUser(UserServiceMapper.toUser(command, passwordEncoder));
+        Boolean isCreated = createUserPort.createUser(UserServiceMapper.toUser(command));
         return UserServiceMapper.toCreateUserResult(isCreated);
     }
 

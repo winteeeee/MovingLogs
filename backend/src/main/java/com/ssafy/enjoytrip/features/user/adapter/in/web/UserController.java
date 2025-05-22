@@ -1,12 +1,9 @@
 package com.ssafy.enjoytrip.features.user.adapter.in.web;
 
-import com.ssafy.enjoytrip.features.user.adapter.in.web.request.CreateUserRequest;
 import com.ssafy.enjoytrip.features.user.adapter.in.web.request.UpdateUserRequest;
-import com.ssafy.enjoytrip.features.user.adapter.in.web.response.CreateUserResponse;
 import com.ssafy.enjoytrip.features.user.adapter.in.web.response.DeleteUserResponse;
 import com.ssafy.enjoytrip.features.user.adapter.in.web.response.SearchUserResponse;
 import com.ssafy.enjoytrip.features.user.adapter.in.web.response.UpdateUserResponse;
-import com.ssafy.enjoytrip.features.user.application.port.in.CreateUserUseCase;
 import com.ssafy.enjoytrip.features.user.application.port.in.DeleteUserUseCase;
 import com.ssafy.enjoytrip.features.user.application.port.in.SearchUserUseCase;
 import com.ssafy.enjoytrip.features.user.application.port.in.UpdateUserUseCase;
@@ -22,7 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "UserController", description = "회원 관련 API 제공")
 public class UserController {
 	private final SearchUserUseCase searchUserUseCase;
-	private final CreateUserUseCase createUserUseCase;
 	private final UpdateUserUseCase updateUserUseCase;
 	private final DeleteUserUseCase deleteUserUseCase;
 
@@ -32,15 +28,6 @@ public class UserController {
 		SearchUserUseCase.Command command = UserControllerMapper.toSearchUserCommand(id);
 		SearchUserUseCase.Result result = searchUserUseCase.searchUser(command);
 		SearchUserResponse response = UserControllerMapper.toSearchUserResponse(result);
-		return ResponseEntity.ok(response);
-	}
-
-	@PostMapping
-	@Operation(summary = "회원 가입", description = "전송한 정보를 바탕으로 회원을 가입시킨다.")
-	public ResponseEntity<CreateUserResponse> insert(@RequestBody CreateUserRequest request) {
-		CreateUserUseCase.Command command = UserControllerMapper.toCreateUserCommand(request);
-		CreateUserUseCase.Result result = createUserUseCase.createUser(command);
-		CreateUserResponse response = UserControllerMapper.toCreateUserResponse(result);
 		return ResponseEntity.ok(response);
 	}
 

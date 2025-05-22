@@ -21,9 +21,7 @@ public interface SearchUserUseCase {
     @AllArgsConstructor
     class Result {
         private String id;
-        private String pw;
         private String name;
-        private String email;
         private String role;
         private LocalDateTime createdAt;
         private LocalDateTime updatedAt;
