@@ -11,11 +11,10 @@ import java.util.Map;
 public class JwtUtils {
     private JwtUtils() {}
 
-    public static void writeJwtTokensToResponse(HttpServletResponse response, String accessToken, String refreshToken) {
+    public static void writeJwtTokensToResponse(HttpServletResponse response, String accessToken) {
         Map<String, String> result = new HashMap<>();
         result.put("status", "SUCCESS");
         result.put("accessToken", accessToken);
-        result.put("refreshToken", refreshToken);
         handleResult(response, result, HttpStatus.OK);
     }
 
