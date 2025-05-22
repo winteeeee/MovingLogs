@@ -20,7 +20,7 @@ public class AuthorMybatisAdapter implements AuthorPort {
         Map<String, Object> resultMap = authorDao.findById(uid);
         Author author = new Author(
                 uid,
-                (String) resultMap.get("nickname")
+                (String) resultMap.get("name")
         );
         return Optional.of(author);
     }

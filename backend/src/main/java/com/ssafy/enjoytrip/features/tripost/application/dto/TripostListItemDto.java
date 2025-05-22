@@ -18,11 +18,11 @@ public class TripostListItemDto {
     private String title;
     private String description;
     private String uid;
-    private String nickname;
+    private String name;
     private LocalDateTime createdAt;
     private Long commentCount;
     private Long viewCount;
     private Long likeCount;
-    private List<RouteDto> routes;
-    private List<RouteImageDto> images;
+    private List<WaypointDto> waypoints;
+    private List<WaypointImageDto> images;
 }

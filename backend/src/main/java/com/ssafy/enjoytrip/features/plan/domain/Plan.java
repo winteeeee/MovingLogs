@@ -22,7 +22,7 @@ public class Plan {
     private Image image;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<PlanDetail> planDetails;
+    private List<Waypoint> waypoints;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;

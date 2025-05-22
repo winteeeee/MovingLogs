@@ -4,7 +4,7 @@ import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.SearchPlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
-import com.ssafy.enjoytrip.features.plan.domain.PlanDetail;
+import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 
@@ -13,7 +13,7 @@ import java.util.List;
 
 public class PlanServiceMapper {
     public static Plan toPlan(CreatePlanUseCase.Command command) {
-        List<PlanDetail> planDetailList = PlanDetailServiceMapper.toPlanDetailList(command.getAttractionIds());
+        List<Waypoint> waypointList = WaypointServiceMapper.toWaypointList(command.getAttractionIds());
        return Plan.builder()
                .title(command.getTitle())
                .description(command.getDesc())
@@ -21,7 +21,7 @@ public class PlanServiceMapper {
                .startDate(command.getStartDate())
                .endDate(command.getEndDate())
                .uid(new Uid(String.valueOf(command.getUid())))
-               .planDetails(planDetailList)
+               .waypoints(waypointList)
                .createdAt(LocalDateTime.now())
                .updatedAt(LocalDateTime.now())
                .isDeleted(false)
@@ -29,14 +29,14 @@ public class PlanServiceMapper {
     }
 
     public static Plan toPlan(UpdatePlanUseCase.Command command) {
-        List<PlanDetail> planDetailList = PlanDetailServiceMapper.toPlanDetailList(command.getAttractionIds());
+        List<Waypoint> waypointList = WaypointServiceMapper.toWaypointList(command.getAttractionIds());
         return Plan.builder()
                 .title(command.getTitle())
                 .description(command.getDesc())
                 //TODO .image()
                 .startDate(command.getStartDate())
                 .endDate(command.getEndDate())
-                .planDetails(planDetailList)
+                .waypoints(waypointList)
                 .updatedAt(LocalDateTime.now())
                 .build();
     }
@@ -51,7 +51,7 @@ public class PlanServiceMapper {
         return SearchPlanUseCase.Result.builder()
                 .id(plan.getId())
                 .title(plan.getTitle())
-                .planDetails(plan.getPlanDetails())
+                .waypoints(plan.getWaypoints())
                 .startDate(plan.getStartDate())
                 .endDate(plan.getEndDate())
                 .updatedAt(plan.getUpdatedAt())

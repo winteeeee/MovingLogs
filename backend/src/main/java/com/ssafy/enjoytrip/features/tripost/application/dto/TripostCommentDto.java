@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class TripostCommentDto {
     private String id;
     private String uid;
-    private String nickname;
+    private String name;
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -16,7 +16,7 @@ public class SearchPlanResponse {
     private String imageUrl;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer planDetailLength;
+    private Integer WaypointLength;
     private LocalDateTime updatedAt;
     private Integer dDay;
 }
