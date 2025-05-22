@@ -28,13 +28,13 @@ public class TripostLikeRedisAdapter implements
     }
 
     @Override
-    public void liked(TripostLike tripostLike) {
+    public void like(TripostLike tripostLike) {
         HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
         ops.put(createLikeStateKey(), createLikedMapKey(tripostLike), String.valueOf(true));
     }
 
     @Override
-    public void unliked(TripostLike tripostLike) {
+    public void unlike(TripostLike tripostLike) {
         HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
         ops.put(createLikeStateKey(), createLikedMapKey(tripostLike), String.valueOf(false));
     }

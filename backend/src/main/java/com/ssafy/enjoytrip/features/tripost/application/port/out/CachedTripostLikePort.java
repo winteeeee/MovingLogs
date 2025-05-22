@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CachedTripostLikePort {
-    void liked(TripostLike tripostLike);
-    void unliked(TripostLike tripostLike);
+    void like(TripostLike tripostLike);
+    void unlike(TripostLike tripostLike);
     void setLikeCount(TripostId tripostId, Long likeCount);
     Optional<Long> getLikeCount(TripostId tripostId);
     Optional<Boolean> checkLiked(TripostId tripostId, Uid uid);
