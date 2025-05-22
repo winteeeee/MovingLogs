@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.features.auth.adapter.out.token.redis;
 
+import com.ssafy.enjoytrip.features.auth.application.port.out.DeleteRefreshTokenPort;
 import com.ssafy.enjoytrip.features.auth.application.port.out.SaveRefreshTokenPort;
 import com.ssafy.enjoytrip.features.auth.application.port.out.SearchRefreshTokenPort;
 import com.ssafy.enjoytrip.infrastructure.redis.helper.MultiKeyHelper;
@@ -13,7 +14,11 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class TokenRedisAdapter implements MultiKeyHelper, SaveRefreshTokenPort, SearchRefreshTokenPort {
+public class TokenRedisAdapter implements
+        MultiKeyHelper,
+        SaveRefreshTokenPort,
+        SearchRefreshTokenPort,
+        DeleteRefreshTokenPort {
     @Value("${jwt.refresh-expmin}")
     private long refreshExpMin;
     private final StringRedisTemplate stringRedisTemplate;
@@ -27,5 +32,10 @@ public class TokenRedisAdapter implements MultiKeyHelper, SaveRefreshTokenPort, 
     @Override
     public Optional<String> searchRefreshToken(String accessToken) {
         return Optional.ofNullable(stringRedisTemplate.opsForValue().get(createKey(PREFIX, accessToken)));
+    }
+
+    @Override
+    public void deleteRefreshToken(String accessToken) {
+        stringRedisTemplate.delete(createKey(PREFIX, accessToken));
     }
 }
