@@ -14,8 +14,9 @@ public class AttractionRecommendation {
     @JsonProperty("recommendations")
     List<AttractionRecommendationVO> recommendations;
 
-    class AttractionRecommendationVO {
-        private AttractionId id;
+    @Setter
+    static class AttractionRecommendationVO {
+        private Long id;
         private String name;
         private String reason;
     }
