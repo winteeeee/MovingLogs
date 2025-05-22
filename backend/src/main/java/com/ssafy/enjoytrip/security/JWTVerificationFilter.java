@@ -29,6 +29,11 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
             return;
         }
 
+        //TODO
+        //엑세스 토큰이 만료되지 않음 -> 그냥 통과
+        //액세스 토큰이 만료됨 -> 리프레시 토큰은 만료가 아님 -> 리프레시 토큰과 액세스 토큰 재발급
+        //액세스 토큰이 만료됨 -> 리프레시 토큰도 만료임 -> 통과시키지 않음
+
         Map<String, Object> claims = jwtTokenProvider.getClaims(token);
         UserDetails userDetails = userDetailsService.loadUserByUsername(claims.get("uid").toString());
         UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
