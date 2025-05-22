@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 public class Gugun {
 	private GugunId id;
-	private Long sidoCode;
+	private SidoId sidoCode;
 	private Long gugunCode;
 	private String gugunName;
 }
