@@ -102,12 +102,15 @@ class TripostService implements
 				.ifPresentOrElse(
 						dto::setViewCount,
 						() -> {
-							cachedTripostViewCountPort.createTripostViewCount(query.getTripostId(), dto.getViewCount()+1)
+							cachedTripostViewCountPort.createViewCount(query.getTripostId(), dto.getViewCount()+1)
 									.ifPresent(dto::setViewCount);
 						}
 				);
 		cachedTripostLikePort.getLikeCount(query.getTripostId())
-				.ifPresent(dto::setLikeCount);
+				.ifPresentOrElse(
+						dto::setLikeCount,
+						() -> cachedTripostLikePort.setLikeCount(query.getTripostId(), dto.getLikeCount())
+				);
 
 		return dto;
 	}
