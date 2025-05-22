@@ -20,7 +20,7 @@ public class AiController {
     @Operation(summary = "AI 기반 지역 관광지 추천", description = "사용자가 입력한 정보를 바탕으로 AI가 관광지를 추천합니다")
     public ResponseEntity<AttractionRecommendation> attractionRecommend(@RequestBody AttractionRecommendationRequest req) {
         AttractionRecommendationUseCase.Command command = AiControllerMapper.toAttractionRecommendationUseCaseCommend(req);
-        AttractionRecommendation response =  attractionRecommendationUseCase.recommendAttractions(command);
+        AttractionRecommendation response = attractionRecommendationUseCase.recommendAttractions(command);
         return ResponseEntity.ok(response);
     }
 }

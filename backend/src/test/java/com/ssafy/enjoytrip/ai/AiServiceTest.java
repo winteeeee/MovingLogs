@@ -1,7 +1,7 @@
 package com.ssafy.enjoytrip.ai;
 
+import com.ssafy.enjoytrip.features.ai.adapter.in.web.AiController;
 import com.ssafy.enjoytrip.features.ai.adapter.in.web.request.AttractionRecommendationRequest;
-import com.ssafy.enjoytrip.features.ai.application.AiService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,15 +9,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 public class AiServiceTest {
     @Autowired
-    AiService aiService;
+    AiController aiController;
 
     @Test
     void attractionRecommendTest() {
         AttractionRecommendationRequest req = AttractionRecommendationRequest.builder()
-                .contentTypeCode(32L)
-                .areaCode(1L)
+                .contentTypeCode(12L)
+                .areaCode(7L)
                 .guGunCode(1L)
                 .build();
-        //System.out.println(aiService.attractionRecommend(req));
+        var result = aiController.attractionRecommend(req);
+        System.out.println(result);
     }
 }
