@@ -1,0 +1,65 @@
+package com.ssafy.enjoytrip.features.tripost.adapter.out.cache.redis;
+
+import com.ssafy.enjoytrip.features.tripost.application.port.out.CachedTripostViewCountPort;
+import com.ssafy.enjoytrip.features.tripost.application.port.out.TripostPort;
+import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
+import com.ssafy.enjoytrip.infrastructure.redis.helper.MultiKeyHelper;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+@Component
+@RequiredArgsConstructor
+public class TripostViewCountRedisAdapter implements
+        CachedTripostViewCountPort,
+        MultiKeyHelper {
+    private final StringRedisTemplate stringRedisTemplate;
+    private final String PREFIX = "tripost:view_count:";
+
+    @Override
+    public Optional<Long> createViewCount(TripostId tripostId, Long viewCount) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        ops.set(createCountKey(tripostId), String.valueOf(viewCount));
+        return Optional.of(viewCount);
+    }
+
+    @Override
+    public Optional<Long> incrementViewCount(TripostId tripostId) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        Long incremented = ops.increment(createCountKey(tripostId));
+        return Optional.of(incremented);
+    }
+
+    @Override
+    public List<TripostPort.TripostViewCount> popAllCachedViewCount() {
+        List<TripostPort.TripostViewCount> results = new ArrayList<>();
+
+        for (String key : stringRedisTemplate.keys(PREFIX + "count:*")) {
+            String tripostId = key.substring((PREFIX + "count:").length());
+            String value = stringRedisTemplate.opsForValue().get(key);
+            if (value == null) continue;
+
+            results.add(new TripostPort.TripostViewCount(
+                    new TripostId(tripostId),
+                    Integer.parseInt(value)
+            ));
+
+            stringRedisTemplate.delete(key);
+        }
+
+        return results;
+    }
+
+    private String createCountKey(TripostId tripostId) {
+        return createKey(
+                PREFIX,
+                "count",
+                tripostId.getId()
+        );
+    }
+}

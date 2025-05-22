@@ -21,12 +21,14 @@ class TripostLikeService implements TripostLikeUseCase {
 
 	@Override
 	public void like(Command command) {
-		cachedTripostLikePort.createLike(new TripostLike(command.getTripostId(), command.getUid()));
+		cachedTripostLikePort.liked(new TripostLike(command.getTripostId(), command.getUid()));
+		cachedTripostLikePort.incrementLikeCount(command.getTripostId());
 	}
 
 	@Override
 	public void unlike(Command command) {
-		cachedTripostLikePort.deleteLike(new TripostLike(command.getTripostId(), command.getUid()));
+		cachedTripostLikePort.unliked(new TripostLike(command.getTripostId(), command.getUid()));
+		cachedTripostLikePort.decrementLikeCount(command.getTripostId());
 	}
 
 	@Override
