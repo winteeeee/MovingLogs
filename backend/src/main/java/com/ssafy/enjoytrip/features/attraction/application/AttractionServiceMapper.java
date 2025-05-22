@@ -17,6 +17,7 @@ public class AttractionServiceMapper {
         return SearchAttractionUseCase.Result.builder()
                 .id(attraction.getId())
                 .contentId(attraction.getContentTypeId())
+                .contentTypeName(attraction.getContentTypeName())
                 .title(attraction.getTitle())
                 .sidoName(attraction.getAreaName())
                 .gugunName(attraction.getSiGunGuName())

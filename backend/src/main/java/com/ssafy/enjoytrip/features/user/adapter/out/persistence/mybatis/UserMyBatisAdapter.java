@@ -16,7 +16,6 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-//TODO 쿼리 구현
 public class UserMyBatisAdapter implements CreateUserPort, DeleteUserPort, SearchUserPort {
     private final UserDao userDao;
 
