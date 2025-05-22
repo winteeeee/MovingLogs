@@ -3,7 +3,7 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
   
- <mapper namespace="com/ssafy/enjoytrip/features/attraction/adapter/out/persistence/mybatis/dao/AttractionDao.java">
+ <mapper namespace="com.ssafy.enjoytrip.features.attraction.adapter.out.persistence.mybatis.dao.AttractionDao">
  	<select id="findByContentByIdAndAreaCodeAndSiGunGuCode">
 		SELECT *
 		FROM attraction a
@@ -13,9 +13,9 @@
 		WHERE 1=1
 		<if test="contentTypeId != null">
 			AND a.content_type_id = #{contentTypeId}
-		</if>
-		<if test="areaCode != null">
-			AND a.area_code = #{areaCode}
+			<if test="areaCode != null">
+				AND a.area_code = #{areaCode}
+			</if>
 		</if>
 		<if test="siGunGuCode != null">
 			AND a.si_gun_gu_code = #{siGunGuCode}
@@ -49,9 +49,9 @@
 		WHERE 1=1
 		<if test="contentTypeId != null">
 			AND a.content_type_id = #{contentTypeId}
-		</if>
-		<if test="areaCode != null">
-			AND a.area_code = #{areaCode}
+			<if test="areaCode != null">
+				AND a.area_code = #{areaCode}
+			</if>
 		</if>
 		<if test="siGunGuCode != null">
 			AND a.si_gun_gu_code = #{siGunGuCode}
