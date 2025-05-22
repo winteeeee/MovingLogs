@@ -7,12 +7,12 @@
 	<select id="findById">
 		select *
 		from user
-		where id = #{id}
+		where id = #{id} AND activated = 1
 	</select>
 	
 	<insert id="insert">
-		insert into user(id, pw, name, email, role, created_at, updated_at)
-		values (#{id}, #{pw}, #{name}, #{email}, #{role}, #{createdAt}, #{updatedAt})
+		insert into user(uid, id, name, role, created_at, updated_at)
+		values (#{uid.id}, #{id}, #{name}, #{role}, #{createdAt}, #{updatedAt})
 	</insert>
 	
 	<update id="update">
