@@ -8,4 +8,5 @@ import lombok.Getter;
 public class WaypointImageDto {
     private String thumbnailUrl;
     private String imageUrl;
+    private Integer seq;
 }
