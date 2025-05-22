@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CachedTripostViewCountPort {
-    Optional<Long> createTripostViewCount(TripostId tripostId, Long viewCount);
+    Optional<Long> createViewCount(TripostId tripostId, Long viewCount);
     Optional<Long> incrementViewCount(TripostId tripostId);
     List<TripostPort.TripostViewCount> popAllCachedViewCount();
 }
