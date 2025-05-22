@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 public class SearchUserResponse {
     private String id;
     private String name;
-    private String email;
     private String role;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

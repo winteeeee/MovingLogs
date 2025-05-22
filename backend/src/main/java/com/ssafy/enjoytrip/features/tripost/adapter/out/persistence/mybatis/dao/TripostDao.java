@@ -6,10 +6,12 @@ import com.ssafy.enjoytrip.features.tripost.application.port.out.TripostPort;
 import com.ssafy.enjoytrip.features.tripost.domain.Tripost;
 import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.infrastructure.mybatis.support.PageableSupport;
+import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
 import java.util.Map;
 
+@Mapper
 public interface TripostDao extends PageableSupport<Map<String, Object>, TripostDao.Criteria> {
     int insert(Tripost tripost);
     int update(Tripost tripost);
