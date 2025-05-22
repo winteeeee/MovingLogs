@@ -13,26 +13,27 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
+//TODO 쿼리 구현
 public class UserMyBatisAdapter implements CreateUserPort, DeleteUserPort, SearchUserPort, UpdateUserPort {
     private final UserDao userDao;
 
     @Override
     public Boolean createUser(User user) {
-        return userDao.insert(user) > 0;
+        return null;
     }
 
     @Override
     public Boolean deleteUser(User user) {
-        return userDao.delete(user) > 0;
+        return null;
     }
 
     @Override
     public Optional<User> searchUser(String id) {
-        return Optional.ofNullable(userDao.findById(id));
+        return Optional.ofNullable(null);
     }
 
     @Override
     public Boolean updateUser(User user) {
-        return userDao.update(user) > 0;
+        return null;
     }
 }
