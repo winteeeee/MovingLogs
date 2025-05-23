@@ -11,11 +11,11 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { jwtStore } from '@/stores/jwtStore'
+import { useJwtStore } from '@/stores/jwtStore'
 
+const jwtStore = useJwtStore()
 const router = useRouter()
 const route = useRoute()
-
 const token = route.query.token
 
 onMounted(() => {

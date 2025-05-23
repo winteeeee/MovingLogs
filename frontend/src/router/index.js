@@ -7,6 +7,7 @@ import PlanningPage from '@/views/TempPlanningPage.vue'
 import PostDetailPage from '@/views/PostDetailPage.vue'
 import MyTravelPlanPage from '@/views/MyTripPlanPage.vue'
 import PlanUpdatePage from '@/views/PlanUpdatePage.vue'
+import LoginSuccessPage from '@/views/LoginSuccessPage.vue'
 
 const routes = [
   { path: '/', component: MainPage },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/planning', name: 'PlanningPage', component: PlanningPage },
   // { path: '/post/:id', component: () => import('@/domains/post/pages/PostDetailPage.vue') },
   // { path: '/trip/plan', component: () => import('@/domains/plan/pages/MyTravelPlanPage.vue') },
+  { path: '/login/success', name: 'LoginSuccessPage' , component: LoginSuccessPage }
   // 기타 라우트 정의
 ]
 

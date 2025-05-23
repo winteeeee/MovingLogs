@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const jwtStore = defineStore('auth', {
+export const useJwtStore = defineStore('jwtStore', {
   state: () => ({
     accessToken: null,
   }),

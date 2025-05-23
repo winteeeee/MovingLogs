@@ -116,9 +116,10 @@
 
 <script setup>
 import { ref } from 'vue'
-import { jwtStore } from '@/stores/jwtStore'
+import { useJwtStore } from '@/stores/jwtStore'
 import axios from 'axios'
 
+const jwtStore = useJwtStore()
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 // 로그인 상태 (실제로는 상태 관리 라이브러리나 API 호출로 관리)
 const user = ref({
@@ -143,10 +144,12 @@ function logout() {
     })
     .then((res) => {
       console.log('로그아웃 성공: ', res.data)
-      jwtStore.clearAccessToken()
     })
     .catch((err) => {
       console.log('로그아웃 실패: ', err)
+    })
+    .finally(() => {
+      jwtStore.clearAccessToken()
     })
 }
 </script>
