@@ -17,7 +17,7 @@ public class PlanServiceMapper {
        return Plan.builder()
                .title(command.getTitle())
                .description(command.getDesc())
-               //TODO .image()
+               .thumbnailUrl(command.getThumbnailUrl())
                .startDate(command.getStartDate())
                .endDate(command.getEndDate())
                .uid(new Uid(String.valueOf(command.getUid())))

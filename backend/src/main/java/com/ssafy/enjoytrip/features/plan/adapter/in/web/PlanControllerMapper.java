@@ -20,7 +20,7 @@ public class PlanControllerMapper {
                 .uid(uid)
                 .title(request.getTitle())
                 .desc(request.getDesc())
-                .imgId(request.getImgId())
+                .thumbnailUrl(request.getThumbnailUrl())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .attractionIds(request.getAttractionIds())

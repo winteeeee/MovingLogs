@@ -18,7 +18,7 @@ public interface CreatePlanUseCase {
         private String uid;
         private String desc;
         private String title;
-        private String imgId;
+        private String thumbnailUrl;
         private LocalDate startDate;
         private LocalDate endDate;
         private List<String> attractionIds;
