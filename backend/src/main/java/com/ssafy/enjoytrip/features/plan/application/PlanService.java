@@ -12,7 +12,6 @@ import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
 import com.ssafy.enjoytrip.features.plan.domain.WaypointId;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +21,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class PlanService implements SearchMyPlansUseCase, SearchPlanDetailUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
-    @Value("${paging.size}")
-    private Integer pageSize;
     private final CreatePlanPort createPlanPort;
     private final DeletePlanPort deletePlanPort;
     private final SearchPlanPort searchPlanPort;
@@ -57,15 +54,15 @@ public class PlanService implements SearchMyPlansUseCase, SearchPlanDetailUseCas
     @Override
     @Transactional(readOnly = true)
     public PageDto<SearchMyPlansUseCase.Result> searchMyPlans(SearchMyPlansUseCase.Command command) {
-        List<Plan> planList = searchPlanPort.searchMyPlans(command.getUid(), command.getPage());
+        List<Plan> planList = searchPlanPort.searchMyPlans(command.getUid(), command.getPage(), command.getPageSize());
         List<SearchMyPlansUseCase.Result> content = PlanServiceMapper.toSearchPlanUserCaseResultList(planList);
         Long totalElements = countPlanPort.countPlanByUid(command.getUid());
-        int totalPages = (int) Math.ceil((double) totalElements / pageSize);
+        int totalPages = (int) Math.ceil((double) totalElements / command.getPageSize());
 
         return new PageDto<>(
                 content,
                 command.getPage(),
-                pageSize,
+                command.getPageSize(),
                 totalPages,
                 totalElements,
                 command.getPage() > 0,

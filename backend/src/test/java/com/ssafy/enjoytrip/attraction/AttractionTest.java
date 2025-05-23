@@ -42,7 +42,8 @@ public class AttractionTest {
                 12L,
                 7L,
                 1L,
-                1
+                1,
+                5
         );
         System.out.println(response);
     }

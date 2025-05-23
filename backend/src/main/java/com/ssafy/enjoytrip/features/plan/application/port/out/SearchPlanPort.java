@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface SearchPlanPort {
     Plan searchPlan(PlanId id);
-    List<Plan> searchMyPlans(Uid uid, Integer page);
+    List<Plan> searchMyPlans(Uid uid, Integer page, Integer pageSize);
 }

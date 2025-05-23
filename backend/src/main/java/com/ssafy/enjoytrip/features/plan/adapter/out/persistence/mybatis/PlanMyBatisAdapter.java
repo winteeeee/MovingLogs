@@ -6,7 +6,6 @@ import com.ssafy.enjoytrip.features.plan.domain.Plan;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.sql.Date;
@@ -18,8 +17,6 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, SearchPlanPort, UpdatePlanPort, CountPlanPort {
-    @Value("${paging.size}")
-    private Integer pageSize;
     private final PlanDao planDao;
 
     @Override
@@ -45,7 +42,7 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     }
 
     @Override
-    public List<Plan> searchMyPlans(Uid uid, Integer page) {
+    public List<Plan> searchMyPlans(Uid uid, Integer page, Integer pageSize) {
         List<Map<String, Object>> resultMaps = planDao.findByUid(uid.getId(), pageSize, (long) (page - 1) * pageSize);
         List<Plan> plans = new ArrayList<>();
         for (Map<String, Object> resultMap : resultMaps) {

@@ -22,7 +22,7 @@ public class PlanTest {
 
     @Test
     void 계획_조회_테스트() {
-        ResponseEntity<PageDto<SearchPlanResponse>> response = planController.findPlans(1);
+        ResponseEntity<PageDto<SearchPlanResponse>> response = planController.findPlans(1, 5);
         System.out.println(response);
     }
 

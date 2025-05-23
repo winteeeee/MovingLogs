@@ -16,8 +16,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class AttractionService implements SearchAttractionUseCase, SearchContentTypeUseCase, SearchGugunUseCase, SearchSidoUseCase {
-    @Value("${paging.size}")
-    private Integer pageSize;
     private final SearchAttractionPort searchAttractionPort;
     private final CountAttractionPort countAttractionPort;
     private final SearchContentTypePort searchContentTypePort;
@@ -26,9 +24,9 @@ public class AttractionService implements SearchAttractionUseCase, SearchContent
 
     @Override
     @Transactional(readOnly = true)
-    public PageDto<SearchAttractionUseCase.Result> searchAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page) {
+    public PageDto<SearchAttractionUseCase.Result> searchAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize) {
         List<SearchAttractionUseCase.Result> content = AttractionServiceMapper.toSearchAttractionUseCaseResultList(
-                searchAttractionPort.searchAttractionsWithPaging(contentTypeId, areaCode, siGunGuCode, page)
+                searchAttractionPort.searchAttractionsWithPaging(contentTypeId, areaCode, siGunGuCode, page, pageSize)
         );
         Long totalElements = countAttractionPort.countAttractions(contentTypeId, areaCode, siGunGuCode);
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);

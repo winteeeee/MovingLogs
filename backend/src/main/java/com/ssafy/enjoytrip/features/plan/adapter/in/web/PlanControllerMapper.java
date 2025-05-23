@@ -25,10 +25,11 @@ public class PlanControllerMapper {
                 .build();
     }
 
-    public static SearchMyPlansUseCase.Command toSearchPlanUseCaseCommand(String uid, Integer page) {
+    public static SearchMyPlansUseCase.Command toSearchPlanUseCaseCommand(String uid, Integer page, Integer pageSize) {
         return SearchMyPlansUseCase.Command.builder()
                 .uid(new Uid(uid))
                 .page(page)
+                .pageSize(pageSize)
                 .build();
     }
 

@@ -7,7 +7,6 @@ import com.ssafy.enjoytrip.features.attraction.adapter.out.persistence.mybatis.d
 import com.ssafy.enjoytrip.features.attraction.application.port.out.*;
 import com.ssafy.enjoytrip.features.attraction.domain.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -18,15 +17,13 @@ import java.util.Map;
 @Component
 @RequiredArgsConstructor
 public class AttractionMyBatisAdapter implements SearchAttractionPort, CountAttractionPort, SearchContentTypePort, SearchGugunPort, SearchSidoPort {
-    @Value("${paging.size}")
-    private Integer pageSize;
     private final AttractionDao attractionDao;
     private final ContentTypeDao contentTypeDao;
     private final GugunDao gugunDao;
     private final SidoDao sidoDao;
 
     @Override
-    public List<Attraction> searchAttractionsWithPaging(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page) {
+    public List<Attraction> searchAttractionsWithPaging(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize) {
         List<Map<String, Object>> resultMaps = attractionDao.findByContentByIdAndAreaCodeAndSiGunGuCode(contentTypeId, areaCode, siGunGuCode, pageSize, (long) (page - 1) * pageSize);
         return makeAttractions(resultMaps);
     }

@@ -21,6 +21,7 @@ public interface SearchMyPlansUseCase {
     class Command {
         private Uid uid;
         private Integer page;
+        private Integer pageSize;
     }
 
     @Getter
