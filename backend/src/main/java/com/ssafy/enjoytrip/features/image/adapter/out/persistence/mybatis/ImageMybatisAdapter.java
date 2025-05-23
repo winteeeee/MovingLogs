@@ -1,6 +1,6 @@
-package com.ssafy.enjoytrip.features.image.adapter.out.persistance.mybatis;
+package com.ssafy.enjoytrip.features.image.adapter.out.persistence.mybatis;
 
-import com.ssafy.enjoytrip.features.image.adapter.out.persistance.mybatis.dao.ImageDao;
+import com.ssafy.enjoytrip.features.image.adapter.out.persistence.mybatis.dao.ImageDao;
 import com.ssafy.enjoytrip.features.image.application.port.out.ImagePort;
 import com.ssafy.enjoytrip.features.image.domain.Image;
 import lombok.RequiredArgsConstructor;
