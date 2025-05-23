@@ -1,8 +1,9 @@
 import { defineStore } from 'pinia'
 
-export const useJwtStore = defineStore('jwtStore', {
+export const useAuthStore = defineStore('authStore', {
   state: () => ({
     accessToken: null,
+    name: null,
   }),
 
   getters: {
@@ -10,12 +11,14 @@ export const useJwtStore = defineStore('jwtStore', {
   },
 
   actions: {
-    setAccessToken(token) {
+    setAuthInfo(token, name) {
       this.accessToken = token
+      this.name = name
     },
 
-    clearAccessToken() {
+    clearAuthInfo() {
       this.accessToken = null
+      this.name = null
     },
   },
 

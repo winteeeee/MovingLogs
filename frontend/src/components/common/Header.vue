@@ -55,7 +55,7 @@
             </button>
           </div>
 
-          <div v-if="jwtStore.isLoggedIn" class="user-menu">
+          <div v-if="authStore.isLoggedIn" class="user-menu">
             <div class="notification-icon me-3">
               <i class="bi bi-bell"></i>
               <span class="notification-badge">2</span>
@@ -69,8 +69,7 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <img :src="user.avatar" :alt="user.name" class="user-avatar" />
-                <span class="user-name d-none d-lg-inline">{{ user.name }}</span>
+                <span class="user-name d-none d-lg-inline">{{ authStore.name }}</span>
                 <i class="bi bi-chevron-down"></i>
               </button>
 
@@ -81,7 +80,7 @@
                   </router-link>
                 </li>
                 <li>
-                  <router-link to="/my-routes" class="dropdown-item">
+                  <router-link to="/my-plans" class="dropdown-item">
                     <i class="bi bi-map"></i> 내 여행 경로
                   </router-link>
                 </li>
@@ -116,22 +115,18 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useJwtStore } from '@/stores/jwtStore'
+import { useAuthStore } from '@/stores/authStore.js'
 import axios from 'axios'
 
-const jwtStore = useJwtStore()
+const authStore = useAuthStore()
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
-// 로그인 상태 (실제로는 상태 관리 라이브러리나 API 호출로 관리)
 const user = ref({
   name: '여행자',
-  avatar: 'https://via.placeholder.com/40?text=User',
 })
 
 function login() {
   console.log('`${serverUrl}/oauth2/authorization/kakao`')
   window.location.href = `${serverUrl}/oauth2/authorization/kakao`
-  const code = new URLSearchParams(window.location.search).get('code')
-  console.log(code)
 }
 
 function logout() {
@@ -139,7 +134,7 @@ function logout() {
   axios
     .post(`${serverUrl}/api/v1/auth/logout`, null, {
       headers: {
-        Authorization: `Bearer ${jwtStore.accessToken}`,
+        Authorization: `Bearer ${authStore.accessToken}`,
       },
     })
     .then((res) => {
@@ -149,7 +144,7 @@ function logout() {
       console.log('로그아웃 실패: ', err)
     })
     .finally(() => {
-      jwtStore.clearAccessToken()
+      authStore.clearAuthInfo()
     })
 }
 </script>

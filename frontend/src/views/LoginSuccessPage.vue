@@ -11,17 +11,18 @@
 <script setup>
 import { onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
-import { useJwtStore } from '@/stores/jwtStore'
+import { useAuthStore } from '@/stores/authStore.js'
 
-const jwtStore = useJwtStore()
+const authStore = useAuthStore()
 const router = useRouter()
 const route = useRoute()
 const token = route.query.token
+const name = route.query.name
 
 onMounted(() => {
   if (token) {
     // 토큰 저장
-    jwtStore.setAccessToken(token)
+    authStore.setAuthInfo(token, name)
     console.log('토큰이 성공적으로 저장되었습니다.')
 
     // 잠시 후 루트 경로로 리다이렉트 (사용자에게 로딩 표시를 보여주기 위한 짧은 지연)
