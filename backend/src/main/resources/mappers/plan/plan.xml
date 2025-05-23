@@ -4,6 +4,12 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.PlanDao">
+    <select id="findById">
+        SELECT *
+        FROM plan
+        WHERE id = #{id} AND is_deleted = 0;
+    </select>
+
     <select id="findByUid">
         SELECT *
         FROM plan

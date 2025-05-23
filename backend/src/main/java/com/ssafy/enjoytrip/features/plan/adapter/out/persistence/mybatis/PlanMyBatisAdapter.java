@@ -1,9 +1,13 @@
 package com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis;
 
+import com.ssafy.enjoytrip.features.attraction.domain.AttractionId;
 import com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.PlanDao;
+import com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.WayPointDao;
 import com.ssafy.enjoytrip.features.plan.application.port.out.*;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
+import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
+import com.ssafy.enjoytrip.features.plan.domain.WaypointId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,10 +25,41 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     @Value("${paging.size}")
     private Integer pageSize;
     private final PlanDao planDao;
+    private final WayPointDao wayPointDao;
 
     @Override
     public void createPlan(Plan plan) {
         planDao.insert(plan);
+    }
+
+    @Override
+    public Plan searchPlan(PlanId id) {
+        Map<String, Object> resultMap = planDao.findById(id.getId());
+        Plan plan = Plan.builder()
+                .id(new PlanId((String) resultMap.get("id")))
+                .uid(new Uid((String) resultMap.get("uid")))
+                .title((String) resultMap.get("title"))
+                .description((String) resultMap.get("description"))
+                .thumbnailUrl((String) resultMap.get("thumbnail_url"))
+                .startDate(((Date) resultMap.get("start_date")).toLocalDate())
+                .endDate(((Date) resultMap.get("end_date")).toLocalDate())
+                .createdAt((LocalDateTime) resultMap.get("created_at"))
+                .updatedAt((LocalDateTime) resultMap.get("updated_at"))
+                .isDeleted((Integer) resultMap.get("is_deleted") == 1)
+                .build();
+
+        List<Waypoint> waypoints = new ArrayList<>();
+        List<Map<String, Object>> resultMaps = wayPointDao.findByPlanId(id.getId());
+        for (Map<String, Object> wayPointResultMap : resultMaps) {
+            waypoints.add(Waypoint.builder()
+                            .id(new WaypointId((String) wayPointResultMap.get("id")))
+                            .planId(new PlanId((String) wayPointResultMap.get("plan_id")))
+                            .attractionId(new AttractionId((String) wayPointResultMap.get("attraction_id")))
+                            .seq((Integer) wayPointResultMap.get("seq"))
+                    .build());
+        }
+        plan.injectWaypoints(waypoints);
+        return plan;
     }
 
     @Override

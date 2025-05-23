@@ -9,6 +9,7 @@ import java.util.Map;
 
 @Mapper
 public interface PlanDao {
+    Map<String, Object> findById(String id);
     List<Map<String, Object>> findByUid(String uid, Integer limit, Long offset);
     Long countByUid(String uid);
     int insert(Plan plan);

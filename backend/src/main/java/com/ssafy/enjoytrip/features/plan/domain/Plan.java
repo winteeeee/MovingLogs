@@ -40,4 +40,8 @@ public class Plan {
         updatedAt = LocalDateTime.now();
         isDeleted = true;
     }
+
+    public void injectWaypoints(List<Waypoint> waypoints) {
+        this.waypoints = waypoints;
+    }
 }
