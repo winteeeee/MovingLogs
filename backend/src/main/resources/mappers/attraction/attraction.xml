@@ -40,6 +40,7 @@
 			AND a.si_gun_gu_code = #{siGunGuCode}
 		</if>
 	</select>
+
 	<select id="findByContentByIdAndAreaCodeAndSiGunGuCodeLimit">
 		SELECT *
 		FROM attraction a
@@ -57,5 +58,17 @@
 			AND a.si_gun_gu_code = #{siGunGuCode}
 		</if>
 		LIMIT #{limit}
+	</select>
+
+	<select id="findByIds">
+		SELECT *
+		FROM attraction a
+		JOIN content_type t ON a.content_type_id = t.content_type_id
+		JOIN sido s ON a.area_code = s.sido_code
+		JOIN gugun g ON a.area_code = g.sido_code AND a.si_gun_gu_code = g.gugun_code
+		WHERE a.id IN
+		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
 	</select>
 </mapper>

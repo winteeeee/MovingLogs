@@ -11,12 +11,12 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 public class SearchPlanResponse {
-    private Long id;
+    private String id;
     private String title;
-    private String imageUrl;
+    private String desc;
+    private String thumbnailUrl;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Integer WaypointLength;
     private LocalDateTime updatedAt;
-    private Integer dDay;
+    private Long dDay;
 }

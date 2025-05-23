@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.PlanDao">
+    <select id="findById">
+        SELECT *
+        FROM plan
+        WHERE id = #{id} AND is_deleted = 0;
+    </select>
+
+    <select id="findByUid">
+        SELECT *
+        FROM plan
+        WHERE uid = #{uid} AND is_deleted = 0;
+    </select>
+
+    <select id="countByUid">
+        SELECT count(*)
+        FROM plan
+        WHERE uid = #{uid} AND is_deleted = 0;
+    </select>
+
+    <insert id="insert">
+        INSERT INTO plan
+        VALUES (
+        #{id.id},
+        #{uid.id},
+        #{title},
+        #{description},
+        #{thumbnailUrl},
+        #{startDate},
+        #{endDate},
+        #{createdAt},
+        #{updatedAt},
+        #{isDeleted}
+        )
+    </insert>
+
+    <update id="update">
+        UPDATE plan
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="thumbnailUrl != null">thumbnail_url = #{thumbnailUrl}</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            updated_at = #{updatedAt}
+        </set>
+        WHERE id = #{id.id} AND is_deleted = 0
+    </update>
+
+    <update id="delete">
+        UPDATE plan
+        SET is_deleted = 1, updated_at = #{updatedAt}
+        WHERE id = #{id}
+    </update>
+</mapper>

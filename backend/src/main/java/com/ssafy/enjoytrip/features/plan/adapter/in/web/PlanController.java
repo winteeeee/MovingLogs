@@ -5,11 +5,9 @@ import com.ssafy.enjoytrip.common.util.SecurityUtils;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.request.CreatePlanRequest;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.request.UpdatePlanRequest;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.CreatePlanResponse;
+import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanDetailResponse;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanResponse;
-import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.DeletePlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.SearchPlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
+import com.ssafy.enjoytrip.features.plan.application.port.in.*;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -24,23 +22,33 @@ import org.springframework.web.bind.annotation.*;
 public class PlanController {
     private final CreatePlanUseCase createPlanUseCase;
     private final DeletePlanUseCase deletePlanUseCase;
-    private final SearchPlanUseCase searchPlanUseCase;
+    private final SearchMyPlansUseCase searchMyPlansUseCase;
+    private final SearchPlanDetailUseCase searchPlanDetailUseCase;
     private final UpdatePlanUseCase updatePlanUseCase;
 
     @GetMapping
     @Operation(summary = "여행 계획 조회", description = "특정 회원의 여행 계획을 조회한다.")
     public ResponseEntity<PageDto<SearchPlanResponse>> findPlans(@RequestParam Integer page) {
-        Long uid = SecurityUtils.getUserUidBySecurityContextHolder();
-        SearchPlanUseCase.Command command = PlanControllerMapper.toSearchPlanUseCaseCommand(uid, page);
-        PageDto<SearchPlanUseCase.Result> result = searchPlanUseCase.searchPlans(command);
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
+        SearchMyPlansUseCase.Command command = PlanControllerMapper.toSearchPlanUseCaseCommand(uid, page);
+        PageDto<SearchMyPlansUseCase.Result> result = searchMyPlansUseCase.searchMyPlans(command);
         PageDto<SearchPlanResponse> response = PlanControllerMapper.toSearchPlanResponsePageDto(result);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "여행 계획 상세 조회", description = "특정 여행 계획을 상세 조회한다.")
+    public ResponseEntity<SearchPlanDetailResponse> findPlanDetail(@PathVariable String id) {
+        SearchPlanDetailUseCase.Command command = PlanControllerMapper.toSearchPlanDetailUseCaseCommand(id);
+        SearchPlanDetailUseCase.Result result = searchPlanDetailUseCase.searchPlanDetail(command);
+        SearchPlanDetailResponse response = PlanControllerMapper.toSearchPlanDetailResponse(result);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
     @Operation(summary = "여행 계획 생성", description = "여행 계획을 생성한다.")
     public ResponseEntity<CreatePlanResponse> insertPlan(@RequestBody CreatePlanRequest createPlanRequest) {
-        Long uid = SecurityUtils.getUserUidBySecurityContextHolder();
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
         CreatePlanUseCase.Command command = PlanControllerMapper.toCreatePlanUseCaseCommand(createPlanRequest, uid);
         CreatePlanUseCase.Result result = createPlanUseCase.createPlan(command);
         CreatePlanResponse response = PlanControllerMapper.toCreatePlanResponse(result);

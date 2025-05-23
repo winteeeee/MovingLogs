@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.features.plan.application.port.in;
 
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,6 +12,6 @@ public interface DeletePlanUseCase {
     @Builder
     @AllArgsConstructor
     class Command {
-        private String id;
+        private PlanId id;
     }
 }

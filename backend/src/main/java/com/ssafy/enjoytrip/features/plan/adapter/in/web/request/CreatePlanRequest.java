@@ -13,7 +13,7 @@ import java.util.List;
 public class CreatePlanRequest {
     private String title;
     private String desc;
-    private String imgId;
+    private String thumbnailUrl; //프론트에서 이미지 url 하나 선택해서 넘겨주기
     private LocalDate startDate;
     private LocalDate endDate;
     private List<String> attractionIds;

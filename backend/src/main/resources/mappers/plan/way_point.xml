@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.WayPointDao">
+    <select id="findByPlanId">
+        SELECT *
+        FROM waypoint w
+        WHERE w.plan_id = #{planId}
+    </select>
+
+    <insert id="insertAll">
+        INSERT INTO waypoint
+        VALUES
+        <foreach collection="waypoints" item="p" separator=",">
+            (#{p.id.id}, #{p.planId.id}, #{p.attractionId.id}, #{p.seq})
+        </foreach>
+    </insert>
+
+    <delete id="deleteByPlanId">
+        DELETE FROM waypoint
+        WHERE plan_id = #{planId}
+    </delete>
+</mapper>

@@ -38,6 +38,13 @@ public class AttractionMyBatisAdapter implements SearchAttractionPort, CountAttr
     }
 
     @Override
+    public List<Attraction> searchAttractionByIds(List<AttractionId> ids) {
+        List<String> stringIds = ids.stream().map(AttractionId::getId).toList();
+        List<Map<String, Object>> resultMaps = attractionDao.findByIds(stringIds);
+        return makeAttractions(resultMaps);
+    }
+
+    @Override
     public Long countAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode) {
         return attractionDao.countByContentByIdAndAreaCodeAndSiGunGuCode(contentTypeId, areaCode, siGunGuCode);
     }

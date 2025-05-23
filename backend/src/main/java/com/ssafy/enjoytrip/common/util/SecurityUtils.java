@@ -17,12 +17,12 @@ public class SecurityUtils {
         return Long.parseLong(user.getUser().getUid().getId());
     }
 
-    public static Long getUserUidBySecurityContextHolder() {
+    public static String getUserUidBySecurityContextHolder() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth == null || auth.getPrincipal() == null) {
             throw new AuthenticationException();
         }
 
-        return Long.parseLong(auth.getPrincipal().toString());
+        return auth.getPrincipal().toString();
     }
 }

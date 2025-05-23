@@ -1,6 +1,5 @@
 package com.ssafy.enjoytrip.features.plan.domain;
 
-import com.ssafy.enjoytrip.features.image.domain.Image;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,12 +17,31 @@ public class Plan {
     private Uid uid;
     private String title;
     private String description;
-    //TODO 대표 이미지 관련 처리 추가(추가, 수정 시)
-    private Image image;
+    private String thumbnailUrl;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<Waypoint> waypoints;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private Boolean isDeleted;
+
+    public void setCreateStatus(PlanId id) {
+        this.id = id;
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+        isDeleted = false;
+    }
+
+    public void setUpdateStatus() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public void setDeleteStats() {
+        updatedAt = LocalDateTime.now();
+        isDeleted = true;
+    }
+
+    public void injectWaypoints(List<Waypoint> waypoints) {
+        this.waypoints = waypoints;
+    }
 }

@@ -1,20 +1,27 @@
 package com.ssafy.enjoytrip.features.plan.application;
 
 import com.ssafy.enjoytrip.common.dto.PageDto;
+import com.ssafy.enjoytrip.common.util.UuidFactory;
+import com.ssafy.enjoytrip.features.attraction.application.port.out.SearchAttractionPort;
+import com.ssafy.enjoytrip.features.attraction.domain.Attraction;
+import com.ssafy.enjoytrip.features.attraction.domain.AttractionId;
 import com.ssafy.enjoytrip.features.plan.application.port.in.*;
 import com.ssafy.enjoytrip.features.plan.application.port.out.*;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
+import com.ssafy.enjoytrip.features.plan.domain.WaypointId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
+public class PlanService implements SearchMyPlansUseCase, SearchPlanDetailUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
     @Value("${paging.size}")
     private Integer pageSize;
     private final CreatePlanPort createPlanPort;
@@ -22,20 +29,26 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
     private final SearchPlanPort searchPlanPort;
     private final UpdatePlanPort updatePlanPort;
     private final CountPlanPort countPlanPort;
+    private final SearchWaypointPort searchWaypointPort;
     private final CreateWaypointPort createWaypointPort;
     private final DeleteWaypointPort deleteWaypointPort;
+    private final SearchAttractionPort searchAttractionPort;
 
     @Override
     @Transactional
     public CreatePlanUseCase.Result createPlan(CreatePlanUseCase.Command command) {
-        //일단 커맨드에서 도메인 객체로 변환
+        //커맨드에서 도메인 객체로 변환
         Plan plan = PlanServiceMapper.toPlan(command);
+        plan.setCreateStatus(UuidFactory.newId(PlanId::new));
         //이후 포트를 통해 플랜을 생성
-        CreatePlanUseCase.Result result = PlanServiceMapper.toCreatePlanUseCaseResult(createPlanPort.createPlan(plan));
-        //result에서 pk값을 가져와서 할당하고 플랜 디테일들을 추가적으로 삽입
+        createPlanPort.createPlan(plan);
+
+        //plan에서 pk값을 가져와서 할당하고 웨이 포인트들을 추가적으로 삽입
+        CreatePlanUseCase.Result result = PlanServiceMapper.toCreatePlanUseCaseResult(plan.getId());
         List<Waypoint> waypoints = plan.getWaypoints();
         for (Waypoint waypoint : waypoints) {
             waypoint.setPlanId(result.getPlanId());
+            waypoint.setCreateStatus(UuidFactory.newId(WaypointId::new));
         }
         createWaypointPort.createWaypoints(plan.getWaypoints());
         return result;
@@ -43,9 +56,9 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
 
     @Override
     @Transactional(readOnly = true)
-    public PageDto<SearchPlanUseCase.Result> searchPlans(SearchPlanUseCase.Command command) {
-        List<Plan> planList = searchPlanPort.searchPlanByUid(command.getUid(), command.getPage());
-        List<SearchPlanUseCase.Result> content = PlanServiceMapper.toSearchPlanUserCaseResultList(planList);
+    public PageDto<SearchMyPlansUseCase.Result> searchMyPlans(SearchMyPlansUseCase.Command command) {
+        List<Plan> planList = searchPlanPort.searchMyPlans(command.getUid(), command.getPage());
+        List<SearchMyPlansUseCase.Result> content = PlanServiceMapper.toSearchPlanUserCaseResultList(planList);
         Long totalElements = countPlanPort.countPlanByUid(command.getUid());
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
 
@@ -61,22 +74,40 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
     }
 
     @Override
-    @Transactional
-    public void updatePlan(UpdatePlanUseCase.Command command) {
-        //원래 있던 플랜 디테일은 모두 삭제
-        deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
-        //새롭게 입력된 플랜 디테일로 다시 삽입
-        createWaypointPort.createWaypoints(WaypointServiceMapper.toWaypointList(command.getAttractionIds()));
-        //이후 본래의 여행 계획 업데이트
-        updatePlanPort.updatePlan(PlanServiceMapper.toPlan(command));
+    @Transactional(readOnly = true)
+    public SearchPlanDetailUseCase.Result searchPlanDetail(SearchPlanDetailUseCase.Command command) {
+        //플랜을 찾고
+        Plan plan = searchPlanPort.searchPlan(command.getId());
+        //그에 맞는 웨이포인트를 찾음
+        List<Waypoint> waypoints = searchWaypointPort.searchWaypointsByPlanId(command.getId());
+        plan.injectWaypoints(waypoints);
+
+        //찾은 웨이포인트를 기반으로 관광지 정보를 채움
+        List<AttractionId> attractionIds = waypoints.stream().map(Waypoint::getAttractionId).toList();
+        List<Attraction> attractions = searchAttractionPort.searchAttractionByIds(attractionIds);
+        return PlanServiceMapper.toSearchPlanDetailUseCaseResult(plan, attractions);
     }
 
     @Override
     @Transactional
-    public void deletePlan(DeletePlanUseCase.Command command) {
-        //일단 플랜 디테일을 먼저 삭제하고
+    public void updatePlan(UpdatePlanUseCase.Command command) {
+        //원래 있던 웨이 포인트는 모두 삭제
         deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
-        //그 다음 플랜 자체를 삭제
-        deletePlanPort.deletePlan(command.getId());
+        //새롭게 입력된 웨이 포인트로 다시 삽입
+        List<Waypoint> waypoints = WaypointServiceMapper.toWaypointList(command.getAttractionIds());
+        for (Waypoint waypoint : waypoints) {
+            waypoint.setPlanId(command.getId());
+            waypoint.setCreateStatus(UuidFactory.newId(WaypointId::new));
+        }
+        createWaypointPort.createWaypoints(waypoints);
+        //이후 여행 계획 업데이트
+        Plan plan = PlanServiceMapper.toPlan(command);
+        plan.setUpdateStatus();
+        updatePlanPort.updatePlan(plan);
+    }
+
+    @Override
+    public void deletePlan(DeletePlanUseCase.Command command) {
+        deletePlanPort.deletePlan(command.getId(), LocalDateTime.now());
     }
 }
