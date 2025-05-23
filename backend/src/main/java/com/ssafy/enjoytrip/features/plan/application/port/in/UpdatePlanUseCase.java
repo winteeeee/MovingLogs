@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.features.plan.application.port.in;
 
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +15,7 @@ public interface UpdatePlanUseCase {
     @Builder
     @AllArgsConstructor
     class Command {
-        private String id;
+        private PlanId id;
         private String title;
         private String desc;
         private String thumbnailUrl;
