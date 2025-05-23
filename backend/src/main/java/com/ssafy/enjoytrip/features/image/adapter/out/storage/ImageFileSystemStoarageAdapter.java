@@ -3,7 +3,8 @@ package com.ssafy.enjoytrip.features.image.adapter.out.storage;
 import com.ssafy.enjoytrip.features.image.application.port.out.ImageStoragePort;
 import com.ssafy.enjoytrip.features.image.domain.component.Mimetype;
 import com.ssafy.enjoytrip.features.image.domain.component.RelativePath;
-import lombok.AllArgsConstructor;
+import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +18,20 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component
-@AllArgsConstructor
 public class ImageFileSystemStoarageAdapter implements
         ImageStoragePort {
     @Value("${upload.image.location}")
-    private String BASE_LOCATION;
+    private String baseLocation;
     @Value("${upload.image.thumbnail.width}")
-    private int THUMBNAIL_WIDTH;
+    private int thumbnailWidth;
     @Value("${upload.image.thumbnail.height}")
-    private int THUMBNAIL_HEIGHT;
+    private int thumbnailHeight;
+    private Path basePath;
 
-    private final Path BASE_PATH = Paths.get(BASE_LOCATION);
+    @PostConstruct
+    public void init() {
+        this.basePath = Paths.get(baseLocation);
+    }
 
     @Override
     public ImageMeta saveImage(String fileName, byte[] content, Mimetype mimetype) {
@@ -36,8 +40,8 @@ public class ImageFileSystemStoarageAdapter implements
             String dir2 = fileName.substring(2, 4);
 
             // 1. 저장 디렉토리 경로 설정
-            Path imageDir = BASE_PATH.resolve(Paths.get(dir1, dir2, "image"));
-            Path thumbnailDir = BASE_PATH.resolve(Paths.get(dir1, dir2, "thumbnail"));
+            Path imageDir = basePath.resolve(Paths.get(dir1, dir2, "image"));
+            Path thumbnailDir = basePath.resolve(Paths.get(dir1, dir2, "thumbnail"));
             Files.createDirectories(imageDir);
             Files.createDirectories(thumbnailDir);
 
@@ -54,7 +58,7 @@ public class ImageFileSystemStoarageAdapter implements
 
             // 4. 썸네일 생성
             BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(content));
-            BufferedImage thumbnailImage = toJpegCompatible(originalImage, THUMBNAIL_WIDTH, THUMBNAIL_HEIGHT); // 썸네일 크기
+            BufferedImage thumbnailImage = toJpegCompatible(originalImage, thumbnailWidth, thumbnailHeight); // 썸네일 크기
             ImageIO.write(thumbnailImage, "jpg", thumbnailPath.toFile());
 
             String relBase = String.format("/uploads/images/%s/%s", dir1, dir2);
