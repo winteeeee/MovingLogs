@@ -1,25 +1,21 @@
 <template>
   <div>
     <Header />
-    <!-- <MainPage /> -->
+    <main>
+      <RouterView />
+    </main>
+    <MainPage />
     <!-- <BoardMainPage /> -->
     <!-- <PostWritePage :editPostId="1"/> -->
     <!-- <PostDetailPage /> -->
     <!-- <RouteCreatePage /> -->
     <!-- <MyTravelPlanPage /> -->
-    <PlanUpdatePage />
+    <!-- <PlanUpdatePage /> -->
     <Footer />
   </div>
 </template>
 
 <script setup>
-import MainPage from '@/views/MainPage.vue'
-import BoardMainPage from '@/views/BoardMainPage.vue'
-import RouteCreatePage from '@/views/RouteCreatePage.vue'
-import PostWritePage from '@/views/PostWritePage.vue'
-import PostDetailPage from '@/views/PostDetailPage.vue'
-import MyTravelPlanPage from '@/views/MyTripPlanPage.vue'
-import PlanUpdatePage from '@/views/PlanUpdatePage.vue'
 import Header from '@/components/common/Header.vue'
 import Footer from '@/components/common/Footer.vue'
 </script>

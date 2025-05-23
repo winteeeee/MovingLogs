@@ -15,11 +15,6 @@
           </div>
         </div>
         <div class="col-lg-6 d-none d-lg-block">
-          <img
-            src="https://via.placeholder.com/600x400?text=Travel+Map"
-            alt="여행 지도"
-            class="hero-image"
-          />
         </div>
       </div>
     </div>
@@ -32,8 +27,15 @@
 <style scoped>
 .hero-section {
   background: linear-gradient(135deg, var(--primary-color) 0%, #e8590c 100%);
-  color: white;
-  padding: 80px 0;
+  background-image:
+    linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0)),
+    url("https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: center;
+  background-position-y: center;
+  color: #FFFFFF;
+  padding: 180px 0;
   margin-bottom: 60px;
 }
 
