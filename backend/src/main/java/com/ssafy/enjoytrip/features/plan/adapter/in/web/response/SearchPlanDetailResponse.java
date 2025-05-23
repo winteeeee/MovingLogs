@@ -1,6 +1,6 @@
 package com.ssafy.enjoytrip.features.plan.adapter.in.web.response;
 
-import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
+import com.ssafy.enjoytrip.features.attraction.domain.Attraction;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -17,5 +17,5 @@ public class SearchPlanDetailResponse {
     private String description;
     private LocalDate startDate;
     private LocalDate endDate;
-    private List<Waypoint> waypointList;
+    private List<Attraction> waypointList;
 }

@@ -2,6 +2,9 @@ package com.ssafy.enjoytrip.features.plan.application;
 
 import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.common.util.UuidFactory;
+import com.ssafy.enjoytrip.features.attraction.application.port.out.SearchAttractionPort;
+import com.ssafy.enjoytrip.features.attraction.domain.Attraction;
+import com.ssafy.enjoytrip.features.attraction.domain.AttractionId;
 import com.ssafy.enjoytrip.features.plan.application.port.in.*;
 import com.ssafy.enjoytrip.features.plan.application.port.out.*;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
@@ -29,6 +32,7 @@ public class PlanService implements SearchMyPlansUseCase, SearchPlanDetailUseCas
     private final SearchWaypointPort searchWaypointPort;
     private final CreateWaypointPort createWaypointPort;
     private final DeleteWaypointPort deleteWaypointPort;
+    private final SearchAttractionPort searchAttractionPort;
 
     @Override
     @Transactional
@@ -72,11 +76,16 @@ public class PlanService implements SearchMyPlansUseCase, SearchPlanDetailUseCas
     @Override
     @Transactional(readOnly = true)
     public SearchPlanDetailUseCase.Result searchPlanDetail(SearchPlanDetailUseCase.Command command) {
-        //플랜을 찾고, 그 다음 웨이포인트 찾아서 넣어줌
+        //플랜을 찾고
         Plan plan = searchPlanPort.searchPlan(command.getId());
+        //그에 맞는 웨이포인트를 찾음
         List<Waypoint> waypoints = searchWaypointPort.searchWaypointsByPlanId(command.getId());
         plan.injectWaypoints(waypoints);
-        return PlanServiceMapper.toSearchPlanDetailUseCaseResult(plan);
+
+        //찾은 웨이포인트를 기반으로 관광지 정보를 채움
+        List<AttractionId> attractionIds = waypoints.stream().map(Waypoint::getAttractionId).toList();
+        List<Attraction> attractions = searchAttractionPort.searchAttractionByIds(attractionIds);
+        return PlanServiceMapper.toSearchPlanDetailUseCaseResult(plan, attractions);
     }
 
     @Override

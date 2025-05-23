@@ -10,4 +10,5 @@ public interface AttractionDao {
     List<Map<String, Object>> findByContentByIdAndAreaCodeAndSiGunGuCode(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer limit, Long offset);
     List<Map<String, Object>> findByContentByIdAndAreaCodeAndSiGunGuCodeLimit(Long contentTypeId, Long areaCode, Long siGunGuCode, Long limit);
     Long countByContentByIdAndAreaCodeAndSiGunGuCode(Long contentTypeId, Long areaCode, Long siGunGuCode);
+    List<Map<String, Object>> findByIds(List<String> ids);
 }

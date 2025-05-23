@@ -99,7 +99,7 @@ public class PlanControllerMapper {
                 .description(result.getDescription())
                 .startDate(result.getStartDate())
                 .endDate(result.getEndDate())
-                .waypointList(result.getWaypoints())
+                .waypointList(result.getAttractions())
                 .build();
     }
 }

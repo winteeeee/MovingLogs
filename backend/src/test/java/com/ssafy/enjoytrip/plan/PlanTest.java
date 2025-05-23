@@ -4,6 +4,7 @@ import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.PlanController;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.request.CreatePlanRequest;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.request.UpdatePlanRequest;
+import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanDetailResponse;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanResponse;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,12 @@ public class PlanTest {
     @Test
     void 계획_조회_테스트() {
         ResponseEntity<PageDto<SearchPlanResponse>> response = planController.findPlans(1);
+        System.out.println(response);
+    }
+
+    @Test
+    void 상세_계획_조회_테스트() {
+        ResponseEntity<SearchPlanDetailResponse> response = planController.findPlanDetail("8d967abe-4917-4b94-8fc8-a60c9344da9f");
         System.out.println(response);
     }
 

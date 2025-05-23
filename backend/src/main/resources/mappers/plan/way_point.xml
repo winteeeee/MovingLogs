@@ -4,33 +4,11 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.WayPointDao">
-    <select id="findByPlanId"><![CDATA[
-        SELECT
-        a.id                   AS id,
-        p.seq                  AS seq,
-        a.content_id           AS content_id,
-        a.title                AS title,
-        t.content_type_name    AS content_type_name,
-        s.sido_name            AS sido_name,
-        g.gugun_name           AS gugun_name,
-        a.first_image1         AS first_image1,
-        a.first_image2         AS first_image2,
-        a.map_level            AS map_level,
-        a.latitude             AS latitude,
-        a.longitude            AS longitude,
-        a.tel                  AS tel,
-        a.addr1                AS addr1,
-        a.addr2                AS addr2,
-        a.homepage             AS homepage,
-        a.overview             AS overview
-        FROM waypoint p
-        JOIN attraction      a ON p.attraction_id = a.id
-        JOIN content_type    t ON a.content_type_id = t.content_type_id
-        JOIN sido            s ON a.area_code       = s.sido_code
-        JOIN gugun           g ON a.area_code       = g.sido_code
-        AND a.si_gun_gu_code = g.gugun_code
-        WHERE p.plan_id = #{planId}
-    ]]></select>
+    <select id="findByPlanId">
+        SELECT *
+        FROM waypoint w
+        WHERE w.plan_id = #{planId}
+    </select>
 
     <insert id="insertAll">
         INSERT INTO waypoint
