@@ -1,14 +1,15 @@
 package com.ssafy.enjoytrip.features.plan.application;
 
 import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.SearchPlanUseCase;
+import com.ssafy.enjoytrip.features.plan.application.port.in.SearchMyPlansUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
 import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class PlanServiceMapper {
@@ -44,18 +45,22 @@ public class PlanServiceMapper {
                 .build();
     }
 
-    public static SearchPlanUseCase.Result toSearchPlanUseCaseResult(Plan plan) {
-        return SearchPlanUseCase.Result.builder()
+    public static SearchMyPlansUseCase.Result toSearchPlanUseCaseResult(Plan plan) {
+        LocalDate today = LocalDate.now();
+        LocalDate target = plan.getUpdatedAt().toLocalDate();
+        return SearchMyPlansUseCase.Result.builder()
                 .id(plan.getId())
                 .title(plan.getTitle())
-                .waypoints(plan.getWaypoints())
+                .description(plan.getDescription())
+                .thumbnailUrl(plan.getThumbnailUrl())
                 .startDate(plan.getStartDate())
                 .endDate(plan.getEndDate())
                 .updatedAt(plan.getUpdatedAt())
+                .dDay(ChronoUnit.DAYS.between(today, target))
                 .build();
     }
 
-    public static List<SearchPlanUseCase.Result> toSearchPlanUserCaseResultList(List<Plan> plans) {
+    public static List<SearchMyPlansUseCase.Result> toSearchPlanUserCaseResultList(List<Plan> plans) {
         return plans.stream().map(PlanServiceMapper::toSearchPlanUseCaseResult).toList();
     }
 }

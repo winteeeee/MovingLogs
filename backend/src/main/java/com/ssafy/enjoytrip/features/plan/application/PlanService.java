@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
+public class PlanService implements SearchMyPlansUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
     @Value("${paging.size}")
     private Integer pageSize;
     private final CreatePlanPort createPlanPort;
@@ -51,9 +51,9 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
 
     @Override
     @Transactional(readOnly = true)
-    public PageDto<SearchPlanUseCase.Result> searchPlans(SearchPlanUseCase.Command command) {
-        List<Plan> planList = searchPlanPort.searchPlanByUid(command.getUid(), command.getPage());
-        List<SearchPlanUseCase.Result> content = PlanServiceMapper.toSearchPlanUserCaseResultList(planList);
+    public PageDto<SearchMyPlansUseCase.Result> searchMyPlans(SearchMyPlansUseCase.Command command) {
+        List<Plan> planList = searchPlanPort.searchMyPlans(command.getUid(), command.getPage());
+        List<SearchMyPlansUseCase.Result> content = PlanServiceMapper.toSearchPlanUserCaseResultList(planList);
         Long totalElements = countPlanPort.countPlanByUid(command.getUid());
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
 

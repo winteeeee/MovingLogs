@@ -4,12 +4,16 @@ import com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.Pla
 import com.ssafy.enjoytrip.features.plan.application.port.out.*;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
+import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.sql.Date;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -24,12 +28,21 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     }
 
     @Override
-    public List<Plan> searchPlanByUid(String uid, Integer page) {
-        /*
-        어댑터에서 다 들고와서
-        썸네일 url 채우고 웨이포인트 리스트 채우기
-         */
-        return planDao.findByUid(uid, pageSize, (long) (page - 1) * pageSize);
+    public List<Plan> searchMyPlans(Uid uid, Integer page) {
+        List<Map<String, Object>> resultMaps = planDao.findByUid(uid.getId(), pageSize, (long) (page - 1) * pageSize);
+        List<Plan> plans = new ArrayList<>();
+        for (Map<String, Object> resultMap : resultMaps) {
+            plans.add(Plan.builder()
+                            .id(new PlanId((String) resultMap.get("id")))
+                            .title((String) resultMap.get("title"))
+                            .description((String) resultMap.get("description"))
+                            .thumbnailUrl((String) resultMap.get("thumbnail_url"))
+                            .startDate(((Date) resultMap.get("start_date")).toLocalDate())
+                            .endDate(((Date) resultMap.get("end_date")).toLocalDate())
+                            .updatedAt((LocalDateTime) resultMap.get("updated_at"))
+                    .build());
+        }
+        return plans;
     }
 
     @Override
