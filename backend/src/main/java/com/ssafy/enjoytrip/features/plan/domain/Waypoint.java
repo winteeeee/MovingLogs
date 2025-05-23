@@ -16,4 +16,7 @@ public class Waypoint {
     private AttractionId attractionId;
     private Integer seq;
 
+    public void setCreateStatus(WaypointId id) {
+        this.id = id;
+    }
 }
