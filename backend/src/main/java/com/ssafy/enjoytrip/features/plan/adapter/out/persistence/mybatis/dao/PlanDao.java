@@ -9,6 +9,6 @@ import java.util.List;
 public interface PlanDao {
     List<Plan> findByUid(String uid, Integer limit, Long offset);
     int insert(Plan plan);
-    int update(Long uid, Plan plan);
+    int update(Plan plan);
     int delete(Long id);
 }

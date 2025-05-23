@@ -29,12 +29,14 @@
     <update id="update">
         UPDATE plan
         <set>
-            <if test="plan.title != null">title = #{plan.title},</if>
-            <if test="plan.description != null">description = #{plan.description},</if>
-            <if test="plan.startDate != null">start_date = #{plan.startDate},</if>
-            <if test="plan.endDate != null">end_date = #{plan.endDate},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="thumbnailUrl != null">thumbnail_url = #{thumbnailUrl}</if>
+            <if test="startDate != null">start_date = #{startDate},</if>
+            <if test="endDate != null">end_date = #{endDate},</if>
+            updated_at = #{updatedAt}
         </set>
-        WHERE uid = #{uid}
+        WHERE id = #{id.id}
     </update>
 
     <delete id="delete">

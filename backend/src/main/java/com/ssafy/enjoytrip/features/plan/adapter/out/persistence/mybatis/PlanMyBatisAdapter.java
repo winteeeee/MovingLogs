@@ -38,7 +38,7 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
 
     @Override
     public void updatePlan(Plan plan) {
-        //TODO 쿼리 작성
+        planDao.update(plan);
     }
 
     @Override
