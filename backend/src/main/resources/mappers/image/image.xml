@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.enjoytrip.features.image.adapter.out.persistence.mybatis.dao.ImageDao">
+    <insert id="insert">
+        INSERT INTO IMAGE (
+            ID,
+            UID,
+            FILENAME,
+            ORIGINAL_NAME,
+            IMAGE_URL,
+            THUMBNAIL_URL,
+            MIMETYPE,
+            SIZE,
+            CREATED_AT
+        )
+        VALUES (
+            #{image.id.id},
+            #{image.author.uid.id},
+            #{image.filename},
+            #{image.originalName},
+            #{image.imageUrl.path},
+            #{image.thumbnailUrl.path},
+            #{image.mimetype.type},
+            #{image.size},
+            #{image.createdAt},
+        )
+    </insert>
+</mapper>
