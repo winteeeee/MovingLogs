@@ -3,7 +3,7 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.plan.dao.PlanDao">
+<mapper namespace="com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.PlanDao">
     <select id="findByUid">
         SELECT *
         FROM plan
@@ -11,8 +11,19 @@
     </select>
 
     <insert id="insert">
-        INSERT INTO plan(uid, title, description, start_date, end_date)
-        VALUES (#{plan.uid}, #{plan.title}, #{plan.description}, #{plan.startDate}, #{plan.endDate})
+        INSERT INTO plan
+        VALUES (
+        #{id.id},
+        #{uid.id},
+        #{title},
+        #{description},
+        #{thumbnailUrl},
+        #{startDate},
+        #{endDate},
+        #{createdAt},
+        #{updatedAt},
+        #{isDeleted}
+        )
     </insert>
 
     <update id="update">
