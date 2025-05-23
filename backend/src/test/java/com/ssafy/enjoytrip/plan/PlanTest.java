@@ -54,4 +54,9 @@ public class PlanTest {
 
         planController.updatePlan(request);
     }
+
+    @Test
+    void 계획_삭제_테스트() {
+        planController.deletePlan("0b41a106-cdc4-47e2-8d6f-b3d6a7570c87");
+    }
 }
