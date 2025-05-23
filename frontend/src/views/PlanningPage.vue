@@ -1,9 +1,9 @@
 <template>
-  <div class="route-creator-page">
-    <div class="route-creator-container">
+  <div class="planning-page">
+    <div class="planning-container">
       <!-- 사이드바 영역 (검색 패널) -->
       <div class="sidebar">
-        <RouteCreateSearchPanel
+        <PlanningSearchPanel
           :regions="regions"
           :districts="districts"
           :tourism-types="tourismTypes"
@@ -22,7 +22,7 @@
       <div class="main-content">
         <!-- 지도 영역 -->
         <div class="map-container">
-          <RouteCreateMapView
+          <PlanningMapView
             :selected-spots="selectedSpots"
             :search-results="searchResults"
             :total-distance="totalDistance"
@@ -38,13 +38,13 @@
 
         <!-- 여행 계획 영역 -->
         <div class="plan-container">
-          <RouteCreatePlanInfo
-            :route-plan="routePlan"
+          <PlanningPlanInfo
+            :planInfo="planInfo"
             :selected-spots="selectedSpots"
-            :is-valid="isRoutePlanValid"
+            :is-valid="isPlanInfoValid"
             @update:route-plan="updateRoutePlan"
-            @save="saveRoutePlan"
-            @cancel="cancelRoutePlan"
+            @save="savePlan"
+            @cancel="cancelPlanning"
             @move-spot-up="moveSpotUp"
             @move-spot-down="moveSpotDown"
             @remove-spot="removeSpot"
@@ -58,9 +58,9 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
-import RouteCreateSearchPanel from '@/components/route-create/RouteCreateSearchPanel.vue'
-import RouteCreateMapView from '@/components/route-create/RouteCreateMapView.vue'
-import RouteCreatePlanInfo from '@/components/route-create/RouteCreatePlanInfo.vue'
+import PlanningSearchPanel from '@/components/planning/PlanningSearchPanel.vue'
+import PlanningMapView from '@/components/planning/PlanningMapView.vue'
+import PlanningPlanInfo from '@/components/planning/PlanningPlanInfo.vue'
 import { getRegions, getDistricts, getTourismTypes, searchSpots } from '@/services/tourismService.js'
 import { calculateDistance, optimizeRouteOrder } from '@/utils/routeUtils.js'
 
@@ -88,7 +88,7 @@ const totalDistance = ref(0)
 const estimatedTime = ref(0)
 
 // 여행 계획 정보
-const routePlan = reactive({
+const planInfo = reactive({
   title: '',
   startDate: '',
   endDate: '',
@@ -132,8 +132,8 @@ const tourismTypes = ref([
 ])
 
 // 계산된 속성
-const isRoutePlanValid = computed(() => {
-  return routePlan.title.trim() !== '' && selectedSpots.value.length >= 2
+const isPlanInfoValid = computed(() => {
+  return planInfo.title.trim() !== '' && selectedSpots.value.length >= 2
 })
 
 // 검색 파라미터 업데이트
@@ -390,42 +390,21 @@ function focusOnSpot(spot) {
   }
 }
 
-// 경로 최적화
-function optimizeRoute() {
-  if (selectedSpots.value.length < 3) return // 최적화할 필요 없음
-
-  // 출발지와 도착지는 그대로 두고 중간 경유지만 최적화
-  const start = selectedSpots.value[0]
-  const end = selectedSpots.value[selectedSpots.value.length - 1]
-  const waypoints = selectedSpots.value.slice(1, selectedSpots.value.length - 1)
-
-  // 최적화된 경로 계산 (실제로는 더 복잡한 알고리즘 사용)
-  const optimizedWaypoints = optimizeRouteOrder(waypoints, start)
-
-  // 새 경로 설정
-  selectedSpots.value = [start, ...optimizedWaypoints, end]
-
-  // 지도에 경로 업데이트
-  if (mapViewRef.value) {
-    mapViewRef.value.updateRouteOnMap()
-  }
-}
-
 // 여행 계획 정보 업데이트
 function updateRoutePlan(newPlan) {
-  Object.assign(routePlan, newPlan)
+  Object.assign(planInfo, newPlan)
 }
 
 // 여행 계획 저장
-function saveRoutePlan() {
-  if (!isRoutePlanValid.value) return
+function savePlan() {
+  if (!isPlanInfoValid.value) return
 
   // 여행 계획 데이터 구성
   const planData = {
-    title: routePlan.title,
-    startDate: routePlan.startDate,
-    endDate: routePlan.endDate,
-    description: routePlan.description,
+    title: planInfo.title,
+    startDate: planInfo.startDate,
+    endDate: planInfo.endDate,
+    description: planInfo.description,
     spots: selectedSpots.value.map((spot) => ({
       id: spot.id,
       name: spot.name,
@@ -444,7 +423,7 @@ function saveRoutePlan() {
 }
 
 // 여행 계획 취소
-function cancelRoutePlan() {
+function cancelPlanning() {
   if (confirm('작성 중인 여행 계획을 취소하시겠습니까?')) {
     // 페이지 이동 또는 초기화
     console.log('여행 계획 취소')
@@ -452,7 +431,7 @@ function cancelRoutePlan() {
 }
 
 // 경로 통계 업데이트
-function updateRouteStats() {
+function updateWaypointStats() {
   if (selectedSpots.value.length < 2) {
     totalDistance.value = 0
     estimatedTime.value = 0
@@ -482,7 +461,7 @@ function updateRouteStats() {
 watch(
   selectedSpots,
   () => {
-    updateRouteStats()
+    updateWaypointStats()
   },
   { deep: true },
 )
@@ -495,13 +474,13 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.route-creator-page {
+.planning-page {
   min-height: 100vh;
   background-color: #f8f9fa;
   padding: 20px;
 }
 
-.route-creator-container {
+.planning-container {
   display: flex;
   gap: 20px;
   max-width: 1600px;
@@ -550,7 +529,7 @@ onMounted(() => {
 
 /* 반응형 디자인 */
 @media (max-width: 1200px) {
-  .route-creator-container {
+  .planning-container {
     flex-direction: column;
     height: auto;
   }
@@ -571,7 +550,7 @@ onMounted(() => {
 }
 
 @media (max-width: 768px) {
-  .route-creator-page {
+  .planning-page {
     padding: 10px;
   }
 

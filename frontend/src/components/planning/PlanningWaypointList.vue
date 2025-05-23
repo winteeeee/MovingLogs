@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import RouteCreateRouteSpotItem from './RouteCreateRouteSpotItem.vue'
+import PlanningWaypointItem from './PlanningWaypointItem.vue'
 
 const props = defineProps({
   spots: {

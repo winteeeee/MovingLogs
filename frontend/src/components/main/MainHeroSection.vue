@@ -7,7 +7,9 @@
           <p class="hero-subtitle">여행로드와 함께 특별한 여행 경험을 만들어보세요</p>
           <div class="hero-buttons">
             <button class="btn btn-primary btn-lg me-3">
-              <i class="bi bi-map"></i> 경로 만들기
+              <router-link to="/planning" class="nav-link" active-class="active"
+                ><i class="bi bi-map"></i> 경로 만들기</router-link
+              >
             </button>
             <button class="btn btn-outline-light btn-lg">
               <i class="bi bi-info-circle"></i> 서비스 소개

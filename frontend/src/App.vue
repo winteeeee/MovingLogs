@@ -4,13 +4,6 @@
     <main>
       <RouterView />
     </main>
-    <MainPage />
-    <!-- <BoardMainPage /> -->
-    <!-- <PostWritePage :editPostId="1"/> -->
-    <!-- <PostDetailPage /> -->
-    <!-- <RouteCreatePage /> -->
-    <!-- <MyTravelPlanPage /> -->
-    <!-- <PlanUpdatePage /> -->
     <Footer />
   </div>
 </template>
