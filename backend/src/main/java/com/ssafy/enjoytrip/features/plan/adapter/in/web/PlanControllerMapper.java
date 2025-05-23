@@ -4,16 +4,12 @@ import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.request.CreatePlanRequest;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.request.UpdatePlanRequest;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.CreatePlanResponse;
+import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanDetailResponse;
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanResponse;
-import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.DeletePlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.SearchMyPlansUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
+import com.ssafy.enjoytrip.features.plan.application.port.in.*;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class PlanControllerMapper {
@@ -88,5 +84,22 @@ public class PlanControllerMapper {
                 result.getHasPrevious(),
                 result.getHasNext()
         );
+    }
+
+    public static SearchPlanDetailUseCase.Command toSearchPlanDetailUseCaseCommand(String id) {
+        return SearchPlanDetailUseCase.Command.builder()
+                .id(new PlanId(id))
+                .build();
+    }
+
+    public static SearchPlanDetailResponse toSearchPlanDetailResponse(SearchPlanDetailUseCase.Result result) {
+        return SearchPlanDetailResponse.builder()
+                .id(result.getId().getId())
+                .title(result.getTitle())
+                .description(result.getDescription())
+                .startDate(result.getStartDate())
+                .endDate(result.getEndDate())
+                .waypointList(result.getWaypoints())
+                .build();
     }
 }
