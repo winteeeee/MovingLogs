@@ -1,5 +1,8 @@
 package com.ssafy.enjoytrip.features.image.domain.component;
 
+import lombok.Getter;
+
+@Getter
 public enum MimeType {
     JPEG("image/jpeg"),
     PNG("image/png"),
