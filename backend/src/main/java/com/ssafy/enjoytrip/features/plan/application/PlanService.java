@@ -70,19 +70,26 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
     @Override
     @Transactional
     public void updatePlan(UpdatePlanUseCase.Command command) {
-        //원래 있던 플랜 디테일은 모두 삭제
+        //원래 있던 웨이 포인트는 모두 삭제
         deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
-        //새롭게 입력된 플랜 디테일로 다시 삽입
-        createWaypointPort.createWaypoints(WaypointServiceMapper.toWaypointList(command.getAttractionIds()));
-        //이후 본래의 여행 계획 업데이트
-        updatePlanPort.updatePlan(PlanServiceMapper.toPlan(command));
+        //새롭게 입력된 웨이 포인트로 다시 삽입
+        List<Waypoint> waypoints = WaypointServiceMapper.toWaypointList(command.getAttractionIds());
+        for (Waypoint waypoint : waypoints) {
+            waypoint.setPlanId(command.getId());
+            waypoint.setCreateStatus(UuidFactory.newId(WaypointId::new));
+        }
+        createWaypointPort.createWaypoints(waypoints);
+        //이후 여행 계획 업데이트
+        Plan plan = PlanServiceMapper.toPlan(command);
+        plan.setUpdateStatus();
+        updatePlanPort.updatePlan(plan);
     }
 
     @Override
     @Transactional
     public void deletePlan(DeletePlanUseCase.Command command) {
         //일단 플랜 디테일을 먼저 삭제하고
-        deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
+        //TODO 임시로 주석 처리 deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
         //그 다음 플랜 자체를 삭제
         deletePlanPort.deletePlan(command.getId());
     }
