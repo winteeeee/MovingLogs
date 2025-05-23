@@ -29,12 +29,15 @@
 
 <script setup>
 import { ref, computed, onMounted, nextTick } from 'vue'
+import { useRouter } from 'vue-router'
 import BoardHeader from '../components/board/BoardHeader.vue'
 import BoardSearchFilter from '../components/board/BoardSearchFilter.vue'
 import BoardMapView from '../components/board/BoardMapView.vue'
 import BoardContent from '../components/board/BoardContent.vue'
 
 // State
+const router = useRouter()
+
 const activeTab = ref('free')
 const posts = ref([])
 const loading = ref(true)
@@ -232,7 +235,7 @@ const viewPost = (post) => {
 const writeNewPost = () => {
   // Navigate to post-write writing page
   console.log('Write new post-write')
-  // router.push({ name: 'PostWritePage' });
+  router.push({ name: 'PostWritePage' });
 }
 
 const toggleMapView = () => {
