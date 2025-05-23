@@ -10,6 +10,12 @@
         WHERE uid = #{uid} AND is_deleted = 0;
     </select>
 
+    <select id="countByUid">
+        SELECT count(*)
+        FROM plan
+        WHERE uid = #{uid} AND is_deleted = 0;
+    </select>
+
     <insert id="insert">
         INSERT INTO plan
         VALUES (

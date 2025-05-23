@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.features.plan.application.port.out;
 
+import com.ssafy.enjoytrip.features.user.domain.Uid;
+
 public interface CountPlanPort {
-    Long countPlanByUid(String uid);
+    Long countPlanByUid(Uid uid);
 }

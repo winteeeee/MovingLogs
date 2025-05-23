@@ -33,9 +33,8 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     }
 
     @Override
-    public Long countPlanByUid(String uid) {
-        //TODO 쿼리 작성
-        return 0L;
+    public Long countPlanByUid(Uid uid) {
+        return planDao.countByUid(uid.getId());
     }
 
     @Override
