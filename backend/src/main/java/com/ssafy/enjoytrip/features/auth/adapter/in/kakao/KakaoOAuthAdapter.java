@@ -9,6 +9,7 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Component
@@ -24,8 +25,9 @@ public class KakaoOAuthAdapter extends DefaultOAuth2UserService {
         //정보 추출
         Map<String, Object> attributes = oAuth2User.getAttributes();
         String kakaoId = attributes.get("id").toString();
+        String name = ((LinkedHashMap<?, ?>) attributes.get("properties")).get("nickname").toString();
         //서비스 호출
-        createOAuth2UserUseCase.createOAuth2User(KakaoOAuthMapper.toCreateOAuth2UserUseCaseCommand(kakaoId));
+        createOAuth2UserUseCase.createOAuth2User(KakaoOAuthMapper.toCreateOAuth2UserUseCaseCommand(kakaoId, name));
         return oAuth2User;
     }
 }

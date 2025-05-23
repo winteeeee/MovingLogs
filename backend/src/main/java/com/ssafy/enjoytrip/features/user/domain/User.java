@@ -33,6 +33,7 @@ public class User {
     public void setCreateStatus() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
+        activated = true;
     }
 
     public void setUpdateStatus() {

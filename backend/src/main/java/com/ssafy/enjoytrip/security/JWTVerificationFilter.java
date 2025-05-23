@@ -14,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,6 +28,8 @@ import java.util.Optional;
 @Component
 @RequiredArgsConstructor
 public class JWTVerificationFilter extends OncePerRequestFilter {
+    @Value("frontend_url")
+    private String frontendUrl;
     private final JwtTokenProvider jwtTokenProvider;
     private final CustomUserDetailsService userDetailsService;
     private final SaveRefreshTokenPort saveRefreshTokenPort;
@@ -60,7 +63,7 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
                 //레디스에 리프레시 토큰 저장, 컨텍스트 홀더에 유저 디테일 저장, 액세스 토큰 응답으로 전송
                 saveRefreshTokenPort.saveRefreshToken(accessToken, newRefreshToken);
                 saveUserDetailsToSecurityContextHolder(uid);
-                JwtUtils.writeJwtTokensToResponse(response, accessToken);
+                JwtUtils.redirectWithJwtToken(response, accessToken);
             }
         } finally {
             filterChain.doFilter(request, response);

@@ -23,7 +23,7 @@ class AuthService implements CreateOAuth2UserUseCase, DeleteRefreshTokenUseCase 
         Optional<User> user = searchUserPort.searchUser(command.getId());
         if (user.isEmpty()) {
             //현재 우리 DB에 없는 사용자라면 저장함
-            User newUser = AuthServiceMapper.toUser(command.getId());
+            User newUser = AuthServiceMapper.toUser(command);
             newUser.setUserRole();
             newUser.setCreateStatus();
             createUserPort.createUser(newUser);

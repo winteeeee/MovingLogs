@@ -55,7 +55,7 @@
             </button>
           </div>
 
-          <div v-if="isLoggedIn" class="user-menu">
+          <div v-if="jwtStore.isLoggedIn" class="user-menu">
             <div class="notification-icon me-3">
               <i class="bi bi-bell"></i>
               <span class="notification-badge">2</span>
@@ -107,7 +107,6 @@
 
           <div v-else class="auth-buttons">
             <button class="btn btn-outline-primary me-2" @click="login">로그인</button>
-            <button class="btn btn-primary" @click="register">회원가입</button>
           </div>
         </div>
       </div>
@@ -117,25 +116,38 @@
 
 <script setup>
 import { ref } from 'vue'
+import { jwtStore } from '@/stores/jwtStore'
+import axios from 'axios'
 
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 // 로그인 상태 (실제로는 상태 관리 라이브러리나 API 호출로 관리)
-const isLoggedIn = ref(true)
 const user = ref({
   name: '여행자',
   avatar: 'https://via.placeholder.com/40?text=User',
 })
 
 function login() {
-  console.log('로그인 모달 열기')
-}
-
-function register() {
-  console.log('회원가입 페이지로 이동')
+  console.log('`${serverUrl}/oauth2/authorization/kakao`')
+  window.location.href = `${serverUrl}/oauth2/authorization/kakao`
+  const code = new URLSearchParams(window.location.search).get('code')
+  console.log(code)
 }
 
 function logout() {
   console.log('로그아웃 처리')
-  isLoggedIn.value = false
+  axios
+    .post(`${serverUrl}/api/v1/auth/logout`, null, {
+      headers: {
+        Authorization: `Bearer ${jwtStore.accessToken}`,
+      },
+    })
+    .then((res) => {
+      console.log('로그아웃 성공: ', res.data)
+      jwtStore.clearAccessToken()
+    })
+    .catch((err) => {
+      console.log('로그아웃 실패: ', err)
+    })
 }
 </script>
 

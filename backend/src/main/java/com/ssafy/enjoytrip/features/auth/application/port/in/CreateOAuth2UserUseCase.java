@@ -12,5 +12,6 @@ public interface CreateOAuth2UserUseCase {
     @AllArgsConstructor
     class Command {
         private String id;
+        private String name;
     }
 }
