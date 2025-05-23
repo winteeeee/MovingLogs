@@ -10,5 +10,5 @@ public interface PlanDao {
     List<Plan> findByUid(String uid, Integer limit, Long offset);
     int insert(Plan plan);
     int update(Plan plan);
-    int delete(Long id);
+    int delete(String id);
 }

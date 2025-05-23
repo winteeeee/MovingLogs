@@ -89,7 +89,7 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
     @Transactional
     public void deletePlan(DeletePlanUseCase.Command command) {
         //일단 플랜 디테일을 먼저 삭제하고
-        //TODO 임시로 주석 처리 deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
+        deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
         //그 다음 플랜 자체를 삭제
         deletePlanPort.deletePlan(command.getId());
     }
