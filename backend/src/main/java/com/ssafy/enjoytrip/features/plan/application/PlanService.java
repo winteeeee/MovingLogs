@@ -1,10 +1,13 @@
 package com.ssafy.enjoytrip.features.plan.application;
 
 import com.ssafy.enjoytrip.common.dto.PageDto;
+import com.ssafy.enjoytrip.common.util.UuidFactory;
 import com.ssafy.enjoytrip.features.plan.application.port.in.*;
 import com.ssafy.enjoytrip.features.plan.application.port.out.*;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
+import com.ssafy.enjoytrip.features.plan.domain.WaypointId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,14 +31,18 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
     @Override
     @Transactional
     public CreatePlanUseCase.Result createPlan(CreatePlanUseCase.Command command) {
-        //일단 커맨드에서 도메인 객체로 변환
+        //커맨드에서 도메인 객체로 변환
         Plan plan = PlanServiceMapper.toPlan(command);
+        plan.setCreateStatus(UuidFactory.newId(PlanId::new));
         //이후 포트를 통해 플랜을 생성
-        CreatePlanUseCase.Result result = PlanServiceMapper.toCreatePlanUseCaseResult(createPlanPort.createPlan(plan));
-        //result에서 pk값을 가져와서 할당하고 플랜 디테일들을 추가적으로 삽입
+        createPlanPort.createPlan(plan);
+
+        //plan에서 pk값을 가져와서 할당하고 웨이 포인트들을 추가적으로 삽입
+        CreatePlanUseCase.Result result = PlanServiceMapper.toCreatePlanUseCaseResult(plan.getId());
         List<Waypoint> waypoints = plan.getWaypoints();
         for (Waypoint waypoint : waypoints) {
             waypoint.setPlanId(result.getPlanId());
+            waypoint.setCreateStatus(UuidFactory.newId(WaypointId::new));
         }
         createWaypointPort.createWaypoints(plan.getWaypoints());
         return result;

@@ -3,7 +3,6 @@ package com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis;
 import com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.PlanDao;
 import com.ssafy.enjoytrip.features.plan.application.port.out.*;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
-import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,8 +17,8 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     private final PlanDao planDao;
 
     @Override
-    public PlanId createPlan(Plan plan) {
-        return planDao.insert(plan);
+    public void createPlan(Plan plan) {
+        planDao.insert(plan);
     }
 
     @Override

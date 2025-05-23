@@ -16,7 +16,7 @@ public class WaypointMyBatisAdapter implements CreateWaypointPort, DeleteWaypoin
 
     @Override
     public void createWaypoints(List<Waypoint> waypointList) {
-        //TODO 쿼리 작성
+        wayPointDao.insertAll(waypointList);
     }
 
     @Override
