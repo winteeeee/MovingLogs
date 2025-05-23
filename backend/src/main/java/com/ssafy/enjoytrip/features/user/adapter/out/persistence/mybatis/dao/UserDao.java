@@ -7,6 +7,7 @@ import java.util.Map;
 
 @Mapper
 public interface UserDao {
+	Map<String, Object> findByUid(String uid);
 	Map<String, Object> findById(String id);
 	int insert(User user);
 	int update(User user);

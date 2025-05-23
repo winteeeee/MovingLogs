@@ -32,13 +32,19 @@
           @view="viewPlan"
           @edit="editPlan"
           @delete="confirmDeletePlan"
-          @duplicate="duplicatePlan"
         />
       </div>
+
+      <Pagination
+        v-if="totalPages >= 1"
+        :total="totalPages"
+        :current="currentPage"
+        @page-change="onPageChange"
+      />
     </div>
 
     <!-- 삭제 확인 모달 -->
-    <DeleteModal
+    <TravelPlanDeleteModal
       v-if="isDeleteModalVisible"
       :plan="planToDelete"
       @close="closeDeleteModal"
@@ -49,17 +55,35 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
+import { useAuthStore } from '@/stores/authStore.js'
+import axios from 'axios'
 import TravelPlanHeader from '@/components/my-trip-plan/TravelPlanHeader.vue'
 import TravelPlanFilter from '@/components/my-trip-plan/TravelPlanFilter.vue'
 import TravelPlanCard from '@/components/my-trip-plan/TravelPlanCard.vue'
 import TravelPlanEmpty from '@/components/my-trip-plan/TravelPlanEmpty.vue'
 import TravelPlanDeleteModal from '@/components/my-trip-plan/TravelPlanDeleteModal.vue'
+import Pagination from '@/components/common/Pagination.vue'
+
+const authStore = useAuthStore()
 
 // 상태 관리
 const travelPlans = ref([])
 const isLoading = ref(true)
 const planToDelete = ref(null)
 const isDeleteModalVisible = ref(false)
+const currentPage = ref(1)
+const totalPages = ref(0)
+const itemsPerPage = 6
+
+function onPageChange(page) {
+  if (1 <= page && page <= totalPages.value) {
+    currentPage.value = page
+  }
+}
+
+watch(currentPage, async (newPage) => {
+  await loadTravelPlans()
+})
 
 // 필터 상태
 const filter = ref({
@@ -187,109 +211,24 @@ function deletePlan() {
   alert('여행 계획이 삭제되었습니다.')
 }
 
-// 여행 계획 복제
-function duplicatePlan(plan) {
-  console.log('여행 계획 복제:', plan.id)
-
-  // 실제 구현: API 호출로 복제 처리
-  // 여기서는 프론트엔드에서만 복제하는 것으로 시뮬레이션
-  const newPlan = {
-    ...plan,
-    id: `duplicate-${plan.id}-${Date.now()}`,
-    title: `${plan.title} (복사본)`,
-    createdAt: new Date().toISOString(),
-  }
-
-  travelPlans.value.push(newPlan)
-
-  // 알림 표시
-  alert('여행 계획이 복제되었습니다.')
-}
-
 // 데이터 로드
-function loadTravelPlans() {
+async function loadTravelPlans() {
   isLoading.value = true
+  const response = await axios.get('http://localhost:8080/api/v1/plans', {
+    params: {
+      page: currentPage.value,
+      pageSize: itemsPerPage,
+    },
+    headers: {
+      Authorization: `Bearer ${authStore.accessToken}`,
+    },
+  })
 
-  // 실제 구현: API 호출로 데이터 가져오기
-  // 여기서는 더미 데이터 사용
-  setTimeout(() => {
-    travelPlans.value = [
-      {
-        id: '1',
-        title: '서울 3박 4일 여행',
-        destination: '서울',
-        startDate: '2025-06-10',
-        endDate: '2025-06-13',
-        spotCount: 8,
-        totalDistance: 42500, // 미터 단위
-        thumbnail: 'https://via.placeholder.com/300x200?text=Seoul',
-        createdAt: '2025-05-15T09:30:00Z',
-        updatedAt: '2025-05-18T14:20:00Z',
-      },
-      {
-        id: '2',
-        title: '제주도 힐링 여행',
-        destination: '제주도',
-        startDate: '2025-07-20',
-        endDate: '2025-07-25',
-        spotCount: 12,
-        totalDistance: 156000,
-        thumbnail: 'https://via.placeholder.com/300x200?text=Jeju',
-        createdAt: '2025-05-10T11:45:00Z',
-        updatedAt: '2025-05-10T11:45:00Z',
-      },
-      {
-        id: '3',
-        title: '부산 맛집 투어',
-        destination: '부산',
-        startDate: '2025-08-05',
-        endDate: '2025-08-08',
-        spotCount: 10,
-        totalDistance: 38700,
-        thumbnail: 'https://via.placeholder.com/300x200?text=Busan',
-        createdAt: '2025-04-28T16:20:00Z',
-        updatedAt: '2025-05-02T10:15:00Z',
-      },
-      {
-        id: '4',
-        title: '강원도 스키 여행',
-        destination: '평창',
-        startDate: '2024-12-20',
-        endDate: '2024-12-23',
-        spotCount: 5,
-        totalDistance: 28500,
-        thumbnail: 'https://via.placeholder.com/300x200?text=Gangwon',
-        createdAt: '2024-11-15T08:30:00Z',
-        updatedAt: '2024-11-15T08:30:00Z',
-      },
-      {
-        id: '5',
-        title: '경주 역사 탐방',
-        destination: '경주',
-        startDate: '2025-04-15',
-        endDate: '2025-04-17',
-        spotCount: 7,
-        totalDistance: 32100,
-        thumbnail: 'https://via.placeholder.com/300x200?text=Gyeongju',
-        createdAt: '2025-03-01T13:10:00Z',
-        updatedAt: '2025-03-05T09:45:00Z',
-      },
-      {
-        id: '6',
-        title: '전주 한옥마을 여행',
-        destination: '전주',
-        startDate: '2025-05-01',
-        endDate: '2025-05-03',
-        spotCount: 6,
-        totalDistance: 18900,
-        thumbnail: 'https://via.placeholder.com/300x200?text=Jeonju',
-        createdAt: '2025-02-20T10:30:00Z',
-        updatedAt: '2025-02-22T16:40:00Z',
-      },
-    ]
-
-    isLoading.value = false
-  }, 1500) // 로딩 시뮬레이션
+  const data = response.data
+  console.log(data)
+  travelPlans.value = data.content
+  totalPages.value = data.totalPages
+  isLoading.value = false
 }
 
 // 필터 변경 감지
@@ -302,8 +241,8 @@ watch(
 )
 
 // 컴포넌트 마운트 시 데이터 로드
-onMounted(() => {
-  loadTravelPlans()
+onMounted(async () => {
+  await loadTravelPlans()
 })
 </script>
 

@@ -13,7 +13,8 @@
     <select id="findByUid">
         SELECT *
         FROM plan
-        WHERE uid = #{uid} AND is_deleted = 0;
+        WHERE uid = #{uid} AND is_deleted = 0
+        LIMIT #{limit} OFFSET #{offset}
     </select>
 
     <select id="countByUid">

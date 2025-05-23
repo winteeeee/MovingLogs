@@ -32,6 +32,16 @@ public class UserMyBatisAdapter implements CreateUserPort, DeleteUserPort, Searc
     @Override
     public Optional<User> searchUser(String id) {
         Map<String, Object> resultMap = userDao.findById(id);
+        return Optional.ofNullable(makeUser(resultMap));
+    }
+
+    @Override
+    public Optional<User> searchUserByUid(Uid id) {
+        Map<String, Object> resultMap = userDao.findByUid(id.getId());
+        return Optional.ofNullable(makeUser(resultMap));
+    }
+
+    private User makeUser(Map<String, Object> resultMap) {
         User user = null;
         if (resultMap != null) {
             user = User.builder()
@@ -44,6 +54,6 @@ public class UserMyBatisAdapter implements CreateUserPort, DeleteUserPort, Searc
                     .updatedAt((LocalDateTime) resultMap.get("updated_at"))
                     .build();
         }
-        return Optional.ofNullable(user);
+        return user;
     }
 }

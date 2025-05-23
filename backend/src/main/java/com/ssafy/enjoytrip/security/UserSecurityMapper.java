@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.security;
 
 import com.ssafy.enjoytrip.features.user.application.port.in.SearchUserUseCase;
 import com.ssafy.enjoytrip.features.user.domain.Role;
+import com.ssafy.enjoytrip.features.user.domain.Uid;
 import com.ssafy.enjoytrip.features.user.domain.User;
 
 public class UserSecurityMapper {

@@ -125,7 +125,6 @@ const user = ref({
 })
 
 function login() {
-  console.log('`${serverUrl}/oauth2/authorization/kakao`')
   window.location.href = `${serverUrl}/oauth2/authorization/kakao`
 }
 

@@ -28,7 +28,7 @@ public class PlanController {
 
     @GetMapping
     @Operation(summary = "여행 계획 조회", description = "특정 회원의 여행 계획을 조회한다.")
-    public ResponseEntity<PageDto<SearchPlanResponse>> findPlans(@RequestParam Integer page, @RequestParam(defaultValue = "5") Integer pageSize) {
+    public ResponseEntity<PageDto<SearchPlanResponse>> findPlans(@RequestParam(defaultValue = "1") Integer page, @RequestParam(defaultValue = "5") Integer pageSize) {
         String uid = SecurityUtils.getUserUidBySecurityContextHolder();
         SearchMyPlansUseCase.Command command = PlanControllerMapper.toSearchPlanUseCaseCommand(uid, page, pageSize);
         PageDto<SearchMyPlansUseCase.Result> result = searchMyPlansUseCase.searchMyPlans(command);
