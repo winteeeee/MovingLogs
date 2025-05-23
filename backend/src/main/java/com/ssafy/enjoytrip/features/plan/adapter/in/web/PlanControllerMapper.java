@@ -49,7 +49,7 @@ public class PlanControllerMapper {
 
     public static DeletePlanUseCase.Command toDeletePlanUseCaseCommand(String id) {
         return DeletePlanUseCase.Command.builder()
-                .id(id)
+                .id(new PlanId(id))
                 .build();
     }
 
