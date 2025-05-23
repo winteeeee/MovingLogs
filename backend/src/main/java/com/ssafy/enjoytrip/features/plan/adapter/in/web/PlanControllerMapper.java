@@ -15,7 +15,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class PlanControllerMapper {
-    public static CreatePlanUseCase.Command toCreatePlanUseCaseCommand(CreatePlanRequest request, Long uid) {
+    public static CreatePlanUseCase.Command toCreatePlanUseCaseCommand(CreatePlanRequest request, String uid) {
         return CreatePlanUseCase.Command.builder()
                 .uid(uid)
                 .title(request.getTitle())
@@ -27,7 +27,7 @@ public class PlanControllerMapper {
                 .build();
     }
 
-    public static SearchPlanUseCase.Command toSearchPlanUseCaseCommand(Long uid, Integer page) {
+    public static SearchPlanUseCase.Command toSearchPlanUseCaseCommand(String uid, Integer page) {
         return SearchPlanUseCase.Command.builder()
                 .uid(uid)
                 .page(page)

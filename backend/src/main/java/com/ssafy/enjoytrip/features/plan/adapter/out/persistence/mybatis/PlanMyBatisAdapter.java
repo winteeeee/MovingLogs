@@ -23,12 +23,16 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     }
 
     @Override
-    public List<Plan> searchPlanByUid(Long uid, Integer page) {
+    public List<Plan> searchPlanByUid(String uid, Integer page) {
+        /*
+        어댑터에서 다 들고와서
+        썸네일 url 채우고 웨이포인트 리스트 채우기
+         */
         return planDao.findByUid(uid, pageSize, (long) (page - 1) * pageSize);
     }
 
     @Override
-    public Long countPlanByUid(Long uid) {
+    public Long countPlanByUid(String uid) {
         //TODO 쿼리 작성
         return 0L;
     }

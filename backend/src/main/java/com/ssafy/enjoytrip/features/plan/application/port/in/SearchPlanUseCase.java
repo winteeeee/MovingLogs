@@ -18,7 +18,7 @@ public interface SearchPlanUseCase {
     @Builder
     @AllArgsConstructor
     class Command {
-        private Long uid;
+        private String uid;
         private Integer page;
     }
 

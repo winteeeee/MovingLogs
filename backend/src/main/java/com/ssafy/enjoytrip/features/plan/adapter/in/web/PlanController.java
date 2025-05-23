@@ -30,7 +30,7 @@ public class PlanController {
     @GetMapping
     @Operation(summary = "여행 계획 조회", description = "특정 회원의 여행 계획을 조회한다.")
     public ResponseEntity<PageDto<SearchPlanResponse>> findPlans(@RequestParam Integer page) {
-        Long uid = SecurityUtils.getUserUidBySecurityContextHolder();
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
         SearchPlanUseCase.Command command = PlanControllerMapper.toSearchPlanUseCaseCommand(uid, page);
         PageDto<SearchPlanUseCase.Result> result = searchPlanUseCase.searchPlans(command);
         PageDto<SearchPlanResponse> response = PlanControllerMapper.toSearchPlanResponsePageDto(result);
@@ -40,7 +40,7 @@ public class PlanController {
     @PostMapping
     @Operation(summary = "여행 계획 생성", description = "여행 계획을 생성한다.")
     public ResponseEntity<CreatePlanResponse> insertPlan(@RequestBody CreatePlanRequest createPlanRequest) {
-        Long uid = SecurityUtils.getUserUidBySecurityContextHolder();
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
         CreatePlanUseCase.Command command = PlanControllerMapper.toCreatePlanUseCaseCommand(createPlanRequest, uid);
         CreatePlanUseCase.Result result = createPlanUseCase.createPlan(command);
         CreatePlanResponse response = PlanControllerMapper.toCreatePlanResponse(result);

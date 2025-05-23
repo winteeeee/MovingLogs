@@ -15,7 +15,7 @@ public interface CreatePlanUseCase {
     @Builder
     @AllArgsConstructor
     class Command {
-        private Long uid;
+        private String uid;
         private String desc;
         private String title;
         private String imgId;
