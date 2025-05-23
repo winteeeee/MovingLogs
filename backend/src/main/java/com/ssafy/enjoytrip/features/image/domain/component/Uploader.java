@@ -6,6 +6,6 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Author {
+public class Uploader {
     private Uid uid;
 }

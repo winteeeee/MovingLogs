@@ -1,7 +1,7 @@
 package com.ssafy.enjoytrip.features.image.domain;
 
 import com.ssafy.enjoytrip.common.util.UuidFactory;
-import com.ssafy.enjoytrip.features.image.domain.component.Author;
+import com.ssafy.enjoytrip.features.image.domain.component.Uploader;
 import com.ssafy.enjoytrip.features.image.domain.component.Mimetype;
 import com.ssafy.enjoytrip.features.image.domain.component.RelativePath;
 import lombok.AccessLevel;
@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Image {
     private ImageId id;
-    private Author author;
+    private Uploader uploader;
     private String filename;
     private String originalName;
     private RelativePath imageUrl;
@@ -28,7 +28,7 @@ public class Image {
     private LocalDateTime createdAt;
 
     public static Image of(
-            Author author,
+            Uploader uploader,
             String filename,
             String originalName,
             RelativePath imageUrl,
@@ -39,7 +39,7 @@ public class Image {
     ) {
         return Image.of(
                 UuidFactory.newId(ImageId::new),
-                author,
+                uploader,
                 filename,
                 originalName,
                 imageUrl,
@@ -52,7 +52,7 @@ public class Image {
 
     public static Image of(
             ImageId imageId,
-            Author author,
+            Uploader uploader,
             String filename,
             String originalName,
             RelativePath imageUrl,
@@ -63,7 +63,7 @@ public class Image {
     ) {
         return Image.builder()
                 .id(imageId)
-                .author(author)
+                .uploader(uploader)
                 .filename(filename)
                 .originalName(originalName)
                 .imageUrl(imageUrl)

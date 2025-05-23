@@ -6,6 +6,6 @@ import org.apache.ibatis.annotations.Mapper;
 import java.util.Map;
 
 @Mapper
-public interface AuthorDao {
+public interface UploaderDao {
     Map<String, Object> findById(Uid uid);
 }
