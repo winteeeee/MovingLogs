@@ -9,6 +9,7 @@ import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.DeletePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.SearchPlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -36,10 +37,10 @@ public class PlanControllerMapper {
 
     public static UpdatePlanUseCase.Command toUpdatedPlanUseCaseCommand(UpdatePlanRequest request) {
         return UpdatePlanUseCase.Command.builder()
-                .id(request.getId())
+                .id(new PlanId(request.getId()))
                 .title(request.getTitle())
                 .desc(request.getDesc())
-                .imgId(request.getImgId())
+                .thumbnailUrl(request.getThumbnailUrl())
                 .startDate(request.getStartDate())
                 .endDate(request.getEndDate())
                 .attractionIds(request.getAttractionIds())

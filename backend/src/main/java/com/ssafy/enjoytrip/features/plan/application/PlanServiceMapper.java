@@ -22,22 +22,19 @@ public class PlanServiceMapper {
                .endDate(command.getEndDate())
                .uid(new Uid(String.valueOf(command.getUid())))
                .waypoints(waypointList)
-               .createdAt(LocalDateTime.now())
-               .updatedAt(LocalDateTime.now())
-               .isDeleted(false)
                .build();
     }
 
     public static Plan toPlan(UpdatePlanUseCase.Command command) {
         List<Waypoint> waypointList = WaypointServiceMapper.toWaypointList(command.getAttractionIds());
         return Plan.builder()
+                .id(command.getId())
                 .title(command.getTitle())
                 .description(command.getDesc())
-                //TODO .image()
+                .thumbnailUrl(command.getThumbnailUrl())
                 .startDate(command.getStartDate())
                 .endDate(command.getEndDate())
                 .waypoints(waypointList)
-                .updatedAt(LocalDateTime.now())
                 .build();
     }
 

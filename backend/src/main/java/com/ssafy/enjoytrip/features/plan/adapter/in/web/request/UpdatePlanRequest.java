@@ -14,7 +14,7 @@ public class UpdatePlanRequest {
     private String id;
     private String title;
     private String desc;
-    private String imgId;
+    private String thumbnailUrl;
     private LocalDate startDate;
     private LocalDate endDate;
     private List<String> attractionIds;
