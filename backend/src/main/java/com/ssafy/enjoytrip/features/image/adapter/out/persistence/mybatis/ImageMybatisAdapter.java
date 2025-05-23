@@ -13,8 +13,8 @@ public class ImageMybatisAdapter implements
     private final ImageDao imageDao;
 
     @Override
-    public Image save(Image image) {
-        imageDao.upsert(image);
-        return image;
+    public int create(Image image) {
+        int created = imageDao.create(image);
+        return created;
     }
 }

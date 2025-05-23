@@ -4,6 +4,5 @@ import com.ssafy.enjoytrip.features.image.domain.Image;
 
 
 public interface ImagePort {
-    Image save(Image image);
-
+    int create(Image image);
 }

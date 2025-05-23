@@ -42,7 +42,7 @@ class ImageService implements
                 command.getContent().length,
                 clock
         );
-        imagePort.save(image);
+        imagePort.create(image);
 
         return Result.builder()
                 .imageId(image.getId())
