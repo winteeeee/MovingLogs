@@ -187,6 +187,8 @@ function logout() {
 .nav-link:hover,
 .nav-link.active {
   color: var(--primary-color);
+  font-weight: 600;
+  border-bottom: 2px solid var(--primary-color); /* 예시 */
 }
 
 .search-box {

@@ -123,7 +123,7 @@
         <!-- 검색 결과 탭 -->
         <div class="tab-pane fade" :class="{ 'show active': activeTab === 'search' }">
           <div v-if="searchResults.length > 0" class="search-results">
-            <RouteCreateSearchResultItem
+            <PlanningSearchResultItem
               v-for="spot in searchResults"
               :key="spot.id"
               :spot="spot"
@@ -189,7 +189,7 @@
 
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
-import RouteCreateSearchResultItem from './RouteCreateSearchResultItem.vue'
+import PlanningSearchResultItem from './PlanningSearchResultItem.vue'
 
 const props = defineProps({
   regions: {

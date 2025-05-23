@@ -61,7 +61,7 @@
         <h6 class="mb-3">선택한 여행 경로</h6>
 
         <div class="selected-spots-container" v-if="selectedSpots.length > 0">
-          <RouteCreateRouteList
+          <PlanningWaypointList
             :spots="selectedSpots"
             @move-up="moveSpotUp"
             @move-down="moveSpotDown"
@@ -88,10 +88,10 @@
 
 <script setup>
 import { reactive, watch } from 'vue'
-import RouteCreateRouteList from './RouteCreateRouteList.vue'
+import PlanningWaypointList from './PlanningWaypointList.vue'
 
 const props = defineProps({
-  routePlan: {
+  planInfo: {
     type: Object,
     required: true,
   },
@@ -117,15 +117,15 @@ const emit = defineEmits([
 
 // 로컬 여행 계획 정보
 const localPlan = reactive({
-  title: props.routePlan.title,
-  startDate: props.routePlan.startDate,
-  endDate: props.routePlan.endDate,
-  description: props.routePlan.description,
+  title: props.planInfo.title,
+  startDate: props.planInfo.startDate,
+  endDate: props.planInfo.endDate,
+  description: props.planInfo.description,
 })
 
 // props 변경 감지
 watch(
-  () => props.routePlan,
+  () => props.planInfo,
   (newPlan) => {
     localPlan.title = newPlan.title
     localPlan.startDate = newPlan.startDate
