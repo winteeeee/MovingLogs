@@ -63,7 +63,7 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
                 //레디스에 리프레시 토큰 저장, 컨텍스트 홀더에 유저 디테일 저장, 액세스 토큰 응답으로 전송
                 saveRefreshTokenPort.saveRefreshToken(accessToken, newRefreshToken);
                 saveUserDetailsToSecurityContextHolder(uid);
-                JwtUtils.redirectWithJwtToken(response, accessToken);
+                JwtUtils.redirectWithJwtToken(response, accessToken, user.getName());
             }
         } finally {
             filterChain.doFilter(request, response);
