@@ -3,6 +3,7 @@ package com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis;
 import com.ssafy.enjoytrip.features.plan.adapter.out.persistence.mybatis.dao.WayPointDao;
 import com.ssafy.enjoytrip.features.plan.application.port.out.CreateWaypointPort;
 import com.ssafy.enjoytrip.features.plan.application.port.out.DeleteWaypointPort;
+import com.ssafy.enjoytrip.features.plan.domain.PlanId;
 import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -20,7 +21,7 @@ public class WaypointMyBatisAdapter implements CreateWaypointPort, DeleteWaypoin
     }
 
     @Override
-    public void deleteWaypointsByPlanId(String planId) {
-        //TODO 쿼리 작성
+    public void deleteWaypointsByPlanId(PlanId planId) {
+        wayPointDao.deleteByPlanId(planId.getId());
     }
 }

@@ -40,8 +40,8 @@
         </foreach>
     </insert>
 
-    <delete id="delete">
+    <delete id="deleteByPlanId">
         DELETE FROM waypoint
-        WHERE plan_id = #{id}
+        WHERE plan_id = #{planId}
     </delete>
 </mapper>

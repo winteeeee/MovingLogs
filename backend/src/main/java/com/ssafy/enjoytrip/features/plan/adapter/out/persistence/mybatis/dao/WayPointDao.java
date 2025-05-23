@@ -8,4 +8,5 @@ import java.util.List;
 @Mapper
 public interface WayPointDao {
     void insertAll(List<Waypoint> waypoints);
+    void deleteByPlanId(String planId);
 }
