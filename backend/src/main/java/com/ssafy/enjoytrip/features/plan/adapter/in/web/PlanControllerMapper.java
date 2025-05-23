@@ -7,9 +7,10 @@ import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.CreatePlanRespo
 import com.ssafy.enjoytrip.features.plan.adapter.in.web.response.SearchPlanResponse;
 import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.DeletePlanUseCase;
-import com.ssafy.enjoytrip.features.plan.application.port.in.SearchPlanUseCase;
+import com.ssafy.enjoytrip.features.plan.application.port.in.SearchMyPlansUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.domain.PlanId;
+import com.ssafy.enjoytrip.features.user.domain.Uid;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -28,9 +29,9 @@ public class PlanControllerMapper {
                 .build();
     }
 
-    public static SearchPlanUseCase.Command toSearchPlanUseCaseCommand(String uid, Integer page) {
-        return SearchPlanUseCase.Command.builder()
-                .uid(uid)
+    public static SearchMyPlansUseCase.Command toSearchPlanUseCaseCommand(String uid, Integer page) {
+        return SearchMyPlansUseCase.Command.builder()
+                .uid(new Uid(uid))
                 .page(page)
                 .build();
     }
@@ -59,28 +60,24 @@ public class PlanControllerMapper {
                 .build();
     }
 
-    public static SearchPlanResponse toSearchPlanResponse(SearchPlanUseCase.Result result) {
-        //TODO 여행 디테일에서 어트랙션을 조회해서 해당 어트랙션에 존재하는 url 중 하나를 찾아야 함
-        LocalDate updateDate = result.getUpdatedAt().toLocalDate();
-        LocalDate today = LocalDate.now();
-        long dDay = ChronoUnit.DAYS.between(today, updateDate);
+    public static SearchPlanResponse toSearchPlanResponse(SearchMyPlansUseCase.Result result) {
         return SearchPlanResponse.builder()
-                .id(Long.parseLong(result.getId().getId()))
+                .id(result.getId().getId())
                 .title(result.getTitle())
-                //.imageUrl()
+                .desc(result.getDescription())
+                .thumbnailUrl(result.getThumbnailUrl())
                 .startDate(result.getStartDate())
                 .endDate(result.getEndDate())
                 .updatedAt(result.getUpdatedAt())
-                .WaypointLength(result.getWaypoints().size())
-                .dDay((int) dDay)
+                .dDay(result.getDDay())
                 .build();
     }
 
-    public static List<SearchPlanResponse> toSearchPlanResponseList(List<SearchPlanUseCase.Result> results) {
+    public static List<SearchPlanResponse> toSearchPlanResponseList(List<SearchMyPlansUseCase.Result> results) {
         return results.stream().map(PlanControllerMapper::toSearchPlanResponse).toList();
     }
 
-    public static PageDto<SearchPlanResponse> toSearchPlanResponsePageDto(PageDto<SearchPlanUseCase.Result> result) {
+    public static PageDto<SearchPlanResponse> toSearchPlanResponsePageDto(PageDto<SearchMyPlansUseCase.Result> result) {
         List<SearchPlanResponse> content = toSearchPlanResponseList(result.getContent());
         return new PageDto<>(
                 content,
