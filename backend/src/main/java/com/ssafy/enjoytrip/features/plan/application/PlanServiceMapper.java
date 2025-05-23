@@ -2,6 +2,7 @@ package com.ssafy.enjoytrip.features.plan.application;
 
 import com.ssafy.enjoytrip.features.plan.application.port.in.CreatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.SearchMyPlansUseCase;
+import com.ssafy.enjoytrip.features.plan.application.port.in.SearchPlanDetailUseCase;
 import com.ssafy.enjoytrip.features.plan.application.port.in.UpdatePlanUseCase;
 import com.ssafy.enjoytrip.features.plan.domain.Plan;
 import com.ssafy.enjoytrip.features.plan.domain.Waypoint;
@@ -62,5 +63,16 @@ public class PlanServiceMapper {
 
     public static List<SearchMyPlansUseCase.Result> toSearchPlanUserCaseResultList(List<Plan> plans) {
         return plans.stream().map(PlanServiceMapper::toSearchPlanUseCaseResult).toList();
+    }
+
+    public static SearchPlanDetailUseCase.Result toSearchPlanDetailUseCaseResult(Plan plan) {
+        return SearchPlanDetailUseCase.Result.builder()
+                .id(plan.getId())
+                .title(plan.getTitle())
+                .description(plan.getDescription())
+                .startDate(plan.getStartDate())
+                .endDate(plan.getEndDate())
+                .waypoints(plan.getWaypoints())
+                .build();
     }
 }

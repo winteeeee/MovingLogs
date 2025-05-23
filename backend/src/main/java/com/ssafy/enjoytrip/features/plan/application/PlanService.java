@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PlanService implements SearchMyPlansUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
+public class PlanService implements SearchMyPlansUseCase, SearchPlanDetailUseCase, CreatePlanUseCase, UpdatePlanUseCase, DeletePlanUseCase {
     @Value("${paging.size}")
     private Integer pageSize;
     private final CreatePlanPort createPlanPort;
@@ -26,6 +26,7 @@ public class PlanService implements SearchMyPlansUseCase, CreatePlanUseCase, Upd
     private final SearchPlanPort searchPlanPort;
     private final UpdatePlanPort updatePlanPort;
     private final CountPlanPort countPlanPort;
+    private final SearchWaypointPort searchWaypointPort;
     private final CreateWaypointPort createWaypointPort;
     private final DeleteWaypointPort deleteWaypointPort;
 
@@ -66,6 +67,16 @@ public class PlanService implements SearchMyPlansUseCase, CreatePlanUseCase, Upd
                 command.getPage() > 0,
                 command.getPage() + 1 < totalPages
         );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public SearchPlanDetailUseCase.Result searchPlanDetail(SearchPlanDetailUseCase.Command command) {
+        //플랜을 찾고, 그 다음 웨이포인트 찾아서 넣어줌
+        Plan plan = searchPlanPort.searchPlan(command.getId());
+        List<Waypoint> waypoints = searchWaypointPort.searchWaypointsByPlanId(command.getId());
+        plan.injectWaypoints(waypoints);
+        return PlanServiceMapper.toSearchPlanDetailUseCaseResult(plan);
     }
 
     @Override
