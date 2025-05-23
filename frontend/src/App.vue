@@ -4,13 +4,15 @@
     <main>
       <RouterView />
     </main>
-    <Footer />
+    <Footer v-if="route.path !== '/planning'" />
   </div>
 </template>
 
 <script setup>
 import Header from '@/components/common/Header.vue'
 import Footer from '@/components/common/Footer.vue'
+import { useRoute } from 'vue-router'
+const route = useRoute()
 </script>
 
 <style scoped>
