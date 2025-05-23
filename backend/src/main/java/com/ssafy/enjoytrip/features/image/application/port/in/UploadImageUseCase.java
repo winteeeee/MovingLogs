@@ -2,7 +2,7 @@ package com.ssafy.enjoytrip.features.image.application.port.in;
 
 
 import com.ssafy.enjoytrip.features.image.domain.ImageId;
-import com.ssafy.enjoytrip.features.image.domain.component.MimeType;
+import com.ssafy.enjoytrip.features.image.domain.component.Mimetype;
 import com.ssafy.enjoytrip.features.image.domain.component.RelativePath;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public interface UploadImageUseCase {
     class Command {
         private Uid uid;
         private String originalName;
-        private MimeType mimeType;
+        private Mimetype mimetype;
         private byte[] content;
     }
 
@@ -27,7 +27,7 @@ public interface UploadImageUseCase {
     @AllArgsConstructor
     class Result {
         private ImageId imageId;
-        private MimeType mimeType;
+        private Mimetype mimeType;
         private RelativePath thumbnailUrl;
         private RelativePath imageUrl;
     }

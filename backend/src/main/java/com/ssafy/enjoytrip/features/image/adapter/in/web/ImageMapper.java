@@ -2,7 +2,7 @@ package com.ssafy.enjoytrip.features.image.adapter.in.web;
 
 import com.ssafy.enjoytrip.features.image.adapter.in.web.response.UploadImageResponse;
 import com.ssafy.enjoytrip.features.image.application.port.in.UploadImageUseCase;
-import com.ssafy.enjoytrip.features.image.domain.component.MimeType;
+import com.ssafy.enjoytrip.features.image.domain.component.Mimetype;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -14,7 +14,7 @@ public class ImageMapper {
             return UploadImageUseCase.Command.builder()
                     .uid(new Uid(uid))
                     .originalName(file.getOriginalFilename())
-                    .mimeType(MimeType.from(file.getContentType()))
+                    .mimetype(Mimetype.from(file.getContentType()))
                     .content(file.getBytes())
                     .build();
         } catch (IOException e) {

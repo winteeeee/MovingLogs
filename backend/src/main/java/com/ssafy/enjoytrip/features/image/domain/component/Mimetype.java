@@ -3,7 +3,7 @@ package com.ssafy.enjoytrip.features.image.domain.component;
 import lombok.Getter;
 
 @Getter
-public enum MimeType {
+public enum Mimetype {
     JPEG("image/jpeg"),
     PNG("image/png"),
 //    GIF("image/gif"),
@@ -18,7 +18,7 @@ public enum MimeType {
 
     private final String value;
 
-    MimeType(String value) {
+    Mimetype(String value) {
         this.value = value;
     }
 
@@ -26,7 +26,7 @@ public enum MimeType {
         if (type == null) {
             return false;
         }
-        for (MimeType mt : values()) {
+        for (Mimetype mt : values()) {
             if (mt.value.equalsIgnoreCase(type)) {
                 return true;
             }
@@ -34,8 +34,8 @@ public enum MimeType {
         return false;
     }
 
-    public static MimeType from(String type) {
-        for (MimeType mt : values()) {
+    public static Mimetype from(String type) {
+        for (Mimetype mt : values()) {
             if (mt.value.equalsIgnoreCase(type)) {
                 return mt;
             }

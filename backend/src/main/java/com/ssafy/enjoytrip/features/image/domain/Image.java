@@ -2,7 +2,7 @@ package com.ssafy.enjoytrip.features.image.domain;
 
 import com.ssafy.enjoytrip.common.util.UuidFactory;
 import com.ssafy.enjoytrip.features.image.domain.component.Author;
-import com.ssafy.enjoytrip.features.image.domain.component.MimeType;
+import com.ssafy.enjoytrip.features.image.domain.component.Mimetype;
 import com.ssafy.enjoytrip.features.image.domain.component.RelativePath;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -23,7 +23,7 @@ public class Image {
     private String originalName;
     private RelativePath imageUrl;
     private RelativePath thumbnailUrl;
-    private MimeType mimetype;
+    private Mimetype mimetype;
     private Integer size;
     private LocalDateTime createdAt;
 
@@ -33,7 +33,7 @@ public class Image {
             String originalName,
             RelativePath imageUrl,
             RelativePath thumbnailUrl,
-            MimeType mimetype,
+            Mimetype mimetype,
             Integer size,
             Clock clock
     ) {
@@ -57,7 +57,7 @@ public class Image {
             String originalName,
             RelativePath imageUrl,
             RelativePath thumbnailUrl,
-            MimeType mimetype,
+            Mimetype mimetype,
             Integer size,
             LocalDateTime createdAt
     ) {

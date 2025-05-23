@@ -30,7 +30,7 @@ class ImageService implements
                 .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다: " + command.getUid()));
 
         String fileName = UuidFactory.newUuid();
-        ImageStoragePort.ImageMeta imageMeta = imageStoragePort.saveImage(fileName, command.getContent(), command.getMimeType());
+        ImageStoragePort.ImageMeta imageMeta = imageStoragePort.saveImage(fileName, command.getContent(), command.getMimetype());
 
         Image image = Image.of(
                 author,
@@ -38,7 +38,7 @@ class ImageService implements
                 command.getOriginalName(),
                 imageMeta.imagePath(),
                 imageMeta.thumbnailPath(),
-                imageMeta.mimeType(),
+                imageMeta.mimetype(),
                 command.getContent().length,
                 clock
         );

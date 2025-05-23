@@ -20,7 +20,7 @@ public class AuthorMybatisAdapter implements
     public Optional<Author> getAuthor(Uid uid) {
         Map<String, Object> resultMap = authorDao.findById(uid);
 
-        Author author = new Author(new Uid((String) resultMap.get(uid)));
+        Author author = new Author(new Uid((String) resultMap.get("uid")));
         return Optional.of(author);
     }
 }

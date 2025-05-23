@@ -1,7 +1,7 @@
 package com.ssafy.enjoytrip.features.image.adapter.out.storage;
 
 import com.ssafy.enjoytrip.features.image.application.port.out.ImageStoragePort;
-import com.ssafy.enjoytrip.features.image.domain.component.MimeType;
+import com.ssafy.enjoytrip.features.image.domain.component.Mimetype;
 import com.ssafy.enjoytrip.features.image.domain.component.RelativePath;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,7 +30,7 @@ public class ImageFileSystemStoarageAdapter implements
     private final Path BASE_PATH = Paths.get(BASE_LOCATION);
 
     @Override
-    public ImageMeta saveImage(String fileName, byte[] content, MimeType mimeType) {
+    public ImageMeta saveImage(String fileName, byte[] content, Mimetype mimetype) {
         try {
             String dir1 = fileName.substring(0, 2);
             String dir2 = fileName.substring(2, 4);
@@ -42,7 +42,7 @@ public class ImageFileSystemStoarageAdapter implements
             Files.createDirectories(thumbnailDir);
 
             // 2. 확장자 및 파일 경로 설정
-            String extension = getExtensionFromMimeType(mimeType);
+            String extension = getExtensionFromMimeType(mimetype);
             String imageFileName = fileName + "." + extension;
             String thumbnailFileName = fileName + "_thumb.jpg";
 
@@ -61,14 +61,14 @@ public class ImageFileSystemStoarageAdapter implements
             return new ImageMeta(
                     new RelativePath(relBase + "/image/" + imageFileName),
                     new RelativePath(relBase + "/thumbnail/" + thumbnailFileName),
-                    mimeType
+                    mimetype
             );
         } catch (IOException e) {
             throw new RuntimeException("이미지 저장 중 오류 발생", e);
         }
     }
 
-    private String getExtensionFromMimeType(MimeType mimeType) {
+    private String getExtensionFromMimeType(Mimetype mimeType) {
         return switch (mimeType) {
             case JPEG -> "jpg";
             case PNG -> "png";
