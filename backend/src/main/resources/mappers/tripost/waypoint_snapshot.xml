@@ -6,7 +6,7 @@
 <mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotDao.java">
     <!--  TODO: 위치 등 부가정보 추가 필요  -->
     <insert id="bulkUpsert">
-        INSERT INTO ROUTE_SNAPSHOT (
+        INSERT INTO WAYPOINT_SNAPSHOT (
             ID,
             TRIPOST_ID,
             ATTRACTION_ID,
@@ -21,7 +21,7 @@
     </insert>
 
     <delete id="deleteBySeqGreaterThan">
-        DELETE FROM ROUTE_SNAPSHOT
+        DELETE FROM WAYPOINT_SNAPSHOT
         WHERE TRIPOST_ID = #{tripostId.id}
             AND SEQ > #{seq}
     </delete>

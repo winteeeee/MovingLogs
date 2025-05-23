@@ -5,7 +5,7 @@
 
 <mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotImageDao.java">
     <insert id="bulkUpsert">
-        INSERT INTO ROUTE_SNAPSHOT_IMAGE (
+        INSERT INTO WAYPOINT_SNAPSHOT_IMAGE (
             WAYPOINT_ID,
             IMAGE_ID,
             SEQ
@@ -19,7 +19,7 @@
     </insert>
 
     <delete id="bulkDeleteBySeqGreaterThan">
-        DELETE FROM ROUTE_SNAPSHOT_IMAGE
+        DELETE FROM WAYPOINT_SNAPSHOT_IMAGE
         WHERE
         <foreach collection="params" item="param" separator=" OR ">
             (WAYPOINT_ID = #{param.waypointSnapshotId.id} AND SEQ > #{param.seq})
