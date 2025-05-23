@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -43,7 +44,7 @@ public class PlanMyBatisAdapter implements CreatePlanPort, DeletePlanPort, Searc
     }
 
     @Override
-    public void deletePlan(PlanId id) {
-        planDao.delete(id.getId());
+    public void deletePlan(PlanId id, LocalDateTime updatedAt) {
+        planDao.delete(id.getId(), updatedAt);
     }
 }

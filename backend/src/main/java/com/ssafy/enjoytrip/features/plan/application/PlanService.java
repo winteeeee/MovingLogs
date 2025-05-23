@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -86,11 +87,7 @@ public class PlanService implements SearchPlanUseCase, CreatePlanUseCase, Update
     }
 
     @Override
-    @Transactional
     public void deletePlan(DeletePlanUseCase.Command command) {
-        //일단 플랜 디테일을 먼저 삭제하고
-        deleteWaypointPort.deleteWaypointsByPlanId(command.getId());
-        //그 다음 플랜 자체를 삭제
-        deletePlanPort.deletePlan(command.getId());
+        deletePlanPort.deletePlan(command.getId(), LocalDateTime.now());
     }
 }

@@ -7,7 +7,7 @@
     <select id="findByUid">
         SELECT *
         FROM plan
-        WHERE uid = #{uid};
+        WHERE uid = #{uid} AND is_deleted = 0;
     </select>
 
     <insert id="insert">
@@ -36,11 +36,12 @@
             <if test="endDate != null">end_date = #{endDate},</if>
             updated_at = #{updatedAt}
         </set>
-        WHERE id = #{id.id}
+        WHERE id = #{id.id} AND is_deleted = 0
     </update>
 
-    <delete id="delete">
-        DELETE FROM plan
+    <update id="delete">
+        UPDATE plan
+        SET is_deleted = 1, updated_at = #{updatedAt}
         WHERE id = #{id}
-    </delete>
+    </update>
 </mapper>
