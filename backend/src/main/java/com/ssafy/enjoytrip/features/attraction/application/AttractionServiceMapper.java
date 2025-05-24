@@ -1,6 +1,5 @@
 package com.ssafy.enjoytrip.features.attraction.application;
 
-import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.attraction.application.port.in.SearchAttractionUseCase;
 import com.ssafy.enjoytrip.features.attraction.application.port.in.SearchContentTypeUseCase;
 import com.ssafy.enjoytrip.features.attraction.application.port.in.SearchGugunUseCase;

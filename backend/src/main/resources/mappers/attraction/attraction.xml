@@ -16,9 +16,9 @@
 		</if>
 		<if test="areaCode != null">
 			AND a.area_code = #{areaCode}
-		</if>
-		<if test="siGunGuCode != null">
-			AND a.si_gun_gu_code = #{siGunGuCode}
+			<if test="siGunGuCode != null">
+				AND a.si_gun_gu_code = #{siGunGuCode}
+			</if>
 		</if>
 		LIMIT #{limit} OFFSET #{offset}
  	</select>
