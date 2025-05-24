@@ -9,9 +9,11 @@ import PlanUpdatePage from '@/views/PlanUpdatePage.vue'
 import LoginSuccessPage from '@/views/LoginSuccessPage.vue'
 import MyTripPlanPage from '@/views/MyTripPlanPage.vue'
 import PlanDetailPage from '@/views/PlanDetailPage.vue'
+import ServiceIntroPage from '@/views/ServiceIntroPage.vue'
 
 const routes = [
   { path: '/', component: MainPage },
+  { path: '/service-intro', name: 'ServiceIntroPage', component: ServiceIntroPage },
   { path: '/board', component: BoardMainPage},
   { path: '/tripost/write', name: 'TripostWritePage', component: TripostWritePage },
   { path: '/planning', name: 'PlanningPage', component: PlanningPage },

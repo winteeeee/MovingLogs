@@ -2,7 +2,7 @@
   <div class="main-page">
     <!-- 히어로 섹션 -->
     <MainHeroSection/>
-    <!-- 인기 여행 경로 섹션 -->
+    <!-- 인기 여행 게시판 섹션 -->
     <MainPagePopularRoutesSection/>
     <!-- 최신 게시글 섹션 -->
     <MainPageLatestPostsSection/>
