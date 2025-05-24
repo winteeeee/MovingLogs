@@ -74,7 +74,7 @@
                 <div class="search-input-group">
                   <input type="text" class="form-control" placeholder="검색어를 입력하세요" />
                   <button class="btn btn-search" @click="search">검색</button>
-                  <button class="btn btn-ai">AI 지도 보기</button>
+                  <button class="btn btn-ai"><i class="bi bi-robot"></i> AI 추천</button>
                 </div>
               </div>
             </div>
@@ -199,17 +199,17 @@
             <div class="plan-form">
               <div class="form-group">
                 <label>여행 계획 이름</label>
-                <input type="text" class="form-control" placeholder="예: 서울 3박 4일 여행" />
+                <input type="text" class="form-control" v-model="planTitle" placeholder="예: 서울 3박 4일 여행" />
               </div>
 
               <div class="form-row">
                 <div class="form-group">
                   <label>시작일</label>
-                  <input type="date" class="form-control" />
+                  <input type="date" class="form-control" v-model="planStart" />
                 </div>
                 <div class="form-group">
                   <label>종료일</label>
-                  <input type="date" class="form-control" />
+                  <input type="date" class="form-control" v-model="planEnd" />
                 </div>
               </div>
 
@@ -219,6 +219,7 @@
                   class="form-control"
                   rows="3"
                   placeholder="여행 계획에 대한 설명을 입력하세요."
+                  v-model="planDescription"
                 ></textarea>
               </div>
             </div>
@@ -235,13 +236,13 @@
             </div>
 
             <div class="route-list">
-              <div v-if="routePlaces.length === 0" class="empty-state">
+              <div v-if="planWaypoints.length === 0" class="empty-state">
                 <i class="bi bi-map"></i>
                 <p>여행지를 추가해주세요</p>
               </div>
 
               <Draggable
-                v-model="routePlaces"
+                v-model="planWaypoints"
                 class="route-items"
                 item-key="id"
                 handle=".route-item"
@@ -272,7 +273,7 @@
             </div>
 
             <div class="route-footer">
-              <button class="btn btn-action w-100">
+              <button class="btn btn-action w-100" @click="savePlan">
                 <span class="btn-text">저장하기</span>
               </button>
             </div>
@@ -285,9 +286,11 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
+import { useRouter } from 'vue-router';
 import Draggable from 'vuedraggable'
 import api from '@/api/axios.js'
 
+const router = useRouter();
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const contentTypeList = ref([]);
@@ -298,29 +301,56 @@ const sidoSelected = ref("");
 const gugunSelected = ref("");
 const contentTypeSelected = ref("");
 
-// {
-//   id: 'attr01',
-//   content_id: 1,
-//   title: '경복궁',
-//   content_type_id: 12,
-//   area_code: 1,
-//   si_gun_gu_code: 23,
-//   first_image: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2017/11/1-1.jpg',
-//   first_image2: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2017/11/1-1.jpg',
-//   map_level: 5,
-//   latitude: 37.579617,
-//   longitude: 126.977041,
-//   tel: '02-3700-3900',
-//   addr1: '서울 종로구 사직로 161',
-//   addr2: '세종로',
-//   homepage: 'http://www.royalpalace.go.kr',
-//   overview: '경복궁은 조선왕조의 법궁(法宮)으로, 1395년에 창건되었다. 경복궁은 동궐(창덕궁)과 서궐(경희궁)의 중간에 위치한 북궐로, 조선의 중심 법궁이었다.'
-// }
 // 검색 결과 데이터
 const searchResults = ref([]);
 
 // 경로에 추가된 장소들
-const routePlaces = ref([]);
+const planTitle = ref("");
+const planStart = ref("");
+const planEnd = ref("");
+const planDescription = ref("");
+const planWaypoints = ref([]);
+
+const savePlan = async () => {
+  if (!planTitle.value.trim()) {
+    alert("제목을 입력하세요.");
+    return;
+  }
+  if (!planStart.value) {
+    alert("시작일을 선택하세요.");
+    return;
+  }
+  if (!planEnd.value) {
+    alert("종료일을 선택하세요.");
+    return;
+  }
+  if (!planWaypoints.value.length) {
+    alert("최소 한 개 이상의 관광지를 선택하세요.");
+    return;
+  }
+
+  const attractionIds = planWaypoints.value
+    .map(e => e.id)
+    .filter(id => id !== null && id !== undefined && id !== "");
+
+  if (attractionIds.length !== planWaypoints.value.length) {
+    alert("유효하지 않은 관광지가 포함되어 있습니다.");
+    return;
+  }
+
+  // 모두 통과하면 API 호출
+  const response = await api.post(`${serverUrl}/api/v1/plans`, {
+    title: planTitle.value,
+    desc: planDescription.value,
+    thumbnailUrl: planWaypoints.value[0].firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
+    startDate: planStart.value,
+    endDate: planEnd.value,
+    attractionIds: attractionIds
+  });
+
+  alert("여행 계획이 생성되었습니다");
+  router.push({ name: 'MyTripPlanPage' });
+};
 
 onMounted(async () => {
   const contTypeRes = await api.get(`${serverUrl}/api/v1/attractions/content-types`);
@@ -336,17 +366,37 @@ watch(sidoSelected, async ()=>{
   gugunSelected.value = "";
 });
 
+watch(planStart, () => {
+  if (planEnd.value !== "" && (new Date(planStart.value)) > (new Date(planEnd.value))) {
+    planStart.value = "";
+    alert("여행 시작일은 종료일보다 뒤일 수 없습니다");
+  }
+})
+
+watch(planEnd, () => {
+  if (planStart.value !== "" && (new Date(planStart.value)) > (new Date(planEnd.value))) {
+    planEnd.value = "";
+    alert("여행 종료일은 시작일보다 앞일 수 없습니다");
+  }
+})
+
 const search = async () => {
+  if (!sidoSelected.value) {
+    alert("지역을 선택하세요.");
+    return;
+  }
+
   const response = await api.get(`${serverUrl}/api/v1/attractions`, {
     params: {
       contentTypeId: contentTypeSelected.value,
       areaCode: sidoSelected.value,
       siGunGuCode: gugunSelected.value,
       page: 1,
-      pageSize: 1000
+      pageSize: 500
     }
   });
   searchResults.value = response.data.content;
+  updateSearchResultMarkers();
 }
 
 // 드래그 상태
@@ -362,6 +412,7 @@ const selectedPlace = ref(null);
 const mapContainer = ref(null);
 let map = null;
 let markers = [];
+let searchMarkers = [];
 let polyline = null;
 let highlightedMarker = null;
 
@@ -380,7 +431,7 @@ const showPlaceDetail = (place) => {
 
   // 지도 중심 이동
   map.setCenter(new window.kakao.maps.LatLng(place.latitude, place.longitude));
-  map.setLevel(3);
+  map.setLevel(5);
 };
 
 // 상세 정보 패널 닫기
@@ -416,6 +467,88 @@ const resetMarkerHighlight = () => {
   }
 };
 
+
+// 검색 결과 마커 업데이트
+const updateSearchResultMarkers = () => {
+  if (!map) return;
+
+  // 기존 검색 결과 마커 제거
+  searchMarkers.forEach(marker => {
+    if (marker.overlay) {
+      marker.overlay.setMap(null);
+    }
+    if (marker.marker) {
+      marker.marker.setMap(null);
+    }
+  });
+  searchMarkers = [];
+
+  if (searchResults.value.length === 0) return;
+
+  // 마커들을 저장할 배열
+  const markers = [];
+
+  // 새 검색 결과 마커 생성
+  searchResults.value.forEach((place) => {
+    const position = new window.kakao.maps.LatLng(place.latitude, place.longitude);
+
+    // 커스텀 마커 생성
+    const content = document.createElement('div');
+    content.className = 'search-pin-marker';
+    content.innerHTML = `
+      <div class="pin-marker">
+        <div class="pin-circle">
+          <i class="pin-icon"></i>
+        </div>
+        <div class="pin-label">${place.title}</div>
+      </div>
+    `;
+
+    // 마커 클릭 이벤트
+    content.addEventListener('click', function() {
+      showPlaceDetail(place);
+    });
+
+    const customOverlay = new window.kakao.maps.CustomOverlay({
+      position: position,
+      content: content,
+      yAnchor: 0.1,
+      zIndex: 5
+    });
+
+    // 일반 마커도 생성 (클러스터링용)
+    const marker = new window.kakao.maps.Marker({
+      position: position
+    });
+
+    // 마커 클릭 이벤트
+    window.kakao.maps.event.addListener(marker, 'click', function() {
+      showPlaceDetail(place);
+    });
+
+    markers.push(marker);
+    searchMarkers.push({
+      overlay: customOverlay,
+      marker: marker,
+      place: place
+    });
+  });
+
+  // 커스텀 오버레이들을 지도에 표시
+  searchMarkers.forEach(markerData => {
+    markerData.overlay.setMap(map);
+  });
+
+  // 검색 결과가 있으면 지도 범위 조정
+  if (searchResults.value.length > 0) {
+    const bounds = new window.kakao.maps.LatLngBounds();
+    searchResults.value.forEach(place => {
+      bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+    });
+    map.setBounds(bounds);
+  }
+};
+
 // 텍스트 포맷팅
 const formatOverview = (text) => {
   if (!text) return '';
@@ -424,29 +557,29 @@ const formatOverview = (text) => {
 
 // 경로 관련 함수들
 const isInRoute = (placeId) => {
-  return routePlaces.value.some(p => p.id === placeId);
+  return planWaypoints.value.some(p => p.id === placeId);
 };
 
 const addToRoute = (place) => {
-  const exists = routePlaces.value.some(p => p.id === place.id);
+  const exists = planWaypoints.value.some(p => p.id === place.id);
   if (!exists) {
-    routePlaces.value.push(place);
+    planWaypoints.value.push(place);
     updateMapMarkers();
 
   }
 };
 
 const removeFromRoute = (placeId) => {
-  const index = routePlaces.value.findIndex(p => p.id === placeId);
+  const index = planWaypoints.value.findIndex(p => p.id === placeId);
   if (index !== -1) {
-    routePlaces.value.splice(index, 1);
+    planWaypoints.value.splice(index, 1);
     updateMapMarkers();
   }
 };
 
 const clearRoute = () => {
   if (confirm('모든 경로를 삭제하시겠습니까?')) {
-    routePlaces.value = [];
+    planWaypoints.value = [];
     updateMapMarkers();
   }
 };
@@ -465,7 +598,7 @@ const updateMapMarkers = () => {
   }
 
   // 새 마커 생성
-  routePlaces.value.forEach((place, index) => {
+  planWaypoints.value.forEach((place, index) => {
     const position = new window.kakao.maps.LatLng(place.latitude, place.longitude);
 
     // 커스텀 오버레이 생성
@@ -500,8 +633,8 @@ const updateMapMarkers = () => {
   });
 
   // 경로선 그리기
-  if (routePlaces.value.length > 1) {
-    const path = routePlaces.value.map(place =>
+  if (planWaypoints.value.length > 1) {
+    const path = planWaypoints.value.map(place =>
       new window.kakao.maps.LatLng(place.latitude, place.longitude)
     );
 
@@ -541,10 +674,10 @@ const zoomOut = () => {
 
 const resetMap = () => {
   if (map) {
-    // 모든 마커가 보이도록 지도 범위 조���
-    if (routePlaces.value.length > 0) {
+    // 모든 마커가 보이도록 지도 범위 조
+    if (planWaypoints.value.length > 0) {
       const bounds = new window.kakao.maps.LatLngBounds();
-      routePlaces.value.forEach(place => {
+      planWaypoints.value.forEach(place => {
         bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
       });
       map.setBounds(bounds);
@@ -554,7 +687,7 @@ const resetMap = () => {
 };
 
 // 경로 변경 감지
-watch(routePlaces, () => {
+watch(planWaypoints, () => {
   updateMapMarkers();
 }, { deep: true });
 
@@ -1501,5 +1634,65 @@ onUnmounted(() => {
   border-left: 8px solid transparent;
   border-right: 8px solid transparent;
   border-top: 8px solid #ff6b35;
+}
+
+
+/* 검색 결과 핀 마커 스타일 */
+.search-pin-marker {
+  position: relative;
+  width: auto;
+  height: auto;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pin-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.2s ease;
+}
+
+.pin-circle {
+  width: 18px;
+  height: 18px;
+  background: linear-gradient(135deg, #ff6b35 0%, #ff6b35 100%);
+  border: 2px solid white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.3);
+  position: relative;
+}
+
+.pin-marker:hover {
+  transform: scale(1.1);
+}
+
+.pin-icon {
+  font-size: 18px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+}
+
+.pin-label {
+  margin-top: 4px;
+  color: #000000;
+  text-shadow:
+  -1px -1px 0 white,
+  1px -1px 0 white,
+  -1px  1px 0 white,
+  1px  1px 0 white;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 </style>
