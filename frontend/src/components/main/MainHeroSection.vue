@@ -12,7 +12,9 @@
               >
             </button>
             <button class="btn btn-outline-light btn-lg">
-              <i class="bi bi-info-circle"></i> 서비스 소개
+              <router-link to="/service-intro" class="nav-link" active-class="active">
+                <i class="bi bi-info-circle"></i> 서비스 소개
+              </router-link>
             </button>
           </div>
         </div>

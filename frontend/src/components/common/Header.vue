@@ -5,7 +5,7 @@
         <router-link to="/" class="navbar-brand">
           <div class="logo">
             <i class="bi bi-compass"></i>
-            <span>여행로드</span>
+            <span>Moving Logs</span>
           </div>
         </router-link>
 
@@ -33,34 +33,17 @@
             </li>
             <li class="nav-item">
               <router-link to="/routes" class="nav-link" active-class="active"
-                >인기 경로</router-link
+                >공지사항</router-link
               >
             </li>
             <li class="nav-item">
-              <router-link to="/regions" class="nav-link" active-class="active"
-                >지역별 정보</router-link
-              >
-            </li>
-            <li class="nav-item">
-              <router-link to="/about" class="nav-link" active-class="active"
+              <router-link to="/service-intro" class="nav-link" active-class="active"
                 >서비스 소개</router-link
               >
             </li>
           </ul>
 
-          <div class="search-box d-none d-lg-flex me-3">
-            <input type="text" placeholder="여행지 검색" class="search-input" />
-            <button class="search-btn">
-              <i class="bi bi-search"></i>
-            </button>
-          </div>
-
           <div v-if="authStore.isLoggedIn" class="user-menu">
-            <div class="notification-icon me-3">
-              <i class="bi bi-bell"></i>
-              <span class="notification-badge">2</span>
-            </div>
-
             <div class="dropdown">
               <button
                 class="user-profile-btn"
@@ -69,7 +52,7 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <span class="user-name d-none d-lg-inline">{{ authStore.name }}</span>
+                <span class="user-name d-none d-lg-inline">안녕하세요, {{ authStore.name }}님!</span>
                 <i class="bi bi-chevron-down"></i>
               </button>
 
@@ -86,12 +69,7 @@
                 </li>
                 <li>
                   <router-link to="/bookmarks" class="dropdown-item">
-                    <i class="bi bi-bookmark"></i> 저장한 게시글
-                  </router-link>
-                </li>
-                <li>
-                  <router-link to="/settings" class="dropdown-item">
-                    <i class="bi bi-gear"></i> 설정
+                    <i class="bi bi-bookmark"></i> 작성한 게시글
                   </router-link>
                 </li>
                 <li><hr class="dropdown-divider" /></li>
