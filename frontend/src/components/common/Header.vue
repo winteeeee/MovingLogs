@@ -26,11 +26,13 @@
             <li class="nav-item">
               <router-link to="/" class="nav-link" active-class="active">홈</router-link>
             </li>
+            <!-- TODO 연결 -->
             <li class="nav-item">
               <router-link to="/board" class="nav-link" active-class="active"
                 >여행 게시판</router-link
               >
             </li>
+            <!-- TODO 연결 -->
             <li class="nav-item">
               <router-link to="/routes" class="nav-link" active-class="active"
                 >공지사항</router-link
@@ -52,22 +54,20 @@
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
               >
-                <span class="user-name d-none d-lg-inline">안녕하세요, {{ authStore.name }}님!</span>
+                <span class="user-name d-none d-lg-inline fancy-greeting">
+                  안녕하세요, {{ authStore.name }}님!
+                </span>
                 <i class="bi bi-chevron-down"></i>
               </button>
 
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
-                <li>
-                  <router-link to="/profile" class="dropdown-item">
-                    <i class="bi bi-person"></i> 내 프로필
-                  </router-link>
-                </li>
                 <li>
                   <router-link to="/my-plans" class="dropdown-item">
                     <i class="bi bi-map"></i> 내 여행 경로
                   </router-link>
                 </li>
                 <li>
+                  <!-- TODO 연결 -->
                   <router-link to="/bookmarks" class="dropdown-item">
                     <i class="bi bi-bookmark"></i> 작성한 게시글
                   </router-link>
@@ -83,7 +83,10 @@
           </div>
 
           <div v-else class="auth-buttons">
-            <button class="btn btn-outline-primary me-2" @click="login">로그인</button>
+            <button class="kakao-login-btn" @click="login">
+              <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_small.png" alt="카카오 로그인" class="kakao-icon" />
+              카카오 로그인
+            </button>
           </div>
         </div>
       </div>
@@ -92,16 +95,12 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore.js'
 import axios from 'axios'
 import { router } from '@/router/index.js'
 
 const authStore = useAuthStore()
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
-const user = ref({
-  name: '여행자',
-})
 
 function login() {
   window.location.href = `${serverUrl}/oauth2/authorization/kakao`
@@ -169,69 +168,9 @@ function logout() {
   border-bottom: 2px solid var(--primary-color); /* 예시 */
 }
 
-.search-box {
-  display: flex;
-  align-items: center;
-  background-color: #f8f9fa;
-  border-radius: 24px;
-  overflow: hidden;
-  transition: all 0.3s;
-  width: 220px;
-}
-
-.search-box:focus-within {
-  box-shadow: 0 0 0 2px rgba(253, 126, 20, 0.25);
-  background-color: white;
-}
-
-.search-input {
-  border: none;
-  background: transparent;
-  padding: 8px 16px;
-  font-size: 14px;
-  width: 100%;
-  outline: none;
-}
-
-.search-btn {
-  background: none;
-  border: none;
-  padding: 8px 12px;
-  color: #6c757d;
-  cursor: pointer;
-  transition: color 0.2s;
-}
-
-.search-btn:hover {
-  color: var(--primary-color);
-}
-
 .user-menu {
   display: flex;
   align-items: center;
-}
-
-.notification-icon {
-  position: relative;
-  font-size: 20px;
-  color: #6c757d;
-  cursor: pointer;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -5px;
-  background-color: var(--primary-color);
-  color: white;
-  font-size: 10px;
-  font-weight: 600;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .user-profile-btn {
@@ -241,14 +180,6 @@ function logout() {
   border: none;
   padding: 0;
   cursor: pointer;
-}
-
-.user-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 2px solid #f1f3f5;
 }
 
 .user-name {
@@ -290,15 +221,59 @@ function logout() {
 }
 
 @media (max-width: 991.98px) {
-  .search-box {
-    width: 100%;
-    margin: 12px 0;
-  }
-
   .auth-buttons,
   .user-menu {
     margin-top: 12px;
     justify-content: center;
   }
+}
+
+.kakao-login-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 24px;
+  font-size: 1rem;
+  font-weight: 600;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: #3C1E1E;
+  background: linear-gradient(135deg, #fff8e1, #fff3cd);
+  border: 1.5px solid #f7d600;
+  border-radius: 30px;
+  box-shadow: 0 4px 8px rgb(247 214 0 / 0.15);
+  cursor: pointer;
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+.kakao-login-btn:hover {
+  background: linear-gradient(135deg, #fff3cd, #f7d600);
+  box-shadow: 0 6px 12px rgb(247 214 0 / 0.35);
+}
+
+.kakao-icon {
+  width: 22px;
+  height: 22px;
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
+}
+
+.kakao-login-btn:hover .kakao-icon {
+  opacity: 1;
+}
+
+.fancy-greeting {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #3a3a3a; /* 진한 그레이 */
+  padding: 4px 12px;
+  border-radius: 12px;
+  transition: box-shadow 0.3s ease;
+  user-select: none;
+}
+
+.fancy-greeting:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  cursor: default;
 }
 </style>

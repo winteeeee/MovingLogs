@@ -772,28 +772,6 @@ onMounted(() => {
   box-shadow: 0 8px 25px rgba(74, 107, 223, 0.3);
 }
 
-.button-secondary {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.button-secondary:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2px);
-}
-
-/* 아이콘 스타일 */
-.icon-start::before {
-  content: '🚀';
-  margin-right: 8px;
-}
-
-.icon-explore::before {
-  content: '🔍';
-  margin-right: 8px;
-}
-
 /* 반응형 디자인 */
 @media (max-width: 768px) {
   .hero-content,
@@ -813,12 +791,6 @@ onMounted(() => {
 
   .section-title {
     font-size: 2rem;
-  }
-
-  .hero-actions,
-  .cta-actions {
-    flex-direction: column;
-    align-items: center;
   }
 
   .button {
