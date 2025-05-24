@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import MainPage from '@/views/MainPage.vue'
 import BoardMainPage from '@/views/BoardMainPage.vue'
-import PostWritePage from '@/views/PostWritePage.vue'
+import TripostWritePage from '@/views/TripostWritePage.vue'
 // import PlanningPage from '@/views/PlanningPage.vue'
 import PlanningPage from '@/views/PlanningPage.vue'
 import PostDetailPage from '@/views/PostDetailPage.vue'
@@ -13,7 +13,7 @@ import PlanDetailPage from '@/views/PlanDetailPage.vue'
 const routes = [
   { path: '/', component: MainPage },
   { path: '/board', component: BoardMainPage},
-  { path: '/tripost/write', name: 'PostWritePage', component: PostWritePage },
+  { path: '/tripost/write', name: 'TripostWritePage', component: TripostWritePage },
   { path: '/planning', name: 'PlanningPage', component: PlanningPage },
   // { path: '/post/:id', component: () => import('@/domains/post/pages/PostDetailPage.vue') },
   // { path: '/trip/plan', component: () => import('@/domains/plan/pages/MyTravelPlanPage.vue') },

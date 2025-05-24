@@ -29,6 +29,9 @@
     </div>
 
     <div class="card-actions">
+      <button class="button button-secondary" @click="handleWrite">
+        <span class="icon-pencil"></span> 글쓰기
+      </button>
       <button class="button button-secondary" @click="$emit('edit', plan)">
         <span class="icon-pencil"></span> 수정
       </button>
@@ -49,7 +52,7 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['view', 'edit', 'delete'])
+const emit = defineEmits(['view', 'edit', 'delete', 'writeTripost'])
 
 // 날짜 배지 클래스
 const getDateBadgeClass = computed(() => {
@@ -109,6 +112,10 @@ const formatUpdatedAt = computed(() => {
     return `${updated.getFullYear()}.${month}.${day}`
   }
 })
+
+function handleWrite() {
+  emit('writeTripost', props.plan)
+}
 
 // 삭제 버튼 클릭
 function handleDelete() {
