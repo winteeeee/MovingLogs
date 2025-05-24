@@ -64,6 +64,7 @@ import TravelPlanEmpty from '@/components/my-trip-plan/TravelPlanEmpty.vue'
 import TravelPlanDeleteModal from '@/components/my-trip-plan/TravelPlanDeleteModal.vue'
 import Pagination from '@/components/common/Pagination.vue'
 import { useRouter } from 'vue-router'
+import api from '@/api/axios.js'
 
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const authStore = useAuthStore()
@@ -163,7 +164,7 @@ function clearFilter() {
 // 여행 계획 생성 페이지로 이동
 function navigateToCreate() {
   console.log('새 여행 계획 생성 페이지로 이동')
-  // 실제 구현: router.push('/travel-plans/create')
+  router.push('/planning')
 }
 
 // 여행 계획 상세 보기
@@ -196,23 +197,17 @@ function closeDeleteModal() {
 }
 
 // 여행 계획 삭제
-function deletePlan() {
+async function deletePlan() {
   if (!planToDelete.value) return
 
   console.log('여행 계획 삭제:', planToDelete.value.id)
-
-  // 실제 구현: API 호출로 삭제 처리
-  // 여기서는 프론트엔드에서만 삭제하는 것으로 시뮬레이션
-  const index = travelPlans.value.findIndex((plan) => plan.id === planToDelete.value.id)
-  if (index !== -1) {
-    travelPlans.value.splice(index, 1)
-  }
-
+  await api.delete(`${serverUrl}/api/v1/plans/${planToDelete.value.id}`)
   // 모달 닫기
   closeDeleteModal()
 
   // 알림 표시
   alert('여행 계획이 삭제되었습니다.')
+  await loadTravelPlans()
 }
 
 // 데이터 로드

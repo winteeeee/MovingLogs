@@ -1,6 +1,6 @@
 <template>
-  <div class="travel-plan-card" @click="$emit('view', plan)">
-    <div class="card-thumbnail">
+  <div class="travel-plan-card">
+    <div class="card-thumbnail" @click="$emit('view', plan)">
       <img :src="plan.thumbnailUrl" :alt="plan.title" class="thumbnail-img" />
       <div class="card-date-badge" :class="getDateBadgeClass">
         <span v-if="plan.dday > 0">D-{{ plan.dday }}</span>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="card-body">
+    <div class="card-body" @click="$emit('view', plan)">
       <h5 class="card-title">{{ plan.title }}</h5>
       <div class="card-description">
         <span class="icon-location"></span>
@@ -134,13 +134,13 @@ function handleDelete() {
 .travel-plan-card:hover {
   transform: translateY(-4px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  cursor: pointer;
 }
 
 .card-thumbnail {
   position: relative;
   height: 160px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 .thumbnail-img {
@@ -180,6 +180,7 @@ function handleDelete() {
 .card-body {
   padding: 16px;
   flex: 1;
+  cursor: pointer;
 }
 
 .card-title {

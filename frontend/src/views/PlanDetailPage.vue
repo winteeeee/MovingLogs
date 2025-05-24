@@ -147,6 +147,7 @@ import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore.js'
 import { useRouter } from 'vue-router'
+import api from '@/api/axios.js'
 
 // 상태 관리
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
@@ -196,13 +197,10 @@ function closeDeleteModal() {
 // 여행 계획 삭제
 async function deletePlan() {
   try {
-    // 실제 구현: API 호출로 삭제
-    await new Promise(resolve => setTimeout(resolve, 1000))
-
+    await api.delete(`${serverUrl}/api/v1/plans/${plan.value.id}`)
     alert('여행 계획이 삭제되었습니다.')
     showDeleteModal.value = false
-
-    // 실제 구현: router.push('/plans')
+    router.back();
     console.log('목록 페이지로 이동')
   } catch (error) {
     console.error('삭제 실패:', error)
