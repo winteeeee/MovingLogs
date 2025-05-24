@@ -221,15 +221,12 @@ async function deletePlan() {
 // 데이터 로드
 async function loadTravelPlans() {
   isLoading.value = true
-  const response = await axios.get(`${serverUrl}/api/v1/plans`, {
+  const response = await api.get(`${serverUrl}/api/v1/plans`, {
     params: {
       page: currentPage.value,
       pageSize: itemsPerPage,
-    },
-    headers: {
-      Authorization: `Bearer ${authStore.accessToken}`,
-    },
-  })
+    }
+  });
 
   const data = response.data
   console.log(data)
