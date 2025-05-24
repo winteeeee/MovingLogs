@@ -1,5 +1,5 @@
 <template>
-  <div class="travel-plan-card">
+  <div class="travel-plan-card" @click="$emit('view', plan)">
     <div class="card-thumbnail">
       <img :src="plan.thumbnail" :alt="plan.title" class="thumbnail-img" />
       <div class="card-date-badge" :class="getDateBadgeClass">
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="card-actions" @click="$emit('view', plan)">
+    <div class="card-actions">
       <button class="button button-secondary" @click="$emit('edit', plan)">
         <span class="icon-pencil"></span> 수정
       </button>

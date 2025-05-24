@@ -117,6 +117,7 @@
 import { ref } from 'vue'
 import { useAuthStore } from '@/stores/authStore.js'
 import axios from 'axios'
+import { router } from '@/router/index.js'
 
 const authStore = useAuthStore()
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
@@ -144,6 +145,7 @@ function logout() {
     })
     .finally(() => {
       authStore.clearAuthInfo()
+      router.push('/')
     })
 }
 </script>

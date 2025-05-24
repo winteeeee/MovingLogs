@@ -63,8 +63,11 @@ import TravelPlanCard from '@/components/my-trip-plan/TravelPlanCard.vue'
 import TravelPlanEmpty from '@/components/my-trip-plan/TravelPlanEmpty.vue'
 import TravelPlanDeleteModal from '@/components/my-trip-plan/TravelPlanDeleteModal.vue'
 import Pagination from '@/components/common/Pagination.vue'
+import { useRouter } from 'vue-router'
 
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const authStore = useAuthStore()
+const router = useRouter()
 
 // 상태 관리
 const travelPlans = ref([])
@@ -74,6 +77,7 @@ const isDeleteModalVisible = ref(false)
 const currentPage = ref(1)
 const totalPages = ref(0)
 const itemsPerPage = 6
+
 
 function onPageChange(page) {
   if (1 <= page && page <= totalPages.value) {
@@ -165,7 +169,7 @@ function navigateToCreate() {
 // 여행 계획 상세 보기
 function viewPlan(plan) {
   console.log('여행 계획 상세 보기:', plan.id)
-  // 실제 구현: router.push(`/travel-plans/${plan.id}`)
+  router.push('/plan/detail/' + plan.id);
 }
 
 // 여행 계획 수정
@@ -214,7 +218,7 @@ function deletePlan() {
 // 데이터 로드
 async function loadTravelPlans() {
   isLoading.value = true
-  const response = await axios.get('http://localhost:8080/api/v1/plans', {
+  const response = await axios.get(`${serverUrl}/api/v1/plans`, {
     params: {
       page: currentPage.value,
       pageSize: itemsPerPage,

@@ -50,6 +50,7 @@ public class SecurityConfig {
         .securityContext(context -> context.securityContextRepository(new NullSecurityContextRepository()))
         .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers("/swagger-ui/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/users").permitAll()
                 .anyRequest().authenticated())
