@@ -513,7 +513,7 @@ const updateSearchResultMarkers = () => {
       position: position,
       content: content,
       yAnchor: 0.1,
-      zIndex: 5
+      zIndex: 1
     });
 
     // 일반 마커도 생성 (클러스터링용)
