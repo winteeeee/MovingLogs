@@ -167,7 +167,6 @@ async function loadPlanData() {
 
      console.log(response.data)
      plan.value = response.data
-
   } catch (error) {
     console.error('데이터 로드 실패:', error)
     alert('여행 계획을 불러오는 중 오류가 발생했습니다.')
@@ -177,7 +176,7 @@ async function loadPlanData() {
 // 수정 페이지로 이동
 function goToEdit() {
   console.log('수정 페이지로 이동')
-  // 실제 구현: router.push(`/plans/${plan.value.id}/edit`)
+  router.push(`/plan/update/${plan.value.id}`)
 }
 
 function goToMyPlans() {

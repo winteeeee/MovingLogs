@@ -1,6 +1,5 @@
 package com.ssafy.enjoytrip.features.attraction.application.port.in;
 
-import com.ssafy.enjoytrip.features.attraction.domain.GugunId;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +13,7 @@ public interface SearchGugunUseCase {
     @Builder
     @AllArgsConstructor
     class Result {
-        private GugunId id;
+        private String gugunCode;
         private String gugunName;
     }
 }

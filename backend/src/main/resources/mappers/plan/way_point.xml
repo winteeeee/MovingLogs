@@ -8,6 +8,7 @@
         SELECT *
         FROM waypoint w
         WHERE w.plan_id = #{planId}
+        ORDER BY seq
     </select>
 
     <insert id="insertAll">

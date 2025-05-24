@@ -15,15 +15,15 @@
       <PlanBasicInfo :plan="plan" @update:plan="updatePlanBasicInfo" />
 
       <!-- 여행 장소 목록 -->
-      <PlanSpotList
-        :spots="plan.spots"
-        @update:spots="updateSpots"
-        @edit-spot="editSpot"
-        @delete-spot="deleteSpot"
+      <PlanWaypointList
+        :waypointList="plan.waypointList"
+        @update:waypointList="updateWaypoints"
+        @edit-waypoint="editWaypoint"
+        @delete-waypoint="deleteWaypoint"
       />
 
       <!-- 장소 추가 영역 -->
-      <PlanAddSpot @add-spot="addSpot" />
+      <PlanAddWaypoint @add-waypoint="addWaypoint" />
     </div>
 
     <!-- 취소 확인 모달 -->
@@ -39,13 +39,13 @@
 
     <!-- 스팟 삭제 확인 모달 -->
     <ConfirmModal
-      v-if="showDeleteSpotModal"
+      v-if="showDeleteWaypointModal"
       title="장소 삭제"
-      :message="`'${spotToDelete?.name}' 장소를 정말 삭제하시겠습니까?`"
+      :message="`${waypointToDelete?.title} 정말 삭제하시겠습니까?`"
       confirm-text="삭제"
       confirm-type="danger"
-      @confirm="confirmDeleteSpot"
-      @close="showDeleteSpotModal = false"
+      @confirm="confirmDeleteWaypoint"
+      @close="showDeleteWaypointModal = false"
     />
 
     <!-- 여행 계획 삭제 확인 모달 -->
@@ -65,23 +65,30 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import PlanUpdateHeader from '@/components/plan-update/PlanUpdateHeader.vue'
 import PlanBasicInfo from '@/components/plan-update/PlanBasicInfo.vue'
-import PlanSpotList from '@/components/plan-update/PlanSpotList.vue'
-import PlanAddSpot from '@/components/plan-update/PlanAddSpot.vue'
+import PlanWaypointList from '@/components/plan-update/PlanWaypointList.vue'
+import PlanAddWaypoint from '@/components/plan-update/PlanAddWaypoint.vue'
 import ConfirmModal from '@/components/plan-update/ConfirmModal.vue'
+import { useAuthStore } from '@/stores/authStore.js'
+import axios from 'axios'
+import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 // 상태 관리
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
+const route = useRoute();
+const router = useRouter();
+const authStore = useAuthStore()
 const originalPlan = ref(null)
 const plan = ref({ plan: [] })
 const isSaving = ref(false)
 const showCancelModal = ref(false)
-const showDeleteSpotModal = ref(false)
+const showDeleteWaypointModal = ref(false)
 const showDeletePlanModal = ref(false)
-const spotToDelete = ref(null)
+const waypointToDelete = ref(null)
 
 // 변경 사항 감지
 const hasChanges = computed(() => {
   if (!originalPlan.value || !plan.value) return false
-
   return JSON.stringify(originalPlan.value) !== JSON.stringify(plan.value)
 })
 
@@ -103,63 +110,70 @@ function updatePlanBasicInfo(updatedInfo) {
 }
 
 // 여행 장소 목록 업데이트
-function updateSpots(updatedSpots) {
-  plan.value.spots = [...updatedSpots]
+function updateWaypoints(updatedWaypoints) {
+  plan.value.waypointList = [...updatedWaypoints]
 }
 
 // 장소 추가
-function addSpot(newSpot) {
-  plan.value.spots.push({
-    ...newSpot,
-    id: `spot-${Date.now()}`,
-    order: plan.value.spots.length,
+function addWaypoint(newWaypoint) {
+  plan.value.waypointList.push({
+    ...newWaypoint,
   })
 }
 
 // 장소 수정
-function editSpot(updatedSpot) {
-  const index = plan.value.spots.findIndex((spot) => spot.id === updatedSpot.id)
+function editWaypoint(updatedWaypoint) {
+  const index = plan.value.waypointList.findIndex((waypoint) => waypoint.id === updatedWaypoint.id)
   if (index !== -1) {
-    plan.value.spots[index] = { ...updatedSpot }
+    plan.value.waypointList[index] = { ...updatedWaypoint }
   }
 }
 
 // 장소 삭제 확인
-function deleteSpot(spot) {
-  spotToDelete.value = spot
-  showDeleteSpotModal.value = true
+function deleteWaypoint(waypoint) {
+  waypointToDelete.value = waypoint
+  showDeleteWaypointModal.value = true
 }
 
 // 장소 삭제 실행
-function confirmDeleteSpot() {
-  if (!spotToDelete.value) return
+function confirmDeleteWaypoint() {
+  if (!waypointToDelete.value) return
 
-  plan.value.spots = plan.value.spots.filter((spot) => spot.id !== spotToDelete.value.id)
+  plan.value.waypointList = plan.value.waypointList.filter((waypoint) => waypoint.id !== waypointToDelete.value.id)
 
   // 순서 재정렬
-  plan.value.spots.forEach((spot, index) => {
-    spot.order = index
+  plan.value.waypointList.forEach((waypoint, index) => {
+    waypoint.order = index
   })
 
-  showDeleteSpotModal.value = false
-  spotToDelete.value = null
+  showDeleteWaypointModal.value = false
+  waypointToDelete.value = null
 }
 
 // 여행 계획 저장
 async function savePlan() {
   if (!hasChanges.value) return
-
   isSaving.value = true
 
+  const requestBody = {
+    id: plan.value.id,
+    title: plan.value.title,
+    desc: plan.value.description,
+    thumbnailUrl: plan.value.waypointList.find(wp => wp.firstImage1 !== null).firstImage1,
+    startDate: plan.value.startDate,
+    endDate: plan.value.endDate,
+    attractionIds: plan.value.waypointList.map(item => item.id.id),
+  }
+  console.log(requestBody)
+
   try {
-    // 실제 구현: API 호출로 저장
-    await new Promise((resolve) => setTimeout(resolve, 1000))
-
-    // 저장 성공 시 원본 데이터 업데이트
-    originalPlan.value = JSON.parse(JSON.stringify(plan.value))
-
-    // 알림 표시
+    await axios.put(`${serverUrl}/api/v1/plans`, requestBody, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    })
     alert('여행 계획이 저장되었습니다.')
+    router.back()
   } catch (error) {
     console.error('저장 실패:', error)
     alert('저장 중 오류가 발생했습니다.')
@@ -180,7 +194,7 @@ function confirmCancel() {
 // 편집 취소
 function cancelEdit() {
   console.log('편집 취소, 목록 페이지로 이동')
-  // 실제 구현: router.push('/travel-plans')
+  router.back();
 }
 
 // 삭제 확인
@@ -207,53 +221,16 @@ async function deletePlan() {
 // 여행 계획 데이터 로드
 async function loadPlanData() {
   try {
-    // 실제 구현: API 호출로 데이터 가져오기
-    // 여기서는 더미 데이터 사용
-    const dummyPlan = {
-      id: '1',
-      title: '서울 3박 4일 여행',
-      destination: '서울',
-      startDate: '2025-06-10',
-      endDate: '2025-06-13',
-      description: '서울의 주요 관광지와 맛집을 탐방하는 여행',
-      isPublic: true,
-      thumbnail: 'https://via.placeholder.com/800x400?text=Seoul',
-      spots: [
-        {
-          id: 'spot-1',
-          name: '경복궁',
-          address: '서울 종로구 사직로 161',
-          category: '관광',
-          description: '조선시대 대표적인 궁궐',
-          order: 0,
-          location: { lat: 37.579617, lng: 126.977041 },
-        },
-        {
-          id: 'spot-2',
-          name: '광화문 광장',
-          address: '서울 종로구 세종로',
-          category: '관광',
-          description: '서울의 중심 광장',
-          order: 1,
-          location: { lat: 37.572976, lng: 126.976757 },
-        },
-        {
-          id: 'spot-3',
-          name: '명동',
-          address: '서울 중구 명동길',
-          category: '쇼핑',
-          description: '쇼핑과 맛집의 중심지',
-          order: 2,
-          location: { lat: 37.563576, lng: 126.983431 },
-        },
-      ],
-      createdAt: '2025-05-15T09:30:00Z',
-      updatedAt: '2025-05-18T14:20:00Z',
-    }
+    const response = await axios.get(`${serverUrl}/api/v1/plans/${route.params.id}`, {
+      headers: {
+        Authorization: `Bearer ${authStore.accessToken}`,
+      },
+    })
 
-    // 깊은 복사로 원본 데이터 저장
-    originalPlan.value = JSON.parse(JSON.stringify(dummyPlan))
-    plan.value = JSON.parse(JSON.stringify(dummyPlan))
+    console.log('데이터 로드')
+    console.log(response.data)
+    plan.value = JSON.parse(JSON.stringify(response.data))
+    originalPlan.value = JSON.parse(JSON.stringify(response.data))
   } catch (error) {
     console.error('데이터 로드 실패:', error)
     alert('여행 계획을 불러오는 중 오류가 발생했습니다.')

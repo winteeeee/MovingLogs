@@ -49,7 +49,7 @@ public class PlanServiceMapper {
 
     public static SearchMyPlansUseCase.Result toSearchPlanUseCaseResult(Plan plan) {
         LocalDate today = LocalDate.now();
-        LocalDate target = plan.getUpdatedAt().toLocalDate();
+        LocalDate target = plan.getStartDate();
         return SearchMyPlansUseCase.Result.builder()
                 .id(plan.getId())
                 .title(plan.getTitle())

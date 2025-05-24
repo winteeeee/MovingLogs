@@ -26,4 +26,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleBadRequestException(RuntimeException ex) {
         return buildErrorResponseEntity(HttpStatus.BAD_REQUEST, ex);
     }
+
+    @ExceptionHandler(RuntimeException.class)
+    public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
+        return buildErrorResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR, ex);
+    }
 }

@@ -20,6 +20,7 @@ const routes = [
   { path: '/login/success', name: 'LoginSuccessPage' , component: LoginSuccessPage },
   { path: '/my-plans', name: 'MyTripPlanPage', component: MyTripPlanPage },
   { path: '/plan/detail/:id', name: 'PlanDetailPage', component: PlanDetailPage },
+  { path: '/plan/update/:id', name: 'PlanUpdatePage', component: PlanUpdatePage },
   // 기타 라우트 정의
 ]
 

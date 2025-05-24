@@ -16,7 +16,12 @@ import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
-public class AttractionMyBatisAdapter implements SearchAttractionPort, CountAttractionPort, SearchContentTypePort, SearchGugunPort, SearchSidoPort {
+public class AttractionMyBatisAdapter implements
+        SearchAttractionPort,
+        CountAttractionPort,
+        SearchContentTypePort,
+        SearchGugunPort,
+        SearchSidoPort {
     private final AttractionDao attractionDao;
     private final ContentTypeDao contentTypeDao;
     private final GugunDao gugunDao;

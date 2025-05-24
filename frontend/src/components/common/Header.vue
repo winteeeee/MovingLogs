@@ -144,6 +144,7 @@ function logout() {
       console.log('로그아웃 실패: ', err)
     })
     .finally(() => {
+      alert("로그아웃 되었습니다.");
       authStore.clearAuthInfo()
       router.push('/')
     })

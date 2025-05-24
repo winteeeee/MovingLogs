@@ -13,9 +13,9 @@
 		WHERE 1=1
 		<if test="contentTypeId != null">
 			AND a.content_type_id = #{contentTypeId}
-			<if test="areaCode != null">
-				AND a.area_code = #{areaCode}
-			</if>
+		</if>
+		<if test="areaCode != null">
+			AND a.area_code = #{areaCode}
 		</if>
 		<if test="siGunGuCode != null">
 			AND a.si_gun_gu_code = #{siGunGuCode}
@@ -68,6 +68,10 @@
 		JOIN gugun g ON a.area_code = g.sido_code AND a.si_gun_gu_code = g.gugun_code
 		WHERE a.id IN
 		<foreach collection="list" item="id" open="(" separator="," close=")">
+			#{id}
+		</foreach>
+		ORDER BY FIELD(a.id
+		<foreach collection="list" item="id" open="," separator="," close=")">
 			#{id}
 		</foreach>
 	</select>

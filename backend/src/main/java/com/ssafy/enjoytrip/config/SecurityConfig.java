@@ -1,11 +1,12 @@
 package com.ssafy.enjoytrip.config;
 
 import com.ssafy.enjoytrip.security.*;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,14 +32,6 @@ public class SecurityConfig {
     }
 
     @Bean
-    public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(customUserDetailsService);
-        provider.setPasswordEncoder(passwordEncoder());
-        return provider;
-    }
-
-    @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
             JWTVerificationFilter jwtVerifyFilter,
@@ -47,16 +40,19 @@ public class SecurityConfig {
         //인증, 유저 관련 API만 인증 없이 접근 허용. 나머지는 인증 필요하도록 설정
         //JWT 관련 필터 삽입
         http.csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
         .securityContext(context -> context.securityContextRepository(new NullSecurityContextRepository()))
         .authorizeHttpRequests(authorize -> authorize
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/swagger-ui/**").permitAll()
+                .requestMatchers("/oauth2/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/users").permitAll()
                 .anyRequest().authenticated())
         .addFilterBefore(jwtVerifyFilter, UsernamePasswordAuthenticationFilter.class)
-        .addFilterBefore(exceptionFilter, JWTVerificationFilter.class)
-        .authenticationProvider(authenticationProvider())
+                .exceptionHandling(e -> e.authenticationEntryPoint((req, res, ex) -> {
+                    res.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                }))
         .oauth2Login(oauth2 -> oauth2
             .userInfoEndpoint(userInfo -> userInfo
                 .userService(defaultOAuth2UserService))

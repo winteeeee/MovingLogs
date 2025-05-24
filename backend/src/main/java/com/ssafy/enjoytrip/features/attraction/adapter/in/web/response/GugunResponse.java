@@ -8,6 +8,6 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class GugunResponse {
-    private Long gugunCode;
+    private String gugunCode;
     private String gugunName;
 }

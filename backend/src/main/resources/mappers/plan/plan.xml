@@ -44,10 +44,10 @@
         <set>
             <if test="title != null">title = #{title},</if>
             <if test="description != null">description = #{description},</if>
-            <if test="thumbnailUrl != null">thumbnail_url = #{thumbnailUrl}</if>
+            <if test="thumbnailUrl != null">thumbnail_url = #{thumbnailUrl},</if>
             <if test="startDate != null">start_date = #{startDate},</if>
             <if test="endDate != null">end_date = #{endDate},</if>
-            updated_at = #{updatedAt}
+            updated_at = #{updatedAt},
         </set>
         WHERE id = #{id.id} AND is_deleted = 0
     </update>

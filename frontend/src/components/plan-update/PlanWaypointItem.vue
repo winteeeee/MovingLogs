@@ -1,6 +1,6 @@
 <template>
-  <div class="plan-spot-item">
-    <div class="spot-order">
+  <div class="plan-waypoint-item">
+    <div class="waypoint-order">
       <div class="order-buttons">
         <button
           class="order-button"
@@ -22,17 +22,16 @@
       <div class="order-number">{{ index + 1 }}</div>
     </div>
 
-    <div class="spot-info">
-      <div class="spot-name">{{ spot.name }}</div>
-      <div class="spot-details">
-        <span class="spot-category">{{ spot.category }}</span>
-        <span class="spot-address">{{ spot.address }}</span>
+    <div class="waypoint-info">
+      <div class="waypoint-name">{{ waypoint.title }}</div>
+      <div class="waypoint-details">
+        <span class="waypoint-category">{{ waypoint.contentTypeName }}</span>
+        <span class="waypoint-address">{{ waypoint.addr1 }}</span>
       </div>
-      <div class="spot-description">{{ spot.description }}</div>
     </div>
 
-    <div class="spot-actions">
-      <button class="button button-icon button-danger" @click="$emit('delete', spot)" title="삭제">
+    <div class="waypoint-actions">
+      <button class="button button-icon button-danger" @click="$emit('delete', waypoint)" title="삭제">
         <span class="icon-trash"></span>
       </button>
     </div>
@@ -41,7 +40,7 @@
 
 <script setup>
 defineProps({
-  spot: {
+  waypoint: {
     type: Object,
     required: true,
   },
@@ -64,7 +63,7 @@ defineEmits(['delete', 'move-up', 'move-down'])
 
 <style scoped>
 /* 스팟 아이템 스타일 */
-.plan-spot-item {
+.plan-waypoint-item {
   display: flex;
   align-items: center;
   padding: 16px;
@@ -72,12 +71,12 @@ defineEmits(['delete', 'move-up', 'move-down'])
   transition: background-color 0.2s;
 }
 
-.plan-spot-item:hover {
+.plan-waypoint-item:hover {
   background-color: #f8f9fa;
 }
 
 /* 순서 영역 */
-.spot-order {
+.waypoint-order {
   width: 60px;
   display: flex;
   flex-direction: column;
@@ -128,18 +127,18 @@ defineEmits(['delete', 'move-up', 'move-down'])
 }
 
 /* 정보 영역 */
-.spot-info {
+.waypoint-info {
   flex: 1;
   padding-right: 16px;
 }
 
-.spot-name {
+.waypoint-name {
   font-weight: 600;
   font-size: 1rem;
   margin-bottom: 4px;
 }
 
-.spot-details {
+.waypoint-details {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -147,18 +146,18 @@ defineEmits(['delete', 'move-up', 'move-down'])
   font-size: 0.85rem;
 }
 
-.spot-category {
+.waypoint-category {
   background-color: #e9ecef;
   padding: 2px 8px;
   border-radius: 12px;
   color: #495057;
 }
 
-.spot-address {
+.waypoint-address {
   color: #6c757d;
 }
 
-.spot-description {
+.waypoint-description {
   font-size: 0.85rem;
   color: #6c757d;
   display: -webkit-box;
@@ -168,17 +167,17 @@ defineEmits(['delete', 'move-up', 'move-down'])
 }
 
 /* 시간 영역 */
-.spot-time {
+.waypoint-time {
   width: 180px;
   padding: 0 16px;
 }
 
-.spot-date {
+.waypoint-date {
   font-weight: 500;
   margin-bottom: 4px;
 }
 
-.spot-time-details {
+.waypoint-time-details {
   display: flex;
   align-items: center;
   gap: 8px;
@@ -186,14 +185,14 @@ defineEmits(['delete', 'move-up', 'move-down'])
   color: #6c757d;
 }
 
-.spot-duration {
+.waypoint-duration {
   background-color: #e9ecef;
   padding: 2px 8px;
   border-radius: 12px;
 }
 
 /* 액션 영역 */
-.spot-actions {
+.waypoint-actions {
   width: 120px;
   display: flex;
   justify-content: center;
@@ -252,26 +251,26 @@ defineEmits(['delete', 'move-up', 'move-down'])
 
 /* 반응형 디자인 */
 @media (max-width: 768px) {
-  .plan-spot-item {
+  .plan-waypoint-item {
     flex-wrap: wrap;
   }
 
-  .spot-order {
+  .waypoint-order {
     width: 40px;
   }
 
-  .spot-info {
+  .waypoint-info {
     width: calc(100% - 40px);
     padding-right: 0;
     margin-bottom: 12px;
   }
 
-  .spot-time {
+  .waypoint-time {
     width: 50%;
     padding: 0;
   }
 
-  .spot-actions {
+  .waypoint-actions {
     width: 50%;
     justify-content: flex-end;
   }

@@ -169,13 +169,13 @@ function navigateToCreate() {
 // 여행 계획 상세 보기
 function viewPlan(plan) {
   console.log('여행 계획 상세 보기:', plan.id)
-  router.push('/plan/detail/' + plan.id);
+  router.push(`/plan/detail/${plan.id}`);
 }
 
 // 여행 계획 수정
 function editPlan(plan) {
   console.log('여행 계획 수정:', plan.id)
-  // 실제 구현: router.push(`/travel-plans/${plan.id}/edit`)
+  router.push(`/plan/update/${plan.id}`)
 }
 
 // 여행 계획 삭제 확인

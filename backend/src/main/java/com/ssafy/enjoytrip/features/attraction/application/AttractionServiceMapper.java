@@ -43,7 +43,7 @@ public class AttractionServiceMapper {
 
     public static SearchGugunUseCase.Result toSearchGugunUseCaseResult(Gugun gugun) {
         return SearchGugunUseCase.Result.builder()
-                .id(gugun.getId())
+                .gugunCode(String.valueOf(gugun.getGugunCode()))
                 .gugunName(gugun.getGugunName())
                 .build();
     }

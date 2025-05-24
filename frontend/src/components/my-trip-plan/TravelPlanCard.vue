@@ -1,9 +1,10 @@
 <template>
   <div class="travel-plan-card" @click="$emit('view', plan)">
     <div class="card-thumbnail">
-      <img :src="plan.thumbnail" :alt="plan.title" class="thumbnail-img" />
+      <img :src="plan.thumbnailUrl" :alt="plan.title" class="thumbnail-img" />
       <div class="card-date-badge" :class="getDateBadgeClass">
-        <span v-if="plan.dDay > 0">D-{{ plan.dDay }}</span>
+        <span v-if="plan.dday > 0">D-{{ plan.dday }}</span>
+        <span v-else-if="plan.dday === 0">D-Day</span>
         <span v-else>지난 여행</span>
       </div>
     </div>
