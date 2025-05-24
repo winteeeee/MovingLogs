@@ -73,12 +73,28 @@ import PostWriteRouteImageUploader from '@/components/post-write/PostWriteRouteI
 import PostWriteImageUploader from '@/components/post-write/PostWriteImageUploader.vue'
 import CKEditor from '@/components/common/CKEditor.vue'
 
+
+
 const props = defineProps({
+  tripId: {
+    type: String,
+    default: null,
+  },
   editPostId: {
     type: Number,
     default: null,
   },
 })
+
+onMounted(() => {
+  if (props.tripId) {
+
+  } else if (props.editPostId) {
+
+  } else {
+
+  }
+});
 
 const isEditing = ref(false)
 const isAdmin = ref(false) // 실제 구현 시 사용자 권한에 따라 설정

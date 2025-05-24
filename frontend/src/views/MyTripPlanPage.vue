@@ -32,6 +32,7 @@
           @view="viewPlan"
           @edit="editPlan"
           @delete="confirmDeletePlan"
+          @write-tripost="writeTripost"
         />
       </div>
 
@@ -186,6 +187,13 @@ function confirmDeletePlan(plan) {
 
   // 모달 표시 시 body 스크롤 방지
   document.body.style.overflow = 'hidden'
+}
+
+function writeTripost(plan) {
+  router.push({
+    name: 'TripostWritePage',
+    params: {'planId': plan.id},
+  });
 }
 
 // 삭제 모달 닫기
