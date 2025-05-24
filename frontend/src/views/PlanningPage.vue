@@ -21,7 +21,7 @@
       </div>
 
       <!-- 왼쪽 사이드바 오버레이 -->
-      <div class="left-sidebar-overlay" :class="{ 'expanded': detailPanelOpen }">
+      <div class="left-sidebar-overlay" :class="{ expanded: detailPanelOpen }">
         <div class="sidebar-layout">
           <!-- 검색 패널 (항상 표시) -->
           <div class="search-panel">
@@ -32,42 +32,25 @@
                 <div class="form-row">
                   <div class="form-group">
                     <label>지역</label>
-                    <select class="form-select">
-                      <option value="">전체 지역</option>
-                      <option value="1">서울특별시</option>
-                      <option value="2">인천광역시</option>
-                      <option value="3">대전광역시</option>
-                      <option value="4">대구광역시</option>
-                      <option value="5">광주광역시</option>
-                      <option value="6">부산광역시</option>
-                      <option value="7">울산광역시</option>
-                      <option value="8">세종특별자치시</option>
-                      <option value="31">경기도</option>
-                      <option value="32">강원특별자치도</option>
-                      <option value="33">충청북도</option>
-                      <option value="34">충청남도</option>
-                      <option value="35">경상북도</option>
-                      <option value="36">경상남도</option>
-                      <option value="37">전북특별자치도</option>
-                      <option value="38">전라남도</option>
-                      <option value="39">제주특별자치도</option>
+                    <select class="form-select" v-model="sidoSelected">
+                      <option disabled value="">지역 선택</option>
+                      <option v-for="sido in sidoList" :value="sido.sidoCode" :key="sido.sidoCode">
+                        {{ sido.sidoName }}
+                      </option>
                     </select>
                   </div>
 
                   <div class="form-group">
                     <label>시군구</label>
-                    <select class="form-select">
+                    <select class="form-select" v-model="gugunSelected">
                       <option value="">전체 시군구</option>
-                      <option value="1">강남구</option>
-                      <option value="2">강동구</option>
-                      <option value="3">강북구</option>
-                      <option value="4">강서구</option>
-                      <option value="5">관악구</option>
-                      <option value="6">광진구</option>
-                      <option value="7">구로구</option>
-                      <option value="8">금천구</option>
-                      <option value="9">노원구</option>
-                      <option value="10">도봉구</option>
+                      <option
+                        v-for="gugun in gugunList"
+                        :value="gugun.gugunCode"
+                        :key="gugun.gugunCode"
+                      >
+                        {{ gugun.gugunName }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -75,23 +58,22 @@
                 <div class="form-row">
                   <div class="form-group">
                     <label>관광지 종류</label>
-                    <select class="form-select">
+                    <select class="form-select" v-model="contentTypeSelected">
                       <option value="">전체 종류</option>
-                      <option value="12">관광지</option>
-                      <option value="14">문화시설</option>
-                      <option value="15">축제공연행사</option>
-                      <option value="25">여행코스</option>
-                      <option value="28">레포츠</option>
-                      <option value="32">숙박</option>
-                      <option value="38">쇼핑</option>
-                      <option value="39">음식점</option>
+                      <option
+                        v-for="contentType in contentTypeList"
+                        :value="contentType.contentTypeId"
+                        :key="contentType.contentTypeId"
+                      >
+                        {{ contentType.contentTypeName }}
+                      </option>
                     </select>
                   </div>
                 </div>
 
                 <div class="search-input-group">
-                  <input type="text" class="form-control" placeholder="검색어를 입력하세요">
-                  <button class="btn btn-search">검색</button>
+                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />
+                  <button class="btn btn-search" @click="search">검색</button>
                   <button class="btn btn-ai">AI 지도 보기</button>
                 </div>
               </div>
@@ -104,17 +86,25 @@
               </div>
 
               <div class="search-results">
-                <div class="place-card" v-for="place in searchResults" :key="place.id"
-                     :class="{ 'active': selectedPlace && selectedPlace.id === place.id }">
+                <div
+                  class="place-card"
+                  v-for="place in searchResults"
+                  :key="place.id"
+                  :class="{ active: selectedPlace && selectedPlace.id === place.id }"
+                  @click="showPlaceDetail(place)"
+                >
                   <div class="place-image">
-                    <img :src="place.first_image || 'https://via.placeholder.com/80?text=No+Image'" :alt="place.title">
+                    <img
+                      :src="place.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'"
+                      :alt="place.title"
+                    />
                   </div>
-                  <div class="place-info" @click="showPlaceDetail(place)">
+                  <div class="place-info">
                     <h4>{{ place.title }}</h4>
                     <p class="place-address">{{ place.addr1 }}</p>
                     <div class="place-tags">
-                      <span class="tag">{{ getAreaName(place.area_code) }}</span>
-                      <span class="tag">{{ getContentTypeName(place.content_type_id) }}</span>
+                      <span class="tag">{{ place.gugunName }}</span>
+                      <span class="tag">{{ place.contentTypeName }}</span>
                     </div>
                   </div>
                   <button
@@ -140,8 +130,12 @@
 
             <div class="detail-content">
               <div class="detail-image">
-                <img :src="selectedPlace.first_image || 'https://via.placeholder.com/400x250?text=No+Image'"
-                     :alt="selectedPlace.title">
+                <img
+                  :src="
+                    selectedPlace.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'
+                  "
+                  :alt="selectedPlace.title"
+                />
               </div>
 
               <div class="detail-info">
@@ -177,10 +171,18 @@
             </div>
 
             <div class="detail-footer">
-              <button class="btn btn-action w-100" v-if="!isInRoute(selectedPlace.id)" @click="addToRoute(selectedPlace)">
+              <button
+                class="btn btn-action w-100"
+                v-if="!isInRoute(selectedPlace.id)"
+                @click="addToRoute(selectedPlace)"
+              >
                 <span class="btn-text">경로 추가하기</span>
               </button>
-              <button class="btn btn-danger w-100" v-else @click="removeFromRoute(selectedPlace.id)">
+              <button
+                class="btn btn-danger w-100"
+                v-else
+                @click="removeFromRoute(selectedPlace.id)"
+              >
                 <span class="btn-text">경로에서 제거</span>
               </button>
             </div>
@@ -197,23 +199,27 @@
             <div class="plan-form">
               <div class="form-group">
                 <label>여행 계획 이름</label>
-                <input type="text" class="form-control" placeholder="예: 서울 3박 4일 여행">
+                <input type="text" class="form-control" placeholder="예: 서울 3박 4일 여행" />
               </div>
 
               <div class="form-row">
                 <div class="form-group">
                   <label>시작일</label>
-                  <input type="date" class="form-control">
+                  <input type="date" class="form-control" />
                 </div>
                 <div class="form-group">
                   <label>종료일</label>
-                  <input type="date" class="form-control">
+                  <input type="date" class="form-control" />
                 </div>
               </div>
 
               <div class="form-group">
                 <label>여행 계획 설명</label>
-                <textarea class="form-control" rows="3" placeholder="여행 계획에 대한 설명을 입력하세요."></textarea>
+                <textarea
+                  class="form-control"
+                  rows="3"
+                  placeholder="여행 계획에 대한 설명을 입력하세요."
+                ></textarea>
               </div>
             </div>
           </div>
@@ -239,13 +245,16 @@
                 class="route-items"
                 item-key="id"
                 handle=".route-item"
-                @start="drag=true"
-                @end="drag=false"
+                @start="drag = true"
+                @end="drag = false"
               >
-                <template #item="{element, index}">
-                  <div class="route-item" :class="{ 'active': selectedPlace && selectedPlace.id === element.id }">
+                <template #item="{ element, index }">
+                  <div
+                    class="route-item"
+                    :class="{ active: selectedPlace && selectedPlace.id === element.id }"
+                  >
                     <div class="route-number">{{ index + 1 }}</div>
-                    <div class="route-info" >
+                    <div class="route-info">
                       <h4>{{ element.title }}</h4>
                       <p>{{ element.addr1 }}</p>
                     </div>
@@ -281,16 +290,64 @@ import api from '@/api/axios.js'
 
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
-
+const contentTypeList = ref([]);
 const sidoList = ref([]);
+const gugunList = ref([]);
+
+const sidoSelected = ref("");
+const gugunSelected = ref("");
+const contentTypeSelected = ref("");
+
+// {
+//   id: 'attr01',
+//   content_id: 1,
+//   title: '경복궁',
+//   content_type_id: 12,
+//   area_code: 1,
+//   si_gun_gu_code: 23,
+//   first_image: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2017/11/1-1.jpg',
+//   first_image2: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2017/11/1-1.jpg',
+//   map_level: 5,
+//   latitude: 37.579617,
+//   longitude: 126.977041,
+//   tel: '02-3700-3900',
+//   addr1: '서울 종로구 사직로 161',
+//   addr2: '세종로',
+//   homepage: 'http://www.royalpalace.go.kr',
+//   overview: '경복궁은 조선왕조의 법궁(法宮)으로, 1395년에 창건되었다. 경복궁은 동궐(창덕궁)과 서궐(경희궁)의 중간에 위치한 북궐로, 조선의 중심 법궁이었다.'
+// }
+// 검색 결과 데이터
+const searchResults = ref([]);
+
+// 경로에 추가된 장소들
+const routePlaces = ref([]);
 
 onMounted(async () => {
-  const response = await api.get(`${serverUrl}/api/v1/attractions/sidos`);
-  console.log(response);
-  // 여기에 DOM 조작 코드나 초기화 코드 작성
+  const contTypeRes = await api.get(`${serverUrl}/api/v1/attractions/content-types`);
+  contentTypeList.value = contTypeRes.data;
+
+  const sidoRes = await api.get(`${serverUrl}/api/v1/attractions/sidos`);
+  sidoList.value = sidoRes.data;
 });
 
+watch(sidoSelected, async ()=>{
+  const response = await api.get(`${serverUrl}/api/v1/attractions/guguns?sidoCode=${sidoSelected.value}`);
+  gugunList.value = response.data;
+  gugunSelected.value = "";
+});
 
+const search = async () => {
+  const response = await api.get(`${serverUrl}/api/v1/attractions`, {
+    params: {
+      contentTypeId: contentTypeSelected.value,
+      areaCode: sidoSelected.value,
+      siGunGuCode: gugunSelected.value,
+      page: 1,
+      pageSize: 1000
+    }
+  });
+  searchResults.value = response.data.content;
+}
 
 // 드래그 상태
 const drag = ref(false);
@@ -308,224 +365,7 @@ let markers = [];
 let polyline = null;
 let highlightedMarker = null;
 
-// 검색 결과 데이터
-const searchResults = ref([
-  {
-    id: 'attr01',
-    content_id: 1,
-    title: '경복궁',
-    content_type_id: 12,
-    area_code: 1,
-    si_gun_gu_code: 23,
-    first_image: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2017/11/1-1.jpg',
-    first_image2: 'https://www.shinsegaegroupnewsroom.com/wp-content/uploads/2017/11/1-1.jpg',
-    map_level: 5,
-    latitude: 37.579617,
-    longitude: 126.977041,
-    tel: '02-3700-3900',
-    addr1: '서울 종로구 사직로 161',
-    addr2: '세종로',
-    homepage: 'http://www.royalpalace.go.kr',
-    overview: '경복궁은 조선왕조의 법궁(法宮)으로, 1395년에 창건되었다. 경복궁은 동궐(창덕궁)과 서궐(경희궁)의 중간에 위치한 북궐로, 조선의 중심 법궁이었다.'
-  },
-  {
-    id: 'attr02',
-    content_id: 2,
-    title: '남산서울타워',
-    content_type_id: 12,
-    area_code: 1,
-    si_gun_gu_code: 24,
-    first_image: 'https://via.placeholder.com/300x200?text=남산타워',
-    first_image2: 'https://via.placeholder.com/80?text=남산타워',
-    map_level: 5,
-    latitude: 37.551245,
-    longitude: 126.988222,
-    tel: '02-3455-9277',
-    addr1: '서울 용산구 남산공원길 105',
-    addr2: '',
-    homepage: 'http://www.seoultower.co.kr',
-    overview: '남산서울타워는 서울 중구 남산 정상 부근에 위치한 전파 송출 및 관광용 타워이다.'
-  },
-  {
-    id: 'attr03',
-    content_id: 3,
-    title: '명동 쇼핑거리',
-    content_type_id: 38,
-    area_code: 1,
-    si_gun_gu_code: 24,
-    first_image: 'https://via.placeholder.com/300x200?text=명동',
-    first_image2: 'https://via.placeholder.com/80?text=명동',
-    map_level: 5,
-    latitude: 37.563576,
-    longitude: 126.983431,
-    tel: '',
-    addr1: '서울 중구 명동길',
-    addr2: '',
-    homepage: '',
-    overview: '명동은 서울특별시 중구에 있는 상업지역이다.'
-  },
-  {
-    id: 'attr04',
-    content_id: 4,
-    title: '창덕궁',
-    content_type_id: 12,
-    area_code: 1,
-    si_gun_gu_code: 23,
-    first_image: 'https://via.placeholder.com/300x200?text=창덕궁',
-    first_image2: 'https://via.placeholder.com/80?text=창덕궁',
-    map_level: 5,
-    latitude: 37.582036,
-    longitude: 126.991168,
-    tel: '02-3668-2300',
-    addr1: '서울 종로구 율곡로 99',
-    addr2: '',
-    homepage: 'http://www.cdg.go.kr',
-    overview: '창덕궁은 조선시대 궁궐 중 가장 오랫동안 임금들이 거처한 궁궐로, 자연과 조화를 이룬 아름다운 궁궐이다.'
-  },
-  {
-    id: 'attr05',
-    content_id: 5,
-    title: '북촌한옥마을',
-    content_type_id: 12,
-    area_code: 1,
-    si_gun_gu_code: 23,
-    first_image: 'https://via.placeholder.com/300x200?text=북촌한옥마을',
-    first_image2: 'https://via.placeholder.com/80?text=북촌한옥마을',
-    map_level: 5,
-    latitude: 37.582014,
-    longitude: 126.983394,
-    tel: '02-2133-1371',
-    addr1: '서울 종로구 계동길 37',
-    addr2: '',
-    homepage: '',
-    overview: '북촌한옥마을은 경복궁과 창덕궁 사이에 위치한 전통 한옥마을로, 조선시대 양반들이 거주했던 지역이다.'
-  },
-  {
-    id: 'attr06',
-    content_id: 6,
-    title: '인사동',
-    content_type_id: 38,
-    area_code: 1,
-    si_gun_gu_code: 23,
-    first_image: 'https://via.placeholder.com/300x200?text=인사동',
-    first_image2: 'https://via.placeholder.com/80?text=인사동',
-    map_level: 5,
-    latitude: 37.574297,
-    longitude: 126.985302,
-    tel: '',
-    addr1: '서울 종로구 인사동길',
-    addr2: '',
-    homepage: '',
-    overview: '인사동은 전통문화와 현대문화가 공존하는 문화의 거리로, 다양한 전통공예품과 차문화를 체험할 수 있다.'
-  },
-  {
-    id: 'attr07',
-    content_id: 7,
-    title: '동대문디자인플라자',
-    content_type_id: 14,
-    area_code: 1,
-    si_gun_gu_code: 25,
-    first_image: 'https://via.placeholder.com/300x200?text=DDP',
-    first_image2: 'https://via.placeholder.com/80?text=DDP',
-    map_level: 5,
-    latitude: 37.566569,
-    longitude: 127.009033,
-    tel: '02-2153-0000',
-    addr1: '서울 중구 을지로 281',
-    addr2: '',
-    homepage: 'http://www.ddp.or.kr',
-    overview: '동대문디자인플라자는 자하 하디드가 설계한 현대적인 건축물로, 디자인과 문화의 복합공간이다.'
-  },
-  {
-    id: 'attr08',
-    content_id: 8,
-    title: '홍대거리',
-    content_type_id: 38,
-    area_code: 1,
-    si_gun_gu_code: 26,
-    first_image: 'https://via.placeholder.com/300x200?text=홍대',
-    first_image2: 'https://via.placeholder.com/80?text=홍대',
-    map_level: 5,
-    latitude: 37.556785,
-    longitude: 126.922497,
-    tel: '',
-    addr1: '서울 마포구 와우산로',
-    addr2: '',
-    homepage: '',
-    overview: '홍대거리는 젊음과 예술이 살아 숨쉬는 거리로, 다양한 클럽과 카페, 공연장이 밀집해 있다.'
-  },
-  {
-    id: 'attr09',
-    content_id: 9,
-    title: '한강공원',
-    content_type_id: 12,
-    area_code: 1,
-    si_gun_gu_code: 27,
-    first_image: 'https://via.placeholder.com/300x200?text=한강공원',
-    first_image2: 'https://via.placeholder.com/80?text=한강공원',
-    map_level: 5,
-    latitude: 37.529787,
-    longitude: 126.936893,
-    tel: '02-3780-0561',
-    addr1: '서울 영등포구 여의동로 330',
-    addr2: '',
-    homepage: '',
-    overview: '한강공원은 서울 시민들의 휴식공간으로, 자전거 타기, 피크닉, 수상스포츠 등을 즐길 수 있다.'
-  },
-  {
-    id: 'attr10',
-    content_id: 10,
-    title: '롯데월드타워',
-    content_type_id: 12,
-    area_code: 1,
-    si_gun_gu_code: 28,
-    first_image: 'https://via.placeholder.com/300x200?text=롯데타워',
-    first_image2: 'https://via.placeholder.com/80?text=롯데타워',
-    map_level: 5,
-    latitude: 37.512400,
-    longitude: 127.102509,
-    tel: '1661-2000',
-    addr1: '서울 송파구 올림픽로 300',
-    addr2: '',
-    homepage: 'http://www.lwt.co.kr',
-    overview: '롯데월드타워는 대한민국에서 가장 높은 건물로, 전망대에서 서울 전경을 한눈에 볼 수 있다.'
-  }
-]);
 
-// 경로에 추가된 장소들
-const routePlaces = ref([]);
-
-// 지역 코드에 따른 지역명 반환
-const getAreaName = (areaCode) => {
-  const areaNames = {
-    1: '서울',
-    2: '인천',
-    3: '대전',
-    4: '대구',
-    5: '광주',
-    6: '부산',
-    7: '울산',
-    8: '세종',
-    31: '경기도',
-    32: '강원도',
-    33: '충청북도',
-    34: '충청남도',
-    35: '경상북도',
-    36: '경상남도',
-    37: '전라북도',
-    38: '전라남도',
-    39: '제주도'
-  };
-  return areaNames[areaCode] || '기타';
-};
-
-// 콘텐츠 타입에 따른 타입명 반환
-const getContentTypeName = (contentTypeId) => {
-  const contentTypes = {
-    12: '관광지', 14: '문화시설', 15: '축제공연행사', 25: '여행코스', 28: '레포츠', 32: '숙박', 38: '쇼핑', 39: '음식점'
-  };
-  return contentTypes[contentTypeId] || '기타';
-};
 
 // 장소 상세 정보 표시
 const showPlaceDetail = (place) => {
@@ -745,7 +585,6 @@ onUnmounted(() => {
 });
 </script>
 
-
 <style scoped>
 /* 전역 스타일 */
 .route-create-page {
@@ -904,7 +743,8 @@ onUnmounted(() => {
   color: #555;
 }
 
-.form-control, .form-select {
+.form-control,
+.form-select {
   width: 100%;
   padding: 8px 12px;
   border: 1px solid #ddd;
@@ -996,6 +836,7 @@ onUnmounted(() => {
 
 .search-results {
   overflow-y: auto;
+  overflow-x: hidden;
   flex: 1;
 }
 
@@ -1020,7 +861,8 @@ onUnmounted(() => {
 }
 
 .place-image {
-  width: 60px;
+  min-width: 60px;
+  max-width: 60px;
   height: 60px;
   margin-right: 12px;
   border-radius: 4px;
@@ -1035,6 +877,8 @@ onUnmounted(() => {
 
 .place-info {
   flex: 1;
+  overflow: hidden;
+  margin-right: 25px;
 }
 
 .place-info h4 {
@@ -1091,7 +935,7 @@ onUnmounted(() => {
 
 .toggle-route-btn.is-add {
   border: 1px solid #ff6b35;
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   color: #ff6b35;
   //background-color: #ff6b35;
 }
@@ -1103,7 +947,7 @@ onUnmounted(() => {
 
 .toggle-route-btn.is-add:hover {
   background-color: #e55a2b;
-  color: #FFFFFF;
+  color: #ffffff;
   transform: scale(1.1);
 }
 
@@ -1212,7 +1056,8 @@ onUnmounted(() => {
   margin-bottom: 3px;
 }
 
-.info-item p, .info-item a {
+.info-item p,
+.info-item a {
   margin: 0;
   font-size: 0.85rem;
   color: #666;
@@ -1449,7 +1294,6 @@ onUnmounted(() => {
   width: 100%;
 }
 
-
 @keyframes pop-in {
   0% {
     transform: scale(0.5);
@@ -1627,7 +1471,6 @@ onUnmounted(() => {
   border-right: 8px solid transparent;
   border-top: 8px solid #28a745;
 }
-
 
 .speech-bubble {
   position: relative;
