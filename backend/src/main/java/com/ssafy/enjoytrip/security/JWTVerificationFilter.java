@@ -7,6 +7,7 @@ import com.ssafy.enjoytrip.features.auth.application.port.out.SaveRefreshTokenPo
 import com.ssafy.enjoytrip.features.auth.application.port.out.SearchRefreshTokenPort;
 import com.ssafy.enjoytrip.features.user.application.exception.UserNotFoundException;
 import com.ssafy.enjoytrip.features.user.application.port.out.SearchUserPort;
+import com.ssafy.enjoytrip.features.user.domain.Uid;
 import com.ssafy.enjoytrip.features.user.domain.User;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
@@ -52,10 +53,11 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
             //리프레시 토큰을 확인해봄
             Optional<String> refreshToken = searchRefreshTokenPort.searchRefreshToken(token);
             if (refreshToken.isPresent()) {
+                logger.debug("토큰 재발급");
                 //리프레시 토큰이 만료되지 않았다면 둘 다 재발급
                 Map<String, Object> claims = jwtTokenProvider.getClaims(refreshToken.get());
                 String uid = (String) claims.get("uid");
-                User user = searchUserPort.searchUser(uid)
+                User user = searchUserPort.searchUserByUid(new Uid(uid))
                         .orElseThrow(() -> new UserNotFoundException("uid에 대응하는 유저가 없습니다."));
                 String accessToken = jwtTokenProvider.createAccessToken(user);
                 String newRefreshToken = jwtTokenProvider.createRefreshToken(user);
@@ -63,11 +65,24 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
                 //레디스에 리프레시 토큰 저장, 컨텍스트 홀더에 유저 디테일 저장, 액세스 토큰 응답으로 전송
                 saveRefreshTokenPort.saveRefreshToken(accessToken, newRefreshToken);
                 saveUserDetailsToSecurityContextHolder(uid);
-                JwtUtils.redirectWithJwtToken(response, accessToken, user.getName());
+
+                /*
+                이 시점에서는 클라이언트의 API가 axios로 요청된 경우.
+                로그인 버튼을 눌렀을 때는 axios가 아니라 windows.loaction을 직접 바꿔서 접근하기 때문에
+                리다이렉트로 토큰을 수신할 수 있지만
+                axios는 redirect 요청을 정상적으로 받지 않으므로 다른 방법으로 요청해야함
+                따라서 액세스 토큰을 JSON의 형태로 담아 클라이언트로 보내고
+                axios의 인터셉터를 이용하여 응답에 액세스 토큰이 있다면 토큰을 클라이언트측에 저장하고
+                다시 재요청을 보내도록 구현
+                또한 여기서 값이 반환되므로 현재 들어온 요청이 이 필터를 통과하면 안됨
+                따라서 doFilter 하지 않고 그대로 반환
+                 */
+                JwtUtils.responseWithJwtToken(response, accessToken, user.getName());
+                return;
             }
-        } finally {
-            filterChain.doFilter(request, response);
         }
+
+        filterChain.doFilter(request, response);
     }
 
     private void saveUserDetailsToSecurityContextHolder(String uid) {
