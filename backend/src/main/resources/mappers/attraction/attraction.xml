@@ -13,12 +13,12 @@
 		WHERE 1=1
 		<if test="contentTypeId != null">
 			AND a.content_type_id = #{contentTypeId}
-			<if test="areaCode != null">
-				AND a.area_code = #{areaCode}
-			</if>
 		</if>
-		<if test="siGunGuCode != null">
-			AND a.si_gun_gu_code = #{siGunGuCode}
+		<if test="areaCode != null">
+			AND a.area_code = #{areaCode}
+			<if test="siGunGuCode != null">
+				AND a.si_gun_gu_code = #{siGunGuCode}
+			</if>
 		</if>
 		LIMIT #{limit} OFFSET #{offset}
  	</select>

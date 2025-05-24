@@ -29,7 +29,7 @@ public class AttractionControllerMapper {
 
     public static GugunResponse toGugunResponse(SearchGugunUseCase.Result result) {
         return GugunResponse.builder()
-                .gugunCode(result.getId().getId())
+                .gugunCode(result.getGugunCode())
                 .gugunName(result.getGugunName())
                 .build();
     }

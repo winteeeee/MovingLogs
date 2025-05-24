@@ -1,6 +1,5 @@
 package com.ssafy.enjoytrip.features.attraction.application;
 
-import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.attraction.application.port.in.SearchAttractionUseCase;
 import com.ssafy.enjoytrip.features.attraction.application.port.in.SearchContentTypeUseCase;
 import com.ssafy.enjoytrip.features.attraction.application.port.in.SearchGugunUseCase;
@@ -43,7 +42,7 @@ public class AttractionServiceMapper {
 
     public static SearchGugunUseCase.Result toSearchGugunUseCaseResult(Gugun gugun) {
         return SearchGugunUseCase.Result.builder()
-                .id(gugun.getId())
+                .gugunCode(gugun.getGugunCode())
                 .gugunName(gugun.getGugunName())
                 .build();
     }
