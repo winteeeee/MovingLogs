@@ -60,7 +60,7 @@ const localList = ref([...props.waypointList])
 // props 변경 감지 시 localList 동기화
 watch(() => props.waypointList, newList => {
   localList.value = [...newList]
-})
+}, { deep: true })
 
 // 드래그가 끝났을 때 순서 업데이트
 function onDragEnd() {

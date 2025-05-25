@@ -1,5 +1,12 @@
 <template>
   <div class="plan-waypoint-item drag-handle">
+    <div class="waypoint-thumb">
+      <img
+        :src="waypoint.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'"
+        loading="lazy"
+      >
+    </div>
+
     <div class="waypoint-order">
       <div class="order-number">{{ index + 1 }}</div>
     </div>
@@ -9,6 +16,7 @@
       <div class="waypoint-details">
         <span class="waypoint-category">{{ waypoint.contentTypeName }}</span>
         <span class="waypoint-address">{{ waypoint.addr1 }}</span>
+        <span class="waypoint-details">{{waypoint.overview}}</span>
       </div>
     </div>
 
@@ -175,5 +183,31 @@ defineEmits(['delete', 'move-up', 'move-down'])
     width: 50%;
     justify-content: flex-end;
   }
+}
+
+/* 썸네일 */
+.waypoint-thumb {
+  width: 184px;
+  height: 80px;
+  flex-shrink: 0;
+  margin-right: 16px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.waypoint-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.waypoint-details {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>
