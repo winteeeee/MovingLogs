@@ -74,7 +74,7 @@
                 <div class="search-input-group">
 <!--                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />-->
                   <button class="btn btn-search" @click="search">검색</button>
-                  <button class="btn btn-ai"><i class="bi bi-robot"></i> AI 추천</button>
+                  <button class="btn btn-ai" @click="aiRecommend"><i class="bi bi-robot"></i> AI 추천</button>
                 </div>
               </div>
             </div>
@@ -116,6 +116,18 @@
                 </div>
               </div>
             </div>
+          </div>
+          <div class="ai-recommend-panel" v-if="showAiPanel">
+            <h3>AI 추천 여행지</h3>
+            <ul>
+              <li v-for="rec in aiRecommendations" :key="rec.id">
+                <strong>{{ rec.title }}</strong>
+                <p class="reason">{{ rec.reason }}</p>
+                <button class="btn btn-ai" @click="addToRoute(rec)">
+                  경로에 추가
+                </button>
+              </li>
+            </ul>
           </div>
 
           <!-- 장소 상세 정보 패널 (조건부 표시) -->
@@ -292,7 +304,6 @@ import api from '@/api/axios.js'
 
 const router = useRouter();
 const route = useRoute();
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const contentTypeList = ref([]);
 const sidoList = ref([]);
@@ -304,6 +315,8 @@ const contentTypeSelected = ref("");
 
 // 검색 결과 데이터
 const searchResults = ref([]);
+const aiRecommendations = ref([]);
+const showAiPanel = computed(() => aiRecommendations.value.length > 0);
 
 // 경로에 추가된 장소들
 const planTitle = ref("");
@@ -311,6 +324,10 @@ const planStart = ref("");
 const planEnd = ref("");
 const planDescription = ref("");
 const planWaypoints = ref([]);
+
+watch([sidoSelected, gugunSelected, contentTypeSelected], () => {
+  aiRecommendations.value = [];
+});
 
 const savePlan = async () => {
   if (!planTitle.value.trim()) {
@@ -385,6 +402,21 @@ watch(planEnd, () => {
     alert("여행 종료일은 시작일보다 앞일 수 없습니다");
   }
 })
+
+const aiRecommend = async () => {
+  if (!sidoSelected.value || !gugunSelected.value || !contentTypeSelected.value) {
+    alert('AI 추천 서비스는 지역, 시군구, 관광지 종류를 모두 선택해야 이용할 수 있습니다.');
+    return;
+  }
+
+  const response = await api.post(`/api/v1/ai/attractions/recommendations`, {
+    contentTypeCode: contentTypeSelected.value,
+    areaCode: sidoSelected.value,
+    guGunCode: gugunSelected.value,
+  });
+
+  aiRecommendations.value = response.data.recommendations;
+}
 
 const search = async () => {
   if (!sidoSelected.value) {
@@ -576,7 +608,6 @@ const addToRoute = (place) => {
   if (!exists) {
     planWaypoints.value.push(place);
     updateMapMarkers();
-
   }
 };
 
@@ -1691,5 +1722,118 @@ onUnmounted(() => {
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.ai-recommend-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  max-width: 330px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+/* Panel title */
+.ai-recommend-panel h3 {
+  margin: 0 0 16px;
+  font-size: 1.25rem;
+  color: #333333;
+  border-bottom: 2px solid #f5f5f5;
+  padding-bottom: 8px;
+}
+
+/* Recommendation list */
+.ai-recommend-panel ul {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;      /* 필요 시 li 간격 조절 */
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ai-recommend-panel ul li {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 0; /* 위아래 여백 */
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ai-recommend-panel ul li:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Recommendation title */
+.ai-recommend-panel ul li strong {
+  display: block;
+  font-size: 1rem;
+  color: #222222;
+  margin-bottom: 6px;
+}
+
+/* Reason text */
+.ai-recommend-panel ul li .reason {
+  font-size: 0.875rem;
+  color: #666666;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.reason-title {
+  font-size: 0.875rem;
+  color: #666666;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Buttons */
+.ai-recommend-panel .btn {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.ai-recommend-panel .btn-search {
+  width: 100%;
+  background-color: #ff6b35;
+  color: #ffffff;
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .ai-recommend-panel {
+    padding: 16px;
+    max-width: 100%;
+  }
+
+  .ai-recommend-panel h3 {
+    font-size: 1.125rem;
+  }
+
+  .ai-recommend-panel ul li strong {
+    font-size: 0.95rem;
+  }
+
+  .ai-recommend-panel .btn {
+    width: 100%;
+    text-align: center;
+  }
 }
 </style>

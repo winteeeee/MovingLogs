@@ -31,7 +31,14 @@ public class Attraction {
     private String homepage;
     private String overview;
 
-    public String makeAttractionInfoString() {
-        return String.format("id: %s, 이름: %s, 주소: %s", id.getId(), title, addr1);
+    @Override
+    public String toString() {
+        return "Attraction[" +
+                "id=" + id.getId() +
+                ", title='" + title + '\'' +
+                ", firstImage1='" + firstImage1 + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ']';
     }
 }
