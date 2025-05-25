@@ -54,8 +54,8 @@
 
 <script setup>
 import { ref, reactive, onMounted, defineProps } from 'vue'
-import TripostWriteWaypointsCard from '@/components/post-write/TripostWriteWaypointsCard.vue'
-import TripostWriteRouteImageUploader from '@/components/post-write/TripostWriteRouteImageUploader.vue'
+import TripostWriteWaypointsCard from '@/components/tripost-write/TripostWriteWaypointsCard.vue'
+import TripostWriteRouteImageUploader from '@/components/tripost-write/TripostWriteRouteImageUploader.vue'
 import CKEditor from '@/components/common/CKEditor.vue'
 import api from '@/api/axios.js'
 
