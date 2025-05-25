@@ -4,8 +4,8 @@
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="com.ssafy.enjoytrip.features.image.adapter.out.persistence.mybatis.dao.ImageDao">
-    <insert id="insert">
-        INSERT INTO IMAGE (
+    <insert id="create">
+        INSERT INTO image (
             ID,
             UID,
             FILENAME,
@@ -23,9 +23,9 @@
             #{image.originalName},
             #{image.imageUrl.path},
             #{image.thumbnailUrl.path},
-            #{image.mimetype.type},
+            #{image.mimetype.value},
             #{image.size},
-            #{image.createdAt},
+            #{image.createdAt}
         )
     </insert>
 </mapper>
