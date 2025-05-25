@@ -549,11 +549,17 @@ const updateSearchResultMarkers = () => {
   if (searchResults.value.length > 0) {
     const bounds = new window.kakao.maps.LatLngBounds();
     searchResults.value.forEach(place => {
-      bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+      if (isValidRange(place.latitude, place.longitude)) {
+        bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+      }
     });
     map.setBounds(bounds);
   }
 };
+
+function isValidRange(latitude, longitude) {
+  return (33 <= latitude && latitude <= 39) && (123 <= longitude && longitude <= 132);
+}
 
 // 텍스트 포맷팅
 const formatOverview = (text) => {
