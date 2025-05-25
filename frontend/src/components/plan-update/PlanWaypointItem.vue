@@ -1,24 +1,6 @@
 <template>
-  <div class="plan-waypoint-item">
+  <div class="plan-waypoint-item drag-handle">
     <div class="waypoint-order">
-      <div class="order-buttons">
-        <button
-          class="order-button"
-          :disabled="!canMoveUp"
-          @click="$emit('move-up')"
-          title="위로 이동"
-        >
-          <span class="icon-up"></span>
-        </button>
-        <button
-          class="order-button"
-          :disabled="!canMoveDown"
-          @click="$emit('move-down')"
-          title="아래로 이동"
-        >
-          <span class="icon-down"></span>
-        </button>
-      </div>
       <div class="order-number">{{ index + 1 }}</div>
     </div>
 
@@ -84,35 +66,6 @@ defineEmits(['delete', 'move-up', 'move-down'])
   gap: 8px;
 }
 
-.order-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.order-button {
-  width: 24px;
-  height: 24px;
-  border-radius: 4px;
-  background-color: #f0f0f0;
-  border: 1px solid #ced4da;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  padding: 0;
-}
-
-.order-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.order-button:hover:not(:disabled) {
-  background-color: #e0e0e0;
-}
-
 .order-number {
   font-weight: 600;
   color: #495057;
@@ -157,40 +110,6 @@ defineEmits(['delete', 'move-up', 'move-down'])
   color: #6c757d;
 }
 
-.waypoint-description {
-  font-size: 0.85rem;
-  color: #6c757d;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* 시간 영역 */
-.waypoint-time {
-  width: 180px;
-  padding: 0 16px;
-}
-
-.waypoint-date {
-  font-weight: 500;
-  margin-bottom: 4px;
-}
-
-.waypoint-time-details {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 0.85rem;
-  color: #6c757d;
-}
-
-.waypoint-duration {
-  background-color: #e9ecef;
-  padding: 2px 8px;
-  border-radius: 12px;
-}
-
 /* 액션 영역 */
 .waypoint-actions {
   width: 120px;
@@ -232,19 +151,6 @@ defineEmits(['delete', 'move-up', 'move-down'])
   background-color: #f8d7da;
 }
 
-/* 아이콘 스타일 */
-.icon-up::before {
-  content: '↑';
-}
-
-.icon-down::before {
-  content: '↓';
-}
-
-.icon-edit::before {
-  content: '✏️';
-}
-
 .icon-trash::before {
   content: '🗑️';
 }
@@ -263,11 +169,6 @@ defineEmits(['delete', 'move-up', 'move-down'])
     width: calc(100% - 40px);
     padding-right: 0;
     margin-bottom: 12px;
-  }
-
-  .waypoint-time {
-    width: 50%;
-    padding: 0;
   }
 
   .waypoint-actions {

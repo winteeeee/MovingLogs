@@ -17,29 +17,32 @@
       <div class="waypoint-list-header">
         <div class="waypoint-header-order">순서</div>
         <div class="waypoint-header-info">장소 정보</div>
-        <div class="waypoint-header-actions">관리</div>
+        <div class="waypoint-header-actions">삭제</div>
       </div>
 
-      <div class="waypoint-list">
-        <div v-for="(waypoint, index) in waypointList" :key="waypoint.id" class="waypoint-item-wrapper">
-          <PlanWaypointItem
-            :waypoint="waypoint"
-            :index="index"
-            @edit="$emit('edit-waypoint', $event)"
-            @delete="$emit('delete-waypoint', $event)"
-            @move-up="moveSpot(index, index - 1)"
-            @move-down="moveSpot(index, index + 1)"
-            :can-move-up="index > 0"
-            :can-move-down="index < waypointList.length - 1"
-          />
-        </div>
-      </div>
+      <Draggable
+        v-model="localList"
+        class="waypoint-list"
+        item-key="id"
+        handle=".drag-handle"
+        @end="onDragEnd"
+      >
+        <template #item="{ element, index }">
+            <PlanWaypointItem
+              :waypoint="element"
+              :index="index"
+              @edit="$emit('edit-waypoint', $event)"
+              @delete="$emit('delete-waypoint', $event)"
+            />
+        </template>
+      </Draggable>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
+import Draggable from 'vuedraggable'
 import PlanWaypointItem from '@/components/plan-update/PlanWaypointItem.vue'
 
 const props = defineProps({
@@ -51,20 +54,22 @@ const props = defineProps({
 
 const emit = defineEmits(['update:waypointList', 'edit-waypoint', 'delete-waypoint'])
 
-// 스팟 위치 이동
-function moveSpot(fromIndex, toIndex) {
-  if (fromIndex === toIndex || toIndex < 0 || toIndex >= props.waypointList.length) return
+// local copy for draggable
+const localList = ref([...props.waypointList])
 
-  const updatedSpots = [...props.waypointList]
-  const [movedItem] = updatedSpots.splice(fromIndex, 1)
-  updatedSpots.splice(toIndex, 0, movedItem)
+// props 변경 감지 시 localList 동기화
+watch(() => props.waypointList, newList => {
+  localList.value = [...newList]
+})
 
-  // 순서 재정렬
-  updatedSpots.forEach((waypoint, index) => {
-    waypoint.order = index
-  })
-
-  emit('update:waypointList', updatedSpots)
+// 드래그가 끝났을 때 순서 업데이트
+function onDragEnd() {
+  // order 재정렬
+  const updated = localList.value.map((waypoint, idx) => ({
+    ...waypoint,
+    order: idx
+  }))
+  emit('update:waypointList', updated)
 }
 </script>
 
@@ -183,5 +188,9 @@ function moveSpot(fromIndex, toIndex) {
   .waypoint-list-header {
     display: none;
   }
+}
+
+.drag-handle {
+  cursor: grab;
 }
 </style>

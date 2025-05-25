@@ -144,8 +144,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
-import { useAuthStore } from '@/stores/authStore.js'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios.js'
 
@@ -153,7 +151,6 @@ import api from '@/api/axios.js'
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const route = useRoute();
 const router = useRouter();
-const authStore = useAuthStore()
 const plan = ref(null)
 const showDeleteModal = ref(false)
 
@@ -227,24 +224,6 @@ function formatDateTime(dateString) {
   const minutes = String(date.getMinutes()).padStart(2, '0')
 
   return `${year}.${month}.${day} ${hours}:${minutes}`
-}
-
-// 소요 시간 포맷팅
-function formatDuration(minutes) {
-  if (!minutes) return ''
-
-  if (minutes < 60) {
-    return `${minutes}분`
-  }
-
-  const hours = Math.floor(minutes / 60)
-  const remainingMinutes = minutes % 60
-
-  if (remainingMinutes === 0) {
-    return `${hours}시간`
-  }
-
-  return `${hours}시간 ${remainingMinutes}분`
 }
 
 // 여행 기간 계산
