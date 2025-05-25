@@ -82,7 +82,6 @@ function createEditor() {
         'outdent',
         'indent',
         '|',
-        'imageUpload',
         'blockQuote',
         'insertTable',
         'undo',
@@ -131,8 +130,8 @@ function createEditor() {
 }
 
 :deep(.ck-editor__editable) {
-  min-height: 300px;
-  max-height: 600px;
+  min-height: 500px;
+  max-height: 500px;
   overflow-y: auto;
 }
 

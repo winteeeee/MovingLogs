@@ -2,11 +2,8 @@
   <div class="image-uploader">
     <div class="image-preview-container">
       <div v-for="(image, index) in images" :key="index" class="image-preview-item">
-        <img :src="image.url" :alt="image.alt || '이미지 미리보기'" class="preview-image" />
+        <img :src="serverUrl + image.imageUrl" :alt="image.alt || '이미지 미리보기'" class="preview-image" />
         <div class="image-actions">
-          <button type="button" class="edit-image-btn" @click="editImage(index)">
-            <i class="bi bi-pencil"></i>
-          </button>
           <button type="button" class="remove-image-btn" @click="removeImage(index, image)">
             <i class="bi bi-trash"></i>
           </button>
@@ -73,6 +70,9 @@
 
 <script setup>
 import { ref, reactive, defineProps, defineEmits } from 'vue'
+import api from '@/api/axios.js'
+
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const props = defineProps({
   images: {
@@ -105,7 +105,7 @@ function triggerFileInput() {
   fileInput.value.click()
 }
 
-function handleFileChange(event) {
+async function handleFileChange(event) {
   const files = event.target.files
 
   if (!files || files.length === 0) return
@@ -119,6 +119,8 @@ function handleFileChange(event) {
       `최대 ${props.maxImages}개의 이미지만 업로드할 수 있습니다. 처음 ${remainingSlots}개만 처리됩니다.`,
     )
   }
+
+  const formData = new FormData();
 
   for (let i = 0; i < filesToProcess; i++) {
     const file = files[i]
@@ -135,43 +137,35 @@ function handleFileChange(event) {
       continue
     }
 
-    const reader = new FileReader()
+    formData.append('files', file);
+  }
 
-    reader.onload = (e) => {
-      const newImage = {
-        file: file,
-        url: e.target.result,
-        alt: '',
-        location: null,
-      }
+  try {
+    const response = await api.post(`${serverUrl}/api/v1/images`, formData);
 
-      emit('image-added', newImage)
+    // TODO 주석 삭제
+    console.log(response);
+
+    const uploadedImages = await response.data;
+
+    for (const img of uploadedImages) {
+      emit('image-added', {
+        imageId: img.imageId,
+        imageUrl: img.imageUrl,
+        thumbnailUrl: img.thumbnailUrl,
+      });
     }
-
-    reader.readAsDataURL(file)
+  } catch (error) {
+    console.error(error);
+    alert('이미지 업로드 중 오류가 발생했습니다.');
   }
 
   // 파일 입력 초기화
   event.target.value = ''
 }
 
-function editImage(index) {
-  if (index >= 0 && index < props.images.length) {
-    const image = props.images[index]
-
-    imageForm.alt = image.alt || ''
-    imageForm.locationText = getLocationName(image.location)
-    imageForm.location = image.location
-
-    editingImageIndex.value = index
-    showImageForm.value = true
-  }
-}
-
 function removeImage(index, image) {
-  if (confirm('이미지를 삭제하시겠습니까?')) {
-    emit('image-removed', { index, image })
-  }
+  emit('image-removed', { index, image })
 }
 
 function openLocationMap() {
