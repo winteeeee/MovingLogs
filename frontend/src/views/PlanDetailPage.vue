@@ -104,6 +104,9 @@
                   <span class="icon-location"></span>
                   {{ waypoint.addr1 }}
                 </div>
+                <div class="waypoint-address">
+                  {{ waypoint.overview }}
+                </div>
               </div>
             </div>
           </div>
@@ -467,7 +470,7 @@ onMounted(() => {
   gap: 8px;
 }
 
-.waypoint-address {
+.waypoint-address, .waypoint-overview {
   display: flex;
   align-items: center;
   gap: 6px;
