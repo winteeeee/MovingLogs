@@ -129,8 +129,8 @@ public class TripostMybatisAdapter implements
     public Tripost save(Tripost tripost) {
         // TODO: WaypointSnapshotImage는 WaypointSnapshot에 케스케이드 걸기
         saveOrUpdateTripost(tripost);
-        cleanUpObsoleteSnapshotImages(tripost);
         saveOrUpdateWaypointSnapshots(tripost);
+        cleanUpObsoleteSnapshotImages(tripost);
         return tripost;
     }
 
@@ -148,7 +148,9 @@ public class TripostMybatisAdapter implements
                     .mapToInt(WaypointSnapshotImage::getSeq).max()
                     .orElse(0);
             maxSeqBySnapshot.put(snapshot.getId(), maxSeq);
-            waypointSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
+            if (!snapshot.getImages().isEmpty()) {
+                waypointSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
+            }
         });
         List<WaypointSnapshotImageDao.Param> deleteParams = new ArrayList<>();
         maxSeqBySnapshot.forEach((snapshotId, seq) ->
