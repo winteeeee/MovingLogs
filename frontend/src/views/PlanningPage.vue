@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="search-input-group">
-                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />
+<!--                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />-->
                   <button class="btn btn-search" @click="search">검색</button>
                   <button class="btn btn-ai"><i class="bi bi-robot"></i> AI 추천</button>
                 </div>
@@ -290,8 +290,9 @@ import { useRouter } from 'vue-router';
 import Draggable from 'vuedraggable'
 import api from '@/api/axios.js'
 
-const router = useRouter();
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
+
+const router = useRouter();
 
 const contentTypeList = ref([]);
 const sidoList = ref([]);
@@ -339,7 +340,7 @@ const savePlan = async () => {
   }
 
   // 모두 통과하면 API 호출
-  const response = await api.post(`${serverUrl}/api/v1/plans`, {
+  const response = await api.post(`/api/v1/plans`, {
     title: planTitle.value,
     desc: planDescription.value,
     thumbnailUrl: planWaypoints.value[0].firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
@@ -353,15 +354,15 @@ const savePlan = async () => {
 };
 
 onMounted(async () => {
-  const contTypeRes = await api.get(`${serverUrl}/api/v1/attractions/content-types`);
+  const contTypeRes = await api.get(`/api/v1/attractions/content-types`);
   contentTypeList.value = contTypeRes.data;
 
-  const sidoRes = await api.get(`${serverUrl}/api/v1/attractions/sidos`);
+  const sidoRes = await api.get(`/api/v1/attractions/sidos`);
   sidoList.value = sidoRes.data;
 });
 
 watch(sidoSelected, async ()=>{
-  const response = await api.get(`${serverUrl}/api/v1/attractions/guguns?sidoCode=${sidoSelected.value}`);
+  const response = await api.get(`/api/v1/attractions/guguns?sidoCode=${sidoSelected.value}`);
   gugunList.value = response.data;
   gugunSelected.value = "";
 });
@@ -386,7 +387,7 @@ const search = async () => {
     return;
   }
 
-  const response = await api.get(`${serverUrl}/api/v1/attractions`, {
+  const response = await api.get(`/api/v1/attractions`, {
     params: {
       contentTypeId: contentTypeSelected.value,
       areaCode: sidoSelected.value,
@@ -419,7 +420,7 @@ let highlightedMarker = null;
 
 
 // 장소 상세 정보 표시
-const showPlaceDetail = (place) => {
+const showPlaceDetail = (place, move=true) => {
   if (selectedPlace.value && selectedPlace.value.id === place.id && detailPanelOpen.value) {
     closeDetailPanel();
     return;
@@ -430,8 +431,10 @@ const showPlaceDetail = (place) => {
   highlightMarker(place);
 
   // 지도 중심 이동
-  map.setCenter(new window.kakao.maps.LatLng(place.latitude, place.longitude));
-  map.setLevel(5);
+  if (move) {
+    map.setCenter(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+    map.setLevel(5);
+  }
 };
 
 // 상세 정보 패널 닫기
@@ -495,18 +498,36 @@ const updateSearchResultMarkers = () => {
     // 커스텀 마커 생성
     const content = document.createElement('div');
     content.className = 'search-pin-marker';
-    content.innerHTML = `
-      <div class="pin-marker">
-        <div class="pin-circle">
-          <i class="pin-icon"></i>
-        </div>
-        <div class="pin-label">${place.title}</div>
-      </div>
-    `;
+    // content.innerHTML = `
+    //   <div class="pin-marker">
+    //     <div class="pin-circle">
+    //       <i class="pin-icon"></i>
+    //     </div>
+    //     <div class="pin-label">${place.title}</div>
+    //   </div>
+    // `;
+
+
+    const pinMarker  = document.createElement('div');
+    pinMarker.className = 'pin-marker';
+
+    const pinCircle = document.createElement('div');
+    const pinLabel = document.createElement('div');
+    pinCircle.className = 'pin-circle';
+    pinCircle.innerHTML = `<i class="pin-icon"></i>`
+    pinLabel.className = 'pin-label';
+    pinLabel.innerText = place.title;
+
+    pinMarker.appendChild(pinCircle);
+    pinMarker.appendChild(pinLabel);
+    content.appendChild(pinMarker);
 
     // 마커 클릭 이벤트
-    content.addEventListener('click', function() {
-      showPlaceDetail(place);
+    pinCircle.addEventListener('click', function() {
+      showPlaceDetail(place, false);
+    });
+    pinLabel.addEventListener('click', function() {
+      showPlaceDetail(place, false);
     });
 
     const customOverlay = new window.kakao.maps.CustomOverlay({
@@ -516,20 +537,8 @@ const updateSearchResultMarkers = () => {
       zIndex: 1
     });
 
-    // 일반 마커도 생성 (클러스터링용)
-    const marker = new window.kakao.maps.Marker({
-      position: position
-    });
-
-    // 마커 클릭 이벤트
-    window.kakao.maps.event.addListener(marker, 'click', function() {
-      showPlaceDetail(place);
-    });
-
-    markers.push(marker);
     searchMarkers.push({
       overlay: customOverlay,
-      marker: marker,
       place: place
     });
   });
@@ -780,21 +789,16 @@ onUnmounted(() => {
   position: absolute;
   top: 20px;
   left: 20px;
-  width: 400px;
   height: calc(100% - 40px);
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 99;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
   min-width: fit-content;
-}
-
-.left-sidebar-overlay.expanded {
-  width: 700px;
 }
 
 /* 오른쪽 사이드바 오버레이 */
@@ -802,13 +806,13 @@ onUnmounted(() => {
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 400px;
+  width: 350px;
   height: calc(100% - 40px);
   background-color: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   border-radius: 8px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 100;
+  z-index: 99;
   transition: all 0.3s ease;
   display: flex;
   flex-direction: column;
@@ -828,23 +832,17 @@ onUnmounted(() => {
 .sidebar-layout {
   display: flex;
   height: 100%;
-  gap: 20px;
-  padding: 20px;
 }
 
 /* 검색 패널 */
 .search-panel {
-  width: 350px;
+  width: 330px;
+  padding: 20px;
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
   height: 100%;
   overflow-y: auto;
-}
-
-/* 검색 섹션 */
-.search-section {
-  margin-bottom: 20px;
 }
 
 .search-section h3 {
@@ -979,7 +977,7 @@ onUnmounted(() => {
   border-bottom: 1px solid #f0f0f0;
   position: relative;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: 0.1s;
   border-radius: 6px;
   margin-bottom: 8px;
 }
@@ -994,10 +992,10 @@ onUnmounted(() => {
 }
 
 .place-image {
-  min-width: 60px;
-  max-width: 60px;
-  height: 60px;
-  margin-right: 12px;
+  min-width: 70px;
+  max-width: 70px;
+  height: 70px;
+  margin-right: 6px;
   border-radius: 4px;
   overflow: hidden;
 }
@@ -1112,7 +1110,7 @@ onUnmounted(() => {
 .detail-toggle {
   position: absolute;
   top: 50%;
-  right: -33px;
+  right: -13px;
   transform: translateY(-50%);
   width: 26px;
   height: 70px;
@@ -1164,7 +1162,7 @@ onUnmounted(() => {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: 6px;
+  border-radius: 3px;
 }
 
 .detail-info {
@@ -1642,7 +1640,6 @@ onUnmounted(() => {
   position: relative;
   width: auto;
   height: auto;
-  cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1653,12 +1650,14 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  transition: all 0.2s ease;
+  width: fit-content;
+  height: fit-content;
 }
 
 .pin-circle {
   width: 18px;
   height: 18px;
+  cursor: pointer;
   background: linear-gradient(135deg, #ff6b35 0%, #ff6b35 100%);
   border: 2px solid white;
   border-radius: 50%;
@@ -1669,18 +1668,14 @@ onUnmounted(() => {
   position: relative;
 }
 
-.pin-marker:hover {
-  transform: scale(1.1);
-}
-
 .pin-icon {
   font-size: 18px;
   filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
 }
 
 .pin-label {
-  margin-top: 4px;
   color: #000000;
+  cursor: pointer;
   text-shadow:
   -1px -1px 0 white,
   1px -1px 0 white,
