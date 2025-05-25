@@ -1,29 +1,28 @@
 <template>
   <div class="post-header">
-    <div class="post-category">{{ getCategoryName(post.type) }}</div>
-    <h1 class="post-title">{{ post.title }}</h1>
+    <h1 class="post-title">{{ tripost.title }}</h1>
     <div class="post-meta">
       <div class="author-info">
-        <div class="author-avatar">
-          <img
-            :src="post.author.avatar || 'https://via.placeholder.com/40'"
-            :alt="post.author.name"
-          />
-        </div>
-        <div class="author-name">{{ post.author.name }}</div>
+<!--        <div class="author-avatar">-->
+<!--          <img-->
+<!--            :src="post.author.avatar || 'https://via.placeholder.com/40'"-->
+<!--            :alt="post.author.name"-->
+<!--          />-->
+<!--        </div>-->
+        <div class="author-name">{{ tripost.name }}</div>
       </div>
-      <div class="post-date">작성 날짜 : {{ formatDate(post.createdAt) }}</div>
+      <div class="post-date">작성 날짜 : {{ formatDate(tripost.createdAt) }}</div>
       <div class="post-stats">
-        <span class="stat-item"> <i class="bi bi-eye"></i> 조회수 : {{ post.views }} </span>
+        <span class="stat-item"> <i class="bi bi-eye"></i> 조회수 : {{ tripost.viewCount }} </span>
         <span class="stat-item">
-          <i class="bi bi-chat"></i> 댓글수 : {{ post.comments ? post.comments.length : 0 }}
+          <i class="bi bi-chat"></i> 댓글수 : {{ tripost.commentCount }}
         </span>
-        <span class="stat-item"> <i class="bi bi-heart"></i> 좋아요 : {{ post.likes }} </span>
+        <span class="stat-item"> <i class="bi bi-heart"></i> 좋아요 : {{ tripost.likeCount }} </span>
       </div>
     </div>
     <div class="post-tags">
       <span
-        v-for="(tag, index) in post.tags"
+        v-for="(tag, index) in tripost.tags"
         :key="index"
         class="tag-item"
         @click="$emit('tag-click', tag)"
@@ -38,7 +37,7 @@
 import { defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
-  post: {
+  tripost: {
     type: Object,
     required: true,
   },

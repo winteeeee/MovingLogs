@@ -1,46 +1,48 @@
 <template>
-  <div class="post-item" @click="$emit('view-post')">
+  <div class="post-item" @click="$emit('view-tripost')">
     <div class="post-header">
-      <h3 class="post-title">{{ post.title }}</h3>
+      <h3 class="post-title">{{ tripost.title }} <span class="comment-count">({{ tripost.commentCount }})</span> </h3>
       <div class="post-meta">
-        <span class="post-author"> 글쓴이 : {{ post.author }}</span>
-        <span class="post-date"> 작성 날짜 : {{ formatDate(post.createdAt) }}</span>
-        <span class="post-views"><i class="bi bi-eye"></i> 조회수 : {{ post.views }}</span>
-        <span class="post-likes"><i class="bi bi-heart"></i> 좋아요 : {{ post.likes }}</span>
+        <span class="post-author"> 글쓴이 : {{ tripost.name }}</span>
+        <span class="post-date"> 작성 날짜 : {{ formatDate(tripost.createdAt) }}</span>
+        <span class="post-views"><i class="bi bi-eye"></i> {{ tripost.viewCount }}</span>
+        <span class="post-likes"><i class="bi bi-heart"></i> {{ tripost.likeCount }}</span>
       </div>
     </div>
 
     <div class="post-preview">
-      <p>{{ truncateText(post.content, 150) }}</p>
+      <p>{{ truncateText(tripost.description, 150) }}</p>
     </div>
 
-    <div v-if="post.route" class="post-route">
-      <i class="bi bi-geo-alt-fill"></i>
-      <span>{{ post.route.departure }} → {{ post.route.destination }}</span>
+    <div class="post-route">
+      <div class="ellipsis">
+        <i class="bi bi-geo-alt-fill me-1"></i>
+        <span>{{ tripost.waypoints.map(e=>e.attractionName).join("&nbsp;&nbsp;→&nbsp;&nbsp;") }} </span>
+      </div>
       <button class="preview-route-btn" @click.stop="$emit('preview-route')">경로 미리보기</button>
     </div>
 
-    <div v-if="post.images && post.images.length > 0" class="post-images">
+    <div v-if="tripost.images && tripost.images.length > 0" class="post-images">
       <img
-        v-for="(image, idx) in post.images.slice(0, 3)"
+        v-for="(image, idx) in tripost.images.slice(0, 3)"
         :key="idx"
-        :src="image.url"
-        :alt="image.alt"
+        :src="serverUrl + image.thumbnailUrl"
       />
-      <div v-if="post.images.length > 3" class="more-images">+{{ post.images.length - 3 }}</div>
+      <div v-if="tripost.images.length > 3" class="more-images">+{{ tripost.images.length - 3 }}</div>
     </div>
 
     <div class="post-tags">
-      <span v-for="(tag, idx) in post.tags" :key="idx" class="tag"> #{{ tag }} </span>
+      <span v-for="(tag, idx) in tripost.tags" :key="idx" class="tag"> #{{ tag }} </span>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps, defineEmits } from 'vue'
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 defineProps({
-  post: {
+  tripost: {
     type: Object,
     required: true,
   },
@@ -95,6 +97,18 @@ const formatDate = (date) => {
   flex: 1;
 }
 
+.comment-count {
+  font-size: 14px;
+  font-weight: bold;
+  color: #999;
+}
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .post-meta {
   display: flex;
   gap: 15px;
@@ -120,6 +134,7 @@ const formatDate = (date) => {
 }
 
 .preview-route-btn {
+  min-width: fit-content;
   margin-left: auto;
   padding: 5px 10px;
   background-color: #4caf50;

@@ -25,9 +25,9 @@ public class Tripost {
 	private String description;
 	private String content;
 	private List<WaypointSnapshot> waypointSnapshots;
-	private Long commentCount;
-	private Long likeCount;
-	private Long viewCount;
+	private Integer commentCount;
+	private Integer likeCount;
+	private Integer viewCount;
 	private Boolean isDeleted;
 	private LocalDateTime createdAt;
 	private LocalDateTime updatedAt;
@@ -116,9 +116,9 @@ public class Tripost {
 				.description(description)
 				.content(content)
 				.waypointSnapshots(waypointSnapshots)
-				.commentCount(0L)
-				.viewCount(0L)
-				.likeCount(0L)
+				.commentCount(0)
+				.viewCount(0)
+				.likeCount(0)
 				.isDeleted(false)
 				.createdAt(LocalDateTime.now(clock))
 				.updatedAt(LocalDateTime.now(clock))

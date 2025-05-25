@@ -1,16 +1,16 @@
 <template>
   <div class="board-header">
     <h1 class="mb-4">여행 커뮤니티</h1>
-    <div class="board-tabs">
-      <button
-        v-for="tab in tabs"
-        :key="tab.value"
-        :class="['tab-btn', { active: activeTab === tab.value }]"
-        @click="$emit('update:activeTab', tab.value)"
-      >
-        {{ tab.label }}
-      </button>
-    </div>
+<!--    <div class="board-tabs">-->
+<!--      <button-->
+<!--        v-for="tab in tabs"-->
+<!--        :key="tab.value"-->
+<!--        :class="['tab-btn', { active: activeTab === tab.value }]"-->
+<!--        @click="$emit('update:activeTab', tab.value)"-->
+<!--      >-->
+<!--        {{ tab.label }}-->
+<!--      </button>-->
+<!--    </div>-->
   </div>
 </template>
 
@@ -27,11 +27,11 @@ defineProps({
 defineEmits(['update:activeTab'])
 
 const tabs = [
-  { value: 'free', label: '자유게시판' },
-  { value: 'notice', label: '공지사항' },
-  { value: 'tips', label: '여행 팁' },
-  { value: 'food', label: '현지 맛집' },
-  { value: 'accommodation', label: '숙소 추천' },
+  { value: 'tripost', label: '여행게시판' },
+  // { value: 'notice', label: '공지사항' },
+  // { value: 'tips', label: '여행 팁' },
+  // { value: 'food', label: '현지 맛집' },
+  // { value: 'accommodation', label: '숙소 추천' },
 ]
 </script>
 

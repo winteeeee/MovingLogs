@@ -2,12 +2,6 @@
   <div class="map-container">
     <div id="kakaoMap" ref="kakaoMapRef"></div>
     <div class="map-controls">
-      <button @click="showAllRoutes" class="map-control-btn">
-        <i class="bi bi-signpost-2"></i> 모든 경로 보기
-      </button>
-      <button @click="showRecommendedPOIs" class="map-control-btn">
-        <i class="bi bi-geo-alt"></i> 추천 장소
-      </button>
     </div>
   </div>
 </template>
@@ -80,9 +74,9 @@ const displayPostsOnMap = () => {
   clearMapOverlays()
 
   props.posts.forEach((post) => {
-    if (post.route && post.route.coordinates && post.route.coordinates.length > 0) {
+    if (post.waypoints && post.waypoints.coordinates && post.waypoints.coordinates.length > 0) {
       // Create path coordinates
-      const path = post.route.coordinates.map(
+      const path = post.waypoints.coordinates.map(
         (coord) => new window.kakao.maps.LatLng(coord.lat, coord.lng),
       )
 
@@ -114,12 +108,12 @@ const displayPostsOnMap = () => {
   })
 }
 
-const showRouteOnMap = (route) => {
+const showWaypointsOnMap = (waypoints) => {
   clearMapOverlays()
 
-  if (route && route.coordinates && route.coordinates.length > 0) {
-    const path = route.coordinates.map(
-      (coord) => new window.kakao.maps.LatLng(coord.lat, coord.lng),
+  if (waypoints && waypoints.length > 0) {
+    const path = waypoints.map(
+      (waypoint) => new window.kakao.maps.LatLng(waypoint.latitude, waypoint.longitude),
     )
 
     // Create polyline
@@ -165,27 +159,6 @@ const showRouteOnMap = (route) => {
   }
 }
 
-const showAllRoutes = () => {
-  displayPostsOnMap()
-
-  // Set map bounds to show all routes
-  const bounds = new window.kakao.maps.LatLngBounds()
-  props.posts.forEach((post) => {
-    if (post.route && post.route.coordinates) {
-      post.route.coordinates.forEach((coord) => {
-        bounds.extend(new window.kakao.maps.LatLng(coord.lat, coord.lng))
-      })
-    }
-  })
-  map.value.setBounds(bounds)
-}
-
-const showRecommendedPOIs = () => {
-  // Logic to show recommended POIs
-  console.log('Show recommended POIs')
-  // In a real implementation, you would fetch POI data from an API
-}
-
 onMounted(() => {
   initMap()
 })
@@ -193,7 +166,7 @@ onMounted(() => {
 // Expose methods to parent component
 defineExpose({
   initMap,
-  showRouteOnMap,
+  showWaypointsOnMap,
 })
 </script>
 

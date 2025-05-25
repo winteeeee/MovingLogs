@@ -20,9 +20,9 @@ public class TripostListItemDto {
     private String uid;
     private String name;
     private LocalDateTime createdAt;
-    private Long commentCount;
-    private Long viewCount;
-    private Long likeCount;
+    private Integer commentCount;
+    private Integer viewCount;
+    private Integer likeCount;
     private List<WaypointSnapshotDto> waypoints;
     private List<WaypointImageDto> images;
 }

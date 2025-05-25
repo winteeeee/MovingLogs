@@ -10,12 +10,8 @@
         class="gallery-item"
         @click="openImageViewer(index)"
       >
-        <img :src="image.url" :alt="image.alt || '이미지'" class="gallery-image" />
+        <img :src="serverUrl + image.thumbnailUrl" class="gallery-image" />
         <div class="image-overlay">
-          <div class="image-alt" v-if="image.alt">{{ image.alt }}</div>
-          <div class="image-location" v-if="image.location">
-            <i class="bi bi-geo-alt"></i> {{ getLocationName(image.location) }}
-          </div>
         </div>
       </div>
 
@@ -48,7 +44,7 @@
           </button>
 
           <div class="viewer-image-container">
-            <img :src="currentImage.url" :alt="currentImage.alt || '이미지'" class="viewer-image" />
+            <img :src="serverUrl + currentImage.imageUrl" :alt="currentImage.alt || '이미지'" class="viewer-image" />
           </div>
 
           <button
@@ -62,7 +58,6 @@
         </div>
 
         <div class="viewer-info">
-          <div class="viewer-caption" v-if="currentImage.alt">{{ currentImage.alt }}</div>
           <div class="viewer-location" v-if="currentImage.location">
             <i class="bi bi-geo-alt"></i> {{ getLocationName(currentImage.location) }}
           </div>
@@ -77,7 +72,7 @@
             :class="{ active: index === currentImageIndex }"
             @click.stop="setCurrentImage(index)"
           >
-            <img :src="image.url" :alt="image.alt || '썸네일'" class="thumbnail-image" />
+            <img :src="serverUrl + image.thumbnailUrl" class="thumbnail-image" />
           </div>
         </div>
       </div>
@@ -87,6 +82,7 @@
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount, defineProps } from 'vue'
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const props = defineProps({
   images: {
@@ -177,7 +173,11 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .image-gallery {
-  margin: 30px 0;
+  margin: 10px 0;
+  background-color: #f8f9fa;
+  padding: 0.8rem 1.4rem;
+  border-radius: 0.7rem;
+  border-left: 4px solid #fd7e14;
 }
 
 .gallery-title {
@@ -189,17 +189,13 @@ onBeforeUnmount(() => {
 
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 10px;
-}
-
-.gallery-grid.single-image {
-  grid-template-columns: 1fr;
 }
 
 .gallery-item {
   position: relative;
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   aspect-ratio: 4/3;
   cursor: pointer;
@@ -326,6 +322,7 @@ onBeforeUnmount(() => {
 
 .viewer-image-container {
   height: 100%;
+  max-height: 1000px;
   display: flex;
   align-items: center;
   justify-content: center;

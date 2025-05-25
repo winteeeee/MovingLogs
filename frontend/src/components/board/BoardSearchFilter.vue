@@ -1,42 +1,5 @@
 <template>
   <div class="search-filter-container">
-    <div class="route-filter">
-      <div class="filter-group">
-        <label for="departure">출발지</label>
-        <input
-          type="text"
-          id="departure"
-          v-model="localFilters.departure"
-          @input="updateFilters"
-          placeholder="출발지 입력"
-          class="form-control form-control-sm"
-        />
-      </div>
-      <div class="filter-arrow">→</div>
-      <div class="filter-group">
-        <label for="destination">도착지</label>
-        <input
-          type="text"
-          id="destination"
-          v-model="localFilters.destination"
-          @input="updateFilters"
-          placeholder="도착지 입력"
-          class="form-control form-control-sm"
-        />
-      </div>
-      <div class="filter-group">
-        <label for="waypoint">경유지</label>
-        <input
-          type="text"
-          id="waypoint"
-          v-model="localFilters.waypoint"
-          @input="updateFilters"
-          placeholder="경유지 입력"
-          class="form-control form-control-sm"
-        />
-      </div>
-    </div>
-
     <div class="search-box">
       <input
         type="text"
@@ -44,6 +7,7 @@
         @input="updateSearchQuery"
         placeholder="검색어를 입력하세요"
         class="form-control form-control-sm"
+        v-on:keyup.enter="$emit('search')"
       />
       <button class="search-btn" @click="$emit('search')"><i class="bi bi-search"></i> 검색</button>
     </div>
@@ -110,8 +74,6 @@ const updateSearchQuery = () => {
   flex-wrap: wrap;
   gap: 15px;
   margin-bottom: 20px;
-  padding: 15px;
-  background-color: #f8f9fa;
   border-radius: 8px;
 }
 

@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.infrastructure.mybatis.support;
 
 import com.ssafy.enjoytrip.common.dto.PageDto;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Objects;
@@ -8,8 +9,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public interface PageableSupport<T, C> {
-    List<T> selectPage(int limit, int offset, C criteria);
-    Long selectTotalCount(C criteria);
+    List<T> selectPage(@Param("limit") int limit, @Param("offset") int offset, @Param("criteria") C criteria);
+    Long selectTotalCount(@Param("criteria") C criteria);
 
     default PageDto<T> toPage(int page, int size, C criteria) {
         Objects.requireNonNull(criteria, "criteria must not be null");

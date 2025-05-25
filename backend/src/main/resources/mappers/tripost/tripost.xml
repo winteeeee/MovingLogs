@@ -90,7 +90,7 @@
     <!-- 단건 조회 (Tripost) -->
     <select id="findById">
         SELECT
-            t.tripost_id        as `tripost_id`,
+            t.id                as `id`,
             t.uid               as `uid`,
             u.name              as `name`,
             t.title             as `title`,
@@ -106,7 +106,7 @@
                 SELECT
                     JSON_ARRAYAGG(
                         JSON_OBJECT(
-                            'id', JSON_OBJECT('id', ws.waypoint_snapshot_id),
+                            'id', JSON_OBJECT('id', ws.id),
                             'attractionId', JSON_OBJECT('id', ws.attraction_id),
                             'images', (
                                 SELECT JSON_ARRAYAGG(
@@ -116,24 +116,24 @@
                                     )
                                 )
                                 FROM waypoint_snapshot_image wsi
-                                WHERE wsi.waypoint_snapshot_id = ws.waypoint_snapshot_id
+                                WHERE wsi.waypoint_snapshot_id = ws.id
                             ),
                             'seq', ws.seq
                         )
                     )
                 FROM waypoint_snapshot ws
-                WHERE ws.tripost_id = t.tripost_id
+                WHERE ws.tripost_id = t.id
             ) AS `waypoints`
         FROM tripost t
         JOIN user u ON t.uid = u.uid
-        WHERE t.tripost_id = #{tripostId.id}
+        WHERE t.id = #{tripostId.id}
     </select>
 
 
     <!-- 상세 조회 (TripostDetailDto) -->
     <select id="findTripostDetailById">
         SELECT
-            T.ID                as `tripost_id`,
+            T.ID                as `id`,
             T.UID               as `uid`,
             U.NAME              as `name`,
             T.TITLE             as `title`,
@@ -147,10 +147,11 @@
                 SELECT JSON_ARRAYAGG(
                     JSON_OBJECT(
                         'id', WS.ID,
-                        'attractionId', WS.ATTRACTION_ID,
-                        'attractionName', WS.TITLE,
+                        'attractionId', A.ID,
+                        'attractionName', A.TITLE,
+                        'latitude', A.LATITUDE,
+                        'longitude', A.LONGITUDE,
                         'seq', WS.SEQ,
-                        <!-- TODO waypoint의 경로 관련 컬럼 추가  -->
                         'images', (
                             SELECT JSON_ARRAYAGG(
                                 JSON_OBJECT(
@@ -160,17 +161,16 @@
                                     'seq', WSI.SEQ
                                 )
                             )
-                            FROM WAYPOINT_SNAPSHOT_IMAGE WSI JOIN IMAGE i ON WSI.IMAGE_ID = I.ID
+                            FROM waypoint_snapshot_image WSI JOIN image I ON WSI.IMAGE_ID = I.ID
                             WHERE WSI.WAYPOINT_SNAPSHOT_ID = WS.ID
-                            ORDER BY seq
                         )
                     )
                 )
-                FROM waypoint_snapshot WS
+                FROM waypoint_snapshot WS JOIN attraction A ON WS.ATTRACTION_ID = A.ID
                 WHERE WS.TRIPOST_ID = T.ID
             )                   as `waypoints`
         FROM tripost T JOIN user U ON T.UID = U.UID
-        WHERE T.ID = #{tripost.id}
+        WHERE T.ID = #{tripostId.id}
     </select>
 
     <!-- 페이징 목록 조회 -->
@@ -190,36 +190,40 @@
                     JSON_OBJECT(
                         'id', WS.ID,
                         'attractionId', WS.ATTRACTION_ID,
-                        'attractionName', WS.TITLE,
+                        'attractionName', A.TITLE,
+                        'latitude', A.LATITUDE,
+                        'longitude', A.LONGITUDE,
                         'seq', WS.SEQ
-                        <!-- TODO waypoint의 경로 관련 컬럼 추가  -->
                     )
                 )
-                FROM waypoint_snapshot WS
+                FROM waypoint_snapshot WS JOIN attraction A ON WS.ATTRACTION_ID = A.ID
                 WHERE WS.TRIPOST_ID = T.ID
             ) AS waypoints,
             (
                 SELECT JSON_ARRAYAGG(
                     JSON_OBJECT(
+                        'imageId', I.ID,
                         'thumbnailUrl', I.THUMBNAIL_URL,
                         'imageUrl', I.IMAGE_URL,
                         'seq', WSI.SEQ
                     )
                 )
                 FROM waypoint_snapshot_image WSI
-                JOIN waypoint_snapshot WS ON WSI.WAYPOINT_ID = WS.ID
+                    JOIN waypoint_snapshot WS ON WSI.WAYPOINT_SNAPSHOT_ID = WS.ID
+                    JOIN image I ON WSI.IMAGE_ID = I.ID
                 WHERE WS.TRIPOST_ID = T.ID
             )                       as `images`
         FROM tripost T JOIN user U ON T.UID = U.UID
         <where>
+            NOT T.IS_DELETED
             <choose>
-                <when test="criteria.type == 'TITLE'">
+                <when test="criteria.type.name() == 'TITLE'">
                     AND T.TITLE LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
-                <when test="criteria.type == 'CONTENT'">
+                <when test="criteria.type.name() == 'CONTENT'">
                     AND T.CONTENT LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
-                <when test="criteria.type == 'AUTHOR'">
+                <when test="criteria.type.name() == 'AUTHOR'">
                     AND T.NAME LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
             </choose>
@@ -230,18 +234,19 @@
     </select>
 
     <!-- 총 개수 조회 -->
-    <select id="selectTotalCount" parameterType="map" resultType="long">
+    <select id="selectTotalCount" resultType="long">
         SELECT COUNT(*)
         FROM tripost T JOIN user U ON T.UID = U.UID
         <where>
+            NOT T.IS_DELETED
             <choose>
-                <when test="criteria.type == 'TITLE'">
+                <when test="criteria.type.name() == 'TITLE'">
                     AND T.TITLE LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
-                <when test="criteria.type == 'CONTENT'">
+                <when test="criteria.type.name() == 'CONTENT'">
                     AND T.CONTENT LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
-                <when test="criteria.type == 'AUTHOR'">
+                <when test="criteria.type.name() == 'AUTHOR'">
                     AND U.NAME LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
             </choose>

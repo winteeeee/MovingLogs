@@ -42,9 +42,11 @@ public class TripostController {
     @Operation(summary = "여행 게시글 조회", description = "여행 게시글을 조회한다.")
     public ResponseEntity<GetTripostResponse> getTripost(
             @PathVariable("tripost_id") String tripostId) {
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
+
         GetTripostByIdQuery.Query query = TripostMapper.toGetTripostByIdQuery(tripostId);
         TripostDetailDto dto = getTripostByIdQuery.findById(query);
-        GetTripostResponse response = TripostMapper.toGetTripostResponse(dto);
+        GetTripostResponse response = TripostMapper.toGetTripostResponse(uid, dto);
         return ResponseEntity.ok(response);
     }
 
@@ -75,7 +77,9 @@ public class TripostController {
     @Operation(summary = "여행 게시글 삭제", description = "기존 여행 게시글을 삭제한다.")
     public ResponseEntity<DeleteTripostResponse> deleteTripost(
             @PathVariable("tripost_id") String tripostId) {
-        DeleteTripostUseCase.Command command = TripostMapper.toDeleteTripostCommand(tripostId);
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
+
+        DeleteTripostUseCase.Command command = TripostMapper.toDeleteTripostCommand(uid, tripostId);
         DeleteTripostUseCase.Result result = deleteTripostUseCase.deleteTripost(command);
         DeleteTripostResponse response = TripostMapper.toDeleteTripostResponse(result);
         return ResponseEntity.ok(response);

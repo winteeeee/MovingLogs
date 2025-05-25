@@ -10,4 +10,5 @@ import lombok.Getter;
 @AllArgsConstructor
 public class GetTripostResponse {
     private TripostDetailDto tripost;
+    private boolean isAuthor;
 }

@@ -74,8 +74,9 @@ public class TripostMapper {
         return new UpdateTripostResponse(result.getTripostId().getId());
     }
 
-    public static DeleteTripostUseCase.Command toDeleteTripostCommand(String tripostId) {
+    public static DeleteTripostUseCase.Command toDeleteTripostCommand(String uid, String tripostId) {
         return DeleteTripostUseCase.Command.builder()
+                .uid(new Uid(uid))
                 .tripostId(new TripostId(tripostId))
                 .build();
     }
@@ -86,9 +87,10 @@ public class TripostMapper {
                 .build();
     }
 
-    public static GetTripostResponse toGetTripostResponse(TripostDetailDto tipost) {
+    public static GetTripostResponse toGetTripostResponse(String uid, TripostDetailDto tipost) {
         return GetTripostResponse.builder()
                 .tripost(tipost)
+                .isAuthor(tipost.getUid().equals(uid))
                 .build();
     }
 

@@ -54,11 +54,13 @@
 
 <script setup>
 import { ref, reactive, onMounted, defineProps } from 'vue'
+import { useRouter } from 'vue-router';
 import TripostWriteWaypointsCard from '@/components/tripost-write/TripostWriteWaypointsCard.vue'
 import TripostWriteRouteImageUploader from '@/components/tripost-write/TripostWriteRouteImageUploader.vue'
 import CKEditor from '@/components/common/CKEditor.vue'
 import api from '@/api/axios.js'
 
+const router = useRouter();
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const plan = ref({})
@@ -115,12 +117,6 @@ async function loadPlan(planId) {
   console.log(postData.waypoints)
 }
 
-const previewImages = ref([])
-const routeImages = reactive({
-  departure: [],
-  destination: [],
-  // waypoint-0, waypoint-1 등은 동적으로 추가됨
-})
 const editor = ref(null)
 
 onMounted(() => {
@@ -213,7 +209,6 @@ async function submitPost() {
     }
   })
 
-  // TODO 게시글 데이터
   const data = {
     title: postData.title,
     description: postData.description,
@@ -224,6 +219,9 @@ async function submitPost() {
   try {
     const response = await api.post(`/api/v1/triposts`, data);
     console.log(response.data)
+    alert('게시글이 등록되었습니다.');
+    router.push({ name: 'TripostBoardPage' });
+
   } catch (e) {
     console.error('Error:', e);
     alert('게시글 등록 중 오류가 발생했습니다.');

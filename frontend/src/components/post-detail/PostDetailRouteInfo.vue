@@ -1,5 +1,5 @@
 <template>
-  <div class="route-info" v-if="route">
+  <div class="route-info" v-if="waypoints">
     <div class="route-header">
       <h3>여행 경로</h3>
       <button class="map-toggle-btn" @click="$emit('toggle-map')">
@@ -9,39 +9,23 @@
     </div>
 
     <div class="route-path">
-      <div class="route-point departure">
-        <div class="point-marker">
-          <i class="bi bi-geo-alt-fill"></i>
-        </div>
-        <div class="point-info">
-          <div class="point-label">출발</div>
-          <div class="point-name">{{ route.departure }}</div>
-        </div>
-      </div>
 
       <div
-        v-for="(waypoint, index) in route.waypoints"
+        v-for="(waypoint, index) in waypoints"
         :key="`waypoint-${index}`"
-        class="route-point waypoint"
+        class="route-point mb-2"
       >
         <div class="point-marker">
-          <i class="bi bi-geo"></i>
+          <i class="point-marker-start bi bi-geo-alt-fill" v-if="index === 0"></i>
+          <i class="point-marker-end bi bi-flag-fill" v-else-if="index === waypoints.length-1"></i>
+          <i class="point-marker-middle bi bi-geo" v-else></i>
         </div>
         <div class="point-info">
-          <div class="point-label">경유 {{ index + 1 }}</div>
-          <div class="point-name">{{ waypoint }}</div>
+          <span class="point-label me-2">{{ index + 1 }}</span>
+          <span class="point-name">{{ waypoint.attractionName }}</span>
         </div>
       </div>
 
-      <div class="route-point destination">
-        <div class="point-marker">
-          <i class="bi bi-flag-fill"></i>
-        </div>
-        <div class="point-info">
-          <div class="point-label">도착</div>
-          <div class="point-name">{{ route.destination }}</div>
-        </div>
-      </div>
     </div>
 
     <div v-if="mapVisible" class="route-map-container">
@@ -54,7 +38,7 @@
 import { ref, watch, nextTick, defineProps, defineEmits } from 'vue'
 
 const props = defineProps({
-  route: {
+  waypoints: {
     type: Object,
     required: true,
   },
@@ -106,21 +90,18 @@ function createMap() {
   }
 
   kakaoMap.value = new window.kakao.maps.Map(routeMapRef.value, mapOptions)
-
-  if (props.route.coordinates && props.route.coordinates.length > 0) {
-    displayRouteOnMap()
-  }
+  displayRouteOnMap()
 }
 
 function displayRouteOnMap() {
   // 기존 마커와 폴리라인 제거
   clearMapOverlays()
 
-  if (!props.route.coordinates || props.route.coordinates.length === 0) return
+  if (!props.waypoints || props.waypoints.length === 0) return
 
   // 마커 생성
-  props.route.coordinates.forEach((coord, index) => {
-    const position = new window.kakao.maps.LatLng(coord.lat, coord.lng)
+  props.waypoints.forEach((wp, index) => {
+    const position = new window.kakao.maps.LatLng(wp.latitude, wp.longitude)
 
     // 마커 아이콘 설정
     let markerImage
@@ -131,7 +112,7 @@ function displayRouteOnMap() {
         new window.kakao.maps.Size(50, 45),
         { offset: new window.kakao.maps.Point(15, 43) },
       )
-    } else if (index === props.route.coordinates.length - 1) {
+    } else if (index === props.waypoints.length - 1) {
       // 도착지 마커
       markerImage = new window.kakao.maps.MarkerImage(
         'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/blue_b.png',
@@ -157,17 +138,9 @@ function displayRouteOnMap() {
 
     // 마커 클릭 이벤트
     window.kakao.maps.event.addListener(marker, 'click', () => {
-      let pointName
-      if (index === 0) {
-        pointName = props.route.departure
-      } else if (index === props.route.coordinates.length - 1) {
-        pointName = props.route.destination
-      } else {
-        pointName = props.route.waypoints[index - 1]
-      }
-
+      const pointName = props.waypoints[index].attractionName;
       const infowindow = new window.kakao.maps.InfoWindow({
-        content: `<div style="padding:5px;font-size:12px;">${pointName}</div>`,
+        content: `<div style="padding:5px; font-size:12px;">${pointName}</div>`,
       })
 
       infowindow.open(kakaoMap.value, marker)
@@ -175,13 +148,13 @@ function displayRouteOnMap() {
       // 3초 후 인포윈도우 닫기
       setTimeout(() => {
         infowindow.close()
-      }, 3000)
+      }, 2000)
     })
   })
 
   // 경로 폴리라인 생성
-  const path = props.route.coordinates.map(
-    (coord) => new window.kakao.maps.LatLng(coord.lat, coord.lng),
+  const path = props.waypoints.map(
+    (wp) => new window.kakao.maps.LatLng(wp.latitude, wp.longitude)
   )
 
   polyline.value = new window.kakao.maps.Polyline({
@@ -196,8 +169,8 @@ function displayRouteOnMap() {
 
   // 지도 범위 재설정
   const bounds = new window.kakao.maps.LatLngBounds()
-  props.route.coordinates.forEach((coord) => {
-    bounds.extend(new window.kakao.maps.LatLng(coord.lat, coord.lng))
+  props.waypoints.forEach((wp) => {
+    bounds.extend(new window.kakao.maps.LatLng(wp.latitude, wp.longitude))
   })
   kakaoMap.value.setBounds(bounds)
 }
@@ -259,20 +232,21 @@ function clearMapOverlays() {
 .route-path {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 8px;
   position: relative;
-  padding-left: 30px;
+  padding-left: 10px;
 }
 
 .route-path::before {
   content: '';
   position: absolute;
-  left: 15px;
-  top: 30px;
-  bottom: 30px;
-  width: 2px;
-  background-color: #ced4da;
+  left: 6px;
+  top: -5px;
+  bottom: 2px;
+  width: 38px;
+  background-color: #efefef;
   z-index: 1;
+  border-radius: 20px;
 }
 
 .route-point {
@@ -293,15 +267,15 @@ function clearMapOverlays() {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.departure .point-marker {
+.point-marker-start {
   color: #fd7e14;
 }
 
-.waypoint .point-marker {
+.point-marker-middle {
   color: #20c997;
 }
 
-.destination .point-marker {
+.point-marker-end {
   color: #339af0;
 }
 
@@ -310,9 +284,9 @@ function clearMapOverlays() {
 }
 
 .point-label {
-  font-size: 12px;
+  font-size: 14px;
+  font-weight: bold;
   color: #6c757d;
-  margin-bottom: 3px;
 }
 
 .point-name {

@@ -49,15 +49,15 @@ public class TripostMybatisAdapter implements
             List<WaypointSnapshotDto> waypoints = gson.fromJson((String) item.get("waypoints"), WAYPOINT_SNAPSHOT_DTO_LIST_TYPE);
             List<WaypointImageDto> images = gson.fromJson((String) item.get("images"), WAYPOINT_IMAGE_DTO_LIST_TYPE);
             return TripostListItemDto.builder()
-                            .id((String) item.get("tripost_id"))
+                            .id((String) item.get("id"))
                             .title((String) item.get("title"))
                             .description((String) item.get("description"))
                             .uid((String) item.get("uid"))
                             .name((String) item.get("name"))
                             .createdAt((LocalDateTime) item.get("created_at"))
-                            .commentCount((Long) item.get("comment_count"))
-                            .viewCount((Long) item.get("view_count"))
-                            .likeCount((Long) item.get("like_count"))
+                            .commentCount((Integer) item.get("comment_count"))
+                            .viewCount((Integer) item.get("view_count"))
+                            .likeCount((Integer) item.get("like_count"))
                             .waypoints(waypoints)
                             .images(images)
                             .build();
@@ -80,7 +80,7 @@ public class TripostMybatisAdapter implements
         List<WaypointSnapshot> waypointSnapshots = gson.fromJson((String) resultMap.get("waypoints"), WAYPOINT_SNAPSHOT_LIST_TYPE);
 
         Tripost tripost = Tripost.builder()
-                .id(new TripostId((String) resultMap.get("tripost_id")))
+                .id(new TripostId((String) resultMap.get("id")))
                 .author(new Author(
                         new Uid((String) resultMap.get("uid")),
                         (String) resultMap.get("name")
@@ -89,10 +89,10 @@ public class TripostMybatisAdapter implements
                 .description((String) resultMap.get("description"))
                 .content((String) resultMap.get("content"))
                 .waypointSnapshots(waypointSnapshots)
-                .commentCount((Long) resultMap.get("comment_count"))
-                .likeCount((Long) resultMap.get("like_count"))
-                .viewCount((Long) resultMap.get("view_count"))
-                .isDeleted((Boolean) resultMap.get("is_deleted"))
+                .commentCount((Integer) resultMap.get("comment_count"))
+                .likeCount((Integer) resultMap.get("like_count"))
+                .viewCount((Integer) resultMap.get("view_count"))
+                .isDeleted(((Integer) resultMap.get("is_deleted")) == 1)
                 .createdAt((LocalDateTime) resultMap.get("created_at"))
                 .updatedAt((LocalDateTime) resultMap.get("updated_at"))
                 .build();
@@ -110,15 +110,15 @@ public class TripostMybatisAdapter implements
         }
 
         TripostDetailDto dto = TripostDetailDto.builder()
-                .id((String) resultMap.get("tripost_id"))
+                .id((String) resultMap.get("id"))
                 .uid((String) resultMap.get("uid"))
                 .name((String) resultMap.get("name"))
                 .title((String) resultMap.get("title"))
                 .content((String) resultMap.get("content"))
                 .waypoints(waypoints)
-                .commentCount((Long) resultMap.get("comment_count"))
-                .likeCount((Long) resultMap.get("like_count"))
-                .viewCount((Long) resultMap.get("view_count"))
+                .commentCount((Integer) resultMap.get("comment_count"))
+                .likeCount((Integer) resultMap.get("like_count"))
+                .viewCount((Integer) resultMap.get("view_count"))
                 .createdAt((LocalDateTime) resultMap.get("created_at"))
                 .updatedAt((LocalDateTime) resultMap.get("updated_at"))
                 .build();
@@ -144,12 +144,14 @@ public class TripostMybatisAdapter implements
     private void cleanUpObsoleteSnapshotImages(Tripost tripost) {
         Map<WaypointSnapshotId, Integer> maxSeqBySnapshot = new HashMap<>();
         tripost.getWaypointSnapshots().forEach(snapshot->{
-            int maxSeq = snapshot.getImages().stream()
-                    .mapToInt(WaypointSnapshotImage::getSeq).max()
-                    .orElse(0);
-            maxSeqBySnapshot.put(snapshot.getId(), maxSeq);
-            if (!snapshot.getImages().isEmpty()) {
-                waypointSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
+            if (snapshot.getImages() != null && !snapshot.getImages().isEmpty()) {
+                int maxSeq = snapshot.getImages().stream()
+                        .mapToInt(WaypointSnapshotImage::getSeq).max()
+                        .orElse(0);
+                maxSeqBySnapshot.put(snapshot.getId(), maxSeq);
+                if (!snapshot.getImages().isEmpty()) {
+                    waypointSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
+                }
             }
         });
         List<WaypointSnapshotImageDao.Param> deleteParams = new ArrayList<>();

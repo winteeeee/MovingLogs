@@ -19,9 +19,9 @@ public class TripostDetailDto {
     private String title;
     private String content;
     private List<WaypointSnapshotDto> waypoints;
-    private Long commentCount;
-    private Long likeCount;
-    private Long viewCount;
+    private long commentCount;
+    private long likeCount;
+    private long viewCount;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

@@ -22,23 +22,22 @@
         </button>
 
         <div class="collapse navbar-collapse" id="navbarContent">
-          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <li class="nav-item">
+          <ul class="navbar-nav me-auto mt-2 mb-lg-0">
+            <li class="nav-item ps-5">
               <router-link to="/" class="nav-link" active-class="active">홈</router-link>
             </li>
-            <!-- TODO 연결 -->
-            <li class="nav-item">
-              <router-link to="/board" class="nav-link" active-class="active"
-                >여행 게시판</router-link
+            <li class="nav-item ps-4">
+              <router-link to="/tripost/board" class="nav-link" active-class="active"
+                >여행 커뮤니티</router-link
               >
             </li>
             <!-- TODO 연결 -->
-            <li class="nav-item">
+            <li class="nav-item ps-3">
               <router-link to="/routes" class="nav-link" active-class="active"
                 >공지사항</router-link
               >
             </li>
-            <li class="nav-item">
+            <li class="nav-item ps-3">
               <router-link to="/service-intro" class="nav-link" active-class="active"
                 >서비스 소개</router-link
               >

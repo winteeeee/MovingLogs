@@ -7,17 +7,17 @@
     </div>
 
     <template v-else>
-      <div v-if="filteredPosts.length === 0" class="no-posts">
+      <div v-if="triposts.length === 0" class="no-posts">
         <p>검색 결과가 없습니다.</p>
       </div>
 
       <div v-else class="post-list">
         <BoardPostItem
-          v-for="post in filteredPosts"
-          :key="post.id"
-          :post="post"
-          @view-post="$emit('view-post', post)"
-          @preview-route="$emit('preview-route', post.route)"
+          v-for="tripost in triposts"
+          :key="tripost.id"
+          :tripost="tripost"
+          @view-tripost="$emit('view-tripost', tripost)"
+          @preview-route="$emit('preview-route', tripost.waypoints)"
         />
       </div>
     </template>
@@ -39,16 +39,6 @@
         다음
       </button>
     </div>
-
-    <div class="board-actions">
-      <button
-        v-if="activeTab !== 'notice' || isAdmin"
-        class="write-btn"
-        @click="$emit('write-post')"
-      >
-        <i class="bi bi-pencil"></i> 글쓰기
-      </button>
-    </div>
   </div>
 </template>
 
@@ -61,7 +51,7 @@ defineProps({
     type: Boolean,
     required: true,
   },
-  filteredPosts: {
+  triposts: {
     type: Array,
     required: true,
   },
@@ -83,7 +73,7 @@ defineProps({
   },
 })
 
-defineEmits(['view-post', 'change-page', 'write-post', 'preview-route'])
+defineEmits(['view-tripost', 'change-page', 'preview-route'])
 </script>
 
 <style scoped>
