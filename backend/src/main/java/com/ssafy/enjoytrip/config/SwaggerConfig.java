@@ -52,8 +52,8 @@ public class SwaggerConfig {
     }
 
     @Bean
-    GroupedOpenApi postOpenApi() {
-        String paths = "/%s/%s/posts/**".formatted(apiPrefix, apiVersion);
+    GroupedOpenApi tripostOpenApi() {
+        String paths = "/%s/%s/triposts/**".formatted(apiPrefix, apiVersion);
         return GroupedOpenApi.builder()
                 .group("Post API")
                 .pathsToMatch(paths)
