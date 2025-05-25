@@ -286,11 +286,12 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import Draggable from 'vuedraggable'
 import api from '@/api/axios.js'
 
 const router = useRouter();
+const route = useRoute();
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const contentTypeList = ref([]);
@@ -358,6 +359,11 @@ onMounted(async () => {
 
   const sidoRes = await api.get(`${serverUrl}/api/v1/attractions/sidos`);
   sidoList.value = sidoRes.data;
+
+  if (route.query.sidoCode !== undefined) {
+      sidoSelected.value = route.query.sidoCode;
+      await search()
+  }
 });
 
 watch(sidoSelected, async ()=>{

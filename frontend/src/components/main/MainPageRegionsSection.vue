@@ -3,18 +3,15 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">지역별 여행 정보</h2>
-        <router-link to="/regions" class="view-all-link">
-          전체보기 <i class="bi bi-arrow-right"></i>
-        </router-link>
       </div>
 
       <div class="regions-grid">
-        <div class="region-item" v-for="region in regions" :key="region.id">
-          <div class="region-card">
+        <div class="region-item" v-for="region in regions" :key="region.sidoCode">
+          <div class="region-card" @click="moveToMap(region.sidoCode)">
             <img :src="region.image" :alt="region.name" class="region-img" />
             <div class="region-overlay">
               <h3 class="region-name">{{ region.name }}</h3>
-              <p class="region-count">{{ region.postCount }}개의 여행 정보</p>
+              <p class="region-count">{{ region.count }}개의 관광지</p>
             </div>
           </div>
         </div>
@@ -25,45 +22,69 @@
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter();
+
+function moveToMap(sidoCode) {
+  router.push({
+    name: 'PlanningPage',
+    query: {
+      sidoCode: sidoCode
+    }
+  })
+}
 
 // 지역 데이터
 const regions = ref([
   {
-    id: 1,
-    name: '서울',
-    image: 'https://via.placeholder.com/300x200?text=Seoul',
-    postCount: 256,
+    "sidoCode": 1,
+    "name": "서울",
+    "image": "/seoul.jpg",
+    "count": 7839
   },
   {
-    id: 2,
-    name: '부산',
-    image: 'https://via.placeholder.com/300x200?text=Busan',
-    postCount: 189,
+    "sidoCode": 2,
+    "name": "인천",
+    "image": "/incheon.jpg",
+    "count": 2052
   },
   {
-    id: 3,
-    name: '제주',
-    image: 'https://via.placeholder.com/300x200?text=Jeju',
-    postCount: 312,
+    "sidoCode": 3,
+    "name": "대전",
+    "image": "/daejeon.jpg",
+    "count": 753
   },
   {
-    id: 4,
-    name: '강원',
-    image: 'https://via.placeholder.com/300x200?text=Gangwon',
-    postCount: 145,
+    "sidoCode": 4,
+    "name": "대구",
+    "image": "/daegu.jpg",
+    "count": 1167
   },
   {
-    id: 5,
-    name: '경주',
-    image: 'https://via.placeholder.com/300x200?text=Gyeongju',
-    postCount: 98,
+    "sidoCode": 5,
+    "name": "광주",
+    "image": "/gwangju.jpg",
+    "count": 606
   },
   {
-    id: 6,
-    name: '전주',
-    image: 'https://via.placeholder.com/300x200?text=Jeonju',
-    postCount: 87,
+    "sidoCode": 6,
+    "name": "부산",
+    "image": "/busan.jpg",
+    "count": 2088
   },
+  {
+    "sidoCode": 7,
+    "name": "울산",
+    "image": "/ulsan.jpg",
+    "count": 656
+  },
+  {
+    "sidoCode": 39,
+    "name": "제주도",
+    "image": "/jeju.jpg",
+    "count": 2335
+  }
 ])
 </script>
 

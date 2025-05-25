@@ -56,8 +56,6 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
-import { useAuthStore } from '@/stores/authStore.js'
-import axios from 'axios'
 import TravelPlanHeader from '@/components/my-trip-plan/TravelPlanHeader.vue'
 import TravelPlanFilter from '@/components/my-trip-plan/TravelPlanFilter.vue'
 import TravelPlanCard from '@/components/my-trip-plan/TravelPlanCard.vue'
@@ -68,7 +66,6 @@ import { useRouter } from 'vue-router'
 import api from '@/api/axios.js'
 
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
-const authStore = useAuthStore()
 const router = useRouter()
 
 // 상태 관리
