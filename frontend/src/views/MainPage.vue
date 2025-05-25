@@ -8,8 +8,8 @@
     <MainPageLatestPostsSection/>
     <!-- 지역별 여행 정보 섹션 -->
     <MainPageRegionsSection/>
-    <!-- 앱 소개 섹션 -->
-    <MainPageAppPromoSection/>
+    <!-- 플랫폼 소개 섹션 -->
+    <MainPagePromoSection/>
   </div>
 </template>
 
@@ -18,7 +18,7 @@ import MainHeroSection from '@/components/main/MainHeroSection.vue'
 import MainPagePopularRoutesSection from '@/components/main/MainPagePopularRoutesSection.vue'
 import MainPageLatestPostsSection from '@/components/main/MainPageLatestPostsSection.vue'
 import MainPageRegionsSection from '@/components/main/MainPageRegionsSection.vue'
-import MainPageAppPromoSection from '@/components/main/MainPageAppPromoSection.vue'
+import MainPagePromoSection from '@/components/main/MainPagePromoSection.vue'
 </script>
 
 <style scoped>

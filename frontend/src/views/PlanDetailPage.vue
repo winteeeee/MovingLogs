@@ -160,12 +160,7 @@ const showDeleteModal = ref(false)
 // 여행 계획 데이터 로드
 async function loadPlanData() {
    try {
-    const response = await axios.get(`${serverUrl}/api/v1/plans/${route.params.id}`, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    })
-
+     const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`);
      console.log(response.data)
      plan.value = response.data
   } catch (error) {

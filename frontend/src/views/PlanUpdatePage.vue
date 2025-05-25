@@ -72,6 +72,7 @@ import { useAuthStore } from '@/stores/authStore.js'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
+import api from '@/api/axios.js'
 
 // 상태 관리
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
@@ -167,11 +168,7 @@ async function savePlan() {
   console.log(requestBody)
 
   try {
-    await axios.put(`${serverUrl}/api/v1/plans`, requestBody, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    })
+    await api.put(`${serverUrl}/api/v1/plans`, requestBody);
     alert('여행 계획이 저장되었습니다.')
     router.back()
   } catch (error) {
@@ -221,12 +218,7 @@ async function deletePlan() {
 // 여행 계획 데이터 로드
 async function loadPlanData() {
   try {
-    const response = await axios.get(`${serverUrl}/api/v1/plans/${route.params.id}`, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    })
-
+    const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`);
     console.log('데이터 로드')
     console.log(response.data)
     plan.value = JSON.parse(JSON.stringify(response.data))

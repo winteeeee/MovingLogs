@@ -110,6 +110,7 @@
 import { ref, reactive, computed, watch, onMounted } from 'vue'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/authStore.js'
+import api from '@/api/axios.js'
 
 const emit = defineEmits(['add-spot'])
 
@@ -149,16 +150,8 @@ watch(
 
 async function loadFilterData() {
   try {
-    const contentTypesResponse = await axios.get(`${serverUrl}/api/v1/attractions/content-types`, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    })
-    const sidosResponse = await axios.get(`${serverUrl}/api/v1/attractions/sidos`, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    })
+    const contentTypesResponse = await api.get(`${serverUrl}/api/v1/attractions/content-types`);
+    const sidosResponse = await api.get(`${serverUrl}/api/v1/attractions/sidos`);
 
     contentTypes.value = contentTypesResponse.data
     sidos.value = sidosResponse.data

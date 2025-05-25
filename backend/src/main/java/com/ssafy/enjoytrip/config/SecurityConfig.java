@@ -22,7 +22,6 @@ import org.springframework.security.web.context.NullSecurityContextRepository;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomUserDetailsService customUserDetailsService;
     private final DefaultOAuth2UserService defaultOAuth2UserService;
     private final SimpleUrlAuthenticationSuccessHandler simpleUrlAuthenticationSuccessHandler;
 
@@ -34,8 +33,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http,
-            JWTVerificationFilter jwtVerifyFilter,
-            SecurityExceptionHandlingFilter exceptionFilter) throws Exception {
+            JWTVerificationFilter jwtVerifyFilter) throws Exception {
         //시큐리티 컨텍스트 홀더를 매번 초기화 (stateless)
         //인증, 유저 관련 API만 인증 없이 접근 허용. 나머지는 인증 필요하도록 설정
         //JWT 관련 필터 삽입
