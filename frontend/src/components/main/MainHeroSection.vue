@@ -4,7 +4,7 @@
       <div class="row align-items-center">
         <div class="col-lg-6">
           <h1 class="hero-title">나만의 여행 경로를<br />쉽게 계획하고 공유하세요</h1>
-          <p class="hero-subtitle">여행로드와 함께 특별한 여행 경험을 만들어보세요</p>
+          <p class="hero-subtitle">Moving Logs와 함께 특별한 여행 경험을 만들어보세요</p>
           <div class="hero-buttons">
             <button class="btn btn-primary btn-lg me-3">
               <router-link to="/planning" class="nav-link" active-class="active"
