@@ -15,7 +15,7 @@ const routes = [
   { path: '/', component: MainPage },
   { path: '/service-intro', name: 'ServiceIntroPage', component: ServiceIntroPage },
   { path: '/board', component: BoardMainPage},
-  { path: '/tripost/write', name: 'TripostWritePage', component: TripostWritePage },
+  { path: '/tripost/write/:planId', name: 'TripostWritePage', component: TripostWritePage, props: true },
   { path: '/planning', name: 'PlanningPage', component: PlanningPage },
   // { path: '/post/:id', component: () => import('@/domains/post/pages/PostDetailPage.vue') },
   // { path: '/trip/plan', component: () => import('@/domains/plan/pages/MyTravelPlanPage.vue') },

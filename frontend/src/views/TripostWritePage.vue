@@ -3,16 +3,6 @@
     <h1 class="write-title">{{ isEditing ? '게시글 수정' : '새 게시글 작성' }}</h1>
 
     <div class="form-container">
-      <div class="form-group">
-        <label for="post-category">카테고리</label>
-        <select id="post-category" v-model="postData.type" class="form-control">
-          <option value="free">자유게시판</option>
-          <option value="tips">여행 팁</option>
-          <option value="food">현지 맛집</option>
-          <option value="accommodation">숙소 추천</option>
-          <option value="notice" v-if="isAdmin">공지사항</option>
-        </select>
-      </div>
 
       <div class="form-group">
         <label for="post-title">제목</label>
@@ -34,14 +24,11 @@
 
       <PostWriteRouteEditor
         :route-data="postData.route"
-        v-model:include-route="includeRoute"
         @route-change="updateRoute"
         @update:coordinates="updateCoordinates"
       />
 
       <PostWriteRouteImageUploader
-        v-if="includeRoute"
-        :include-route="includeRoute"
         :route-data="postData.route"
         :route-images="routeImages"
         @image-added="handleRouteImageAdded"
@@ -49,7 +36,6 @@
       />
 
       <PostWriteImageUploader
-        v-if="!includeRoute"
         :images="previewImages"
         @image-added="handleImageAdded"
         @image-removed="handleImageRemoved"
@@ -76,7 +62,7 @@ import CKEditor from '@/components/common/CKEditor.vue'
 
 
 const props = defineProps({
-  tripId: {
+  planId: {
     type: String,
     default: null,
   },
@@ -87,8 +73,10 @@ const props = defineProps({
 })
 
 onMounted(() => {
-  if (props.tripId) {
+  console.log(props);
 
+  if (props.planId) {
+    // 기존 여행 정보 가져오기
   } else if (props.editPostId) {
 
   } else {
@@ -228,17 +216,14 @@ function submitPost() {
     return
   }
 
-  // 경로 정보 포함 시 유효성 검사
-  if (includeRoute.value) {
-    if (!postData.route.departure.trim()) {
-      alert('출발지를 입력해주세요.')
-      return
-    }
+  if (!postData.route.departure.trim()) {
+    alert('출발지를 입력해주세요.')
+    return
+  }
 
-    if (!postData.route.destination.trim()) {
-      alert('도착지를 입력해주세요.')
-      return
-    }
+  if (!postData.route.destination.trim()) {
+    alert('도착지를 입력해주세요.')
+    return
   }
 
   // 이미지 업로드 처리
@@ -310,7 +295,7 @@ function submitPost() {
 
 <style scoped>
 .post-write-container {
-  max-width: 1000px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Noto Sans KR', sans-serif;

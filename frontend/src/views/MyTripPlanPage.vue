@@ -192,7 +192,7 @@ function confirmDeletePlan(plan) {
 function writeTripost(plan) {
   router.push({
     name: 'TripostWritePage',
-    params: {'planId': plan.id},
+    params: {planId: plan.id},
   });
 }
 
