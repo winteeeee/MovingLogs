@@ -63,7 +63,7 @@
               <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenuDropdown">
                 <li>
                   <router-link to="/my-plans" class="dropdown-item">
-                    <i class="bi bi-map"></i> 내 여행 경로
+                    <i class="bi bi-map"></i> 내 여행 계획
                   </router-link>
                 </li>
                 <li>

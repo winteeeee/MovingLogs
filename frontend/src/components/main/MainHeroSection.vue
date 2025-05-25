@@ -12,12 +12,12 @@
     <div class="container content-layer">
       <div class="row align-items-center">
         <div class="col-lg-6 text-container">
-          <h1 class="hero-title">나만의 여행 경로를<br />쉽게 계획하고 공유하세요</h1>
+          <h1 class="hero-title">나만의 여행을<br />쉽게 계획하고 공유하세요</h1>
           <p class="hero-subtitle">Moving Logs와 함께 특별한 여행 경험을 만들어보세요</p>
           <div class="hero-buttons">
             <button class="btn btn-primary btn-lg me-3">
               <router-link to="/planning" class="nav-link" active-class="active"
-                ><i class="bi bi-map"></i> 경로 만들기</router-link
+                ><i class="bi bi-map"></i> 계획 만들기</router-link
               >
             </button>
             <button class="btn btn-outline-light btn-lg">

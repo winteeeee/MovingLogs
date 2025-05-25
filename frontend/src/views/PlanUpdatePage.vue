@@ -157,7 +157,7 @@ async function savePlan() {
     id: plan.value.id,
     title: plan.value.title,
     desc: plan.value.description,
-    thumbnailUrl: plan.value.waypointList.find(wp => wp.firstImage1 !== null).firstImage1,
+    thumbnailUrl: plan.value.waypointList.find(wp => wp.firstImage1 !== "").firstImage1,
     startDate: plan.value.startDate,
     endDate: plan.value.endDate,
     attractionIds: plan.value.waypointList.map(item => item.id.id),
