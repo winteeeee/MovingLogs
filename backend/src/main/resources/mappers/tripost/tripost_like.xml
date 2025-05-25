@@ -3,21 +3,21 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostLikeDao.java">
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostLikeDao">
     <select id="check">
         SELECT CASE WHEN COUNT(*) > 0 THEN TRUE ELSE FALSE END
-        FROM TRIPOST_LIKE
+        FROM tripost_like
         WHERE TRIPOST_ID = #{tripostId.id} AND UID = #{uid.id}
     </select>
 
     <select id="countByTripostId">
         SELECT COUNT(*)
-        FROM TRIPOST_LIKE
+        FROM tripost_like
         WHERE TRIPOST_ID = #{tripostId.id}
     </select>
 
     <insert id="bulkInsert">
-        INSERT INTO TRIPOST_LIKE (
+        INSERT INTO tripost_like (
             TRIPOST_ID,
             UID
         )
@@ -28,7 +28,7 @@
     </insert>
 
     <delete id="bulkDelete">
-        DELETE FROM TRIPOST_LIKE
+        DELETE FROM tripost_like
         WHERE (TRIPOST_ID, UID) IN
         <foreach collection="tripostLikes" item="like" separator=",">
             (#{like.tripostId.id}, #{like.uid.id})
