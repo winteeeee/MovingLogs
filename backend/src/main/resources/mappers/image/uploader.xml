@@ -5,8 +5,8 @@
 
 <mapper namespace="com.ssafy.enjoytrip.features.image.adapter.out.persistence.mybatis.dao.UploaderDao">
     <select id="findById">
-        SELECT UID
-        FROM USER
-        WHERE UID = #{uid.id}
+        SELECT uid
+        FROM user
+        WHERE uid = #{uid.id}
     </select>
 </mapper>

@@ -6,6 +6,8 @@ import com.ssafy.enjoytrip.features.image.domain.component.RelativePath;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Component;
 
 import javax.imageio.ImageIO;
@@ -18,19 +20,22 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @Component
+@RequiredArgsConstructor
 public class ImageFileSystemStoarageAdapter implements
         ImageStoragePort {
+    private final ResourceLoader resourceLoader;
+
     @Value("${upload.image.location}")
     private String baseLocation;
     @Value("${upload.image.thumbnail.width}")
     private int thumbnailWidth;
-    @Value("${upload.image.thumbnail.height}")
-    private int thumbnailHeight;
     private Path basePath;
 
     @PostConstruct
-    public void init() {
-        this.basePath = Paths.get(baseLocation);
+    public void init() throws IOException {
+        Resource resource = resourceLoader.getResource(baseLocation);
+        Files.createDirectories(Path.of(resource.getFile().getPath()));
+        this.basePath = resource.getFile().toPath();
     }
 
     @Override
@@ -58,7 +63,7 @@ public class ImageFileSystemStoarageAdapter implements
 
             // 4. 썸네일 생성
             BufferedImage originalImage = ImageIO.read(new ByteArrayInputStream(content));
-            BufferedImage thumbnailImage = toJpegCompatible(originalImage, thumbnailWidth, thumbnailHeight); // 썸네일 크기
+            BufferedImage thumbnailImage = toJpegCompatible(originalImage, thumbnailWidth); // 썸네일 크기
             ImageIO.write(thumbnailImage, "jpg", thumbnailPath.toFile());
 
             String relBase = String.format("/uploads/images/%s/%s", dir1, dir2);
@@ -80,26 +85,35 @@ public class ImageFileSystemStoarageAdapter implements
         };
     }
 
-    private BufferedImage toJpegCompatible(BufferedImage src, int width, int height) {
+    private BufferedImage toJpegCompatible(BufferedImage src, int width) {
         // 1. 리사이즈된 알파포함 이미지
-        BufferedImage resizedWithAlpha = resizeImage(src, width, height);
+        BufferedImage resizedWithAlpha = resizeImage(src, width);
+
+        int resizedHeight = resizedWithAlpha.getHeight();
 
         // 2. 알파 없는 RGB 이미지 생성 (흰 배경)
-        BufferedImage rgbImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        BufferedImage rgbImage = new BufferedImage(width, resizedHeight, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = rgbImage.createGraphics();
         g.setPaint(Color.WHITE);
-        g.fillRect(0, 0, width, height);
+        g.fillRect(0, 0, width, resizedHeight);
         g.drawImage(resizedWithAlpha, 0, 0, null);
         g.dispose();
 
         return rgbImage;
     }
 
-    private BufferedImage resizeImage(BufferedImage originalImage, int width, int height) {
-        BufferedImage resized = new BufferedImage(width, height, originalImage.getType());
+    private BufferedImage resizeImage(BufferedImage originalImage, int targetWidth) {
+        int originalWidth = originalImage.getWidth();
+        int originalHeight = originalImage.getHeight();
+
+        // 비율 유지한 높이 계산
+        int targetHeight = (int) ((double) targetWidth / originalWidth * originalHeight);
+
+        BufferedImage resized = new BufferedImage(targetWidth, targetHeight, originalImage.getType());
         Graphics2D g = resized.createGraphics();
-        g.drawImage(originalImage, 0, 0, width, height, null);
+        g.drawImage(originalImage, 0, 0, targetWidth, targetHeight, null);
         g.dispose();
         return resized;
     }
+
 }

@@ -1,5 +1,6 @@
 package com.ssafy.enjoytrip.features.image.adapter.in.web;
 
+import com.ssafy.enjoytrip.common.util.SecurityUtils;
 import com.ssafy.enjoytrip.features.image.adapter.in.web.response.UploadImageResponse;
 import com.ssafy.enjoytrip.features.image.application.port.in.UploadImageUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -23,7 +24,7 @@ public class ImageController {
     @Operation(summary = "이미지 업로드", description = "이미지를 업로드한다.")
     public ResponseEntity<List<UploadImageResponse>> uploadImage(
             @RequestPart("files") List<MultipartFile> files) {
-        String uid = "1234";
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
 
         List<UploadImageResponse> responses = files.stream().map(file -> {
             UploadImageUseCase.Command command = ImageMapper.toUploadImageCommand(uid, file);
