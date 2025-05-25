@@ -68,8 +68,6 @@ import PlanBasicInfo from '@/components/plan-update/PlanBasicInfo.vue'
 import PlanWaypointList from '@/components/plan-update/PlanWaypointList.vue'
 import PlanAddWaypoint from '@/components/plan-update/PlanAddWaypoint.vue'
 import ConfirmModal from '@/components/plan-update/ConfirmModal.vue'
-import { useAuthStore } from '@/stores/authStore.js'
-import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios.js'
@@ -78,7 +76,6 @@ import api from '@/api/axios.js'
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const route = useRoute();
 const router = useRouter();
-const authStore = useAuthStore()
 const originalPlan = ref(null)
 const plan = ref({ plan: [] })
 const isSaving = ref(false)
@@ -160,7 +157,7 @@ async function savePlan() {
     id: plan.value.id,
     title: plan.value.title,
     desc: plan.value.description,
-    thumbnailUrl: plan.value.waypointList.find(wp => wp.firstImage1 !== null).firstImage1,
+    thumbnailUrl: plan.value.waypointList.find(wp => wp.firstImage1 !== "").firstImage1,
     startDate: plan.value.startDate,
     endDate: plan.value.endDate,
     attractionIds: plan.value.waypointList.map(item => item.id.id),

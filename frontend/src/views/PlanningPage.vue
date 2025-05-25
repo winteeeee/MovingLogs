@@ -286,13 +286,13 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import Draggable from 'vuedraggable'
 import api from '@/api/axios.js'
 
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
-
 const router = useRouter();
+const route = useRoute();
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const contentTypeList = ref([]);
 const sidoList = ref([]);
@@ -343,7 +343,7 @@ const savePlan = async () => {
   const response = await api.post(`/api/v1/plans`, {
     title: planTitle.value,
     desc: planDescription.value,
-    thumbnailUrl: planWaypoints.value[0].firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
+    thumbnailUrl: planWaypoints.value.find(wp => wp.firstImage1 !== "").firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
     startDate: planStart.value,
     endDate: planEnd.value,
     attractionIds: attractionIds
@@ -359,6 +359,11 @@ onMounted(async () => {
 
   const sidoRes = await api.get(`/api/v1/attractions/sidos`);
   sidoList.value = sidoRes.data;
+
+  if (route.query.sidoCode !== undefined) {
+      sidoSelected.value = route.query.sidoCode;
+      await search()
+  }
 });
 
 watch(sidoSelected, async ()=>{
@@ -498,15 +503,6 @@ const updateSearchResultMarkers = () => {
     // 커스텀 마커 생성
     const content = document.createElement('div');
     content.className = 'search-pin-marker';
-    // content.innerHTML = `
-    //   <div class="pin-marker">
-    //     <div class="pin-circle">
-    //       <i class="pin-icon"></i>
-    //     </div>
-    //     <div class="pin-label">${place.title}</div>
-    //   </div>
-    // `;
-
 
     const pinMarker  = document.createElement('div');
     pinMarker.className = 'pin-marker';
@@ -552,11 +548,17 @@ const updateSearchResultMarkers = () => {
   if (searchResults.value.length > 0) {
     const bounds = new window.kakao.maps.LatLngBounds();
     searchResults.value.forEach(place => {
-      bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+      if (isValidRange(place.latitude, place.longitude)) {
+        bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+      }
     });
     map.setBounds(bounds);
   }
 };
+
+function isValidRange(latitude, longitude) {
+  return (33 <= latitude && latitude <= 39) && (123 <= longitude && longitude <= 132);
+}
 
 // 텍스트 포맷팅
 const formatOverview = (text) => {

@@ -86,10 +86,17 @@
             :class="{ selected: selectedSpot && selectedSpot.id === spot.id }"
             @click="selectSpot(spot)"
           >
+            <div class="waypoint-thumb">
+              <img
+                :src="spot.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'"
+                loading="lazy"
+              >
+            </div>
             <div class="result-category">{{ spot.contentTypeName }}</div>
             <div class="result-content">
               <h4 class="result-name">{{ spot.title }}</h4>
               <p class="result-address">{{ spot.addr1 }}</p>
+              <p class="result-description">{{spot.overview}}</p>
             </div>
           </div>
         </div>
@@ -243,6 +250,7 @@ function addSpot() {
     title: selectedSpot.value.title,
     addr1: selectedSpot.value.addr1,
     firstImage1: selectedSpot.value.firstImage1,
+    overview: selectedSpot.value.overview,
     contentTypeName: selectedSpot.value.contentTypeName
   }
 
@@ -447,6 +455,7 @@ function resetForm() {
 
 .result-item.selected {
   background-color: #e8f0fe;
+
 }
 
 .result-item.selected::before {
@@ -556,6 +565,22 @@ function resetForm() {
   font-size: 2rem;
   display: block;
   margin-bottom: 8px;
+}
+
+/* 썸네일 */
+.waypoint-thumb {
+  width: 184px;
+  height: 80px;
+  flex-shrink: 0;
+  margin-right: 16px;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.waypoint-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* 반응형 디자인 */
