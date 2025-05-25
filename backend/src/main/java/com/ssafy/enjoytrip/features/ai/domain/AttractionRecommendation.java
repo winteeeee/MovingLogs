@@ -1,7 +1,6 @@
 package com.ssafy.enjoytrip.features.ai.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.ssafy.enjoytrip.features.attraction.domain.AttractionId;
 import lombok.*;
 
 import java.util.List;
@@ -15,9 +14,14 @@ public class AttractionRecommendation {
     List<AttractionRecommendationVO> recommendations;
 
     @Setter
+    @Getter
     static class AttractionRecommendationVO {
-        private Long id;
-        private String name;
+        private String id;
+        private String title;
+        private String firstImage1;
+        private Double latitude;
+        private Double longitude;
+        private String addr1;
         private String reason;
     }
 }

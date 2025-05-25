@@ -28,7 +28,7 @@ public class AiService implements AttractionRecommendationUseCase {
 
         sb.append("아래부터는 사용자의 DB입니다. 아래의 내용 중 상위 3개를 선정 이유와 함께 제공하세요.\n");
         for (Attraction attraction : attractions) {
-            sb.append(attraction.makeAttractionInfoString()).append('\n');
+            sb.append(attraction.toString()).append('\n');
         }
         return recommendAttractionPort.attractionRecommend(sb.toString());
     }
