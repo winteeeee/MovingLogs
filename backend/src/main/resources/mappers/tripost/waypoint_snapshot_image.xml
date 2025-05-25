@@ -3,10 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotImageDao.java">
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotImageDao">
     <insert id="bulkUpsert">
-        INSERT INTO WAYPOINT_SNAPSHOT_IMAGE (
-            WAYPOINT_ID,
+        INSERT INTO waypoint_snapshot_image (
+            WAYPOINT_SNAPSHOT_ID,
             IMAGE_ID,
             SEQ
         )
@@ -14,15 +14,16 @@
         <foreach collection="waypointSnapshotImages" item="image" separator=",">
             (#{waypointSnapshotId.id}, #{image.imageId.id}, #{image.seq})
         </foreach>
+        AS new
         ON DUPLICATE KEY UPDATE
             IMAGE_ID = VALUES(IMAGE_ID)
     </insert>
 
     <delete id="bulkDeleteBySeqGreaterThan">
-        DELETE FROM WAYPOINT_SNAPSHOT_IMAGE
+        DELETE FROM waypoint_snapshot_image
         WHERE
         <foreach collection="params" item="param" separator=" OR ">
-            (WAYPOINT_ID = #{param.waypointSnapshotId.id} AND SEQ > #{param.seq})
+            (WAYPOINT_SNAPSHOT_ID = #{param.waypointSnapshotId.id} AND SEQ > #{param.seq})
         </foreach>
     </delete>
 </mapper>

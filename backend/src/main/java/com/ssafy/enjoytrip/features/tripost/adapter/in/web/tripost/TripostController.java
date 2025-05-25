@@ -1,6 +1,7 @@
 package com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost;
 
 import com.ssafy.enjoytrip.common.dto.PageDto;
+import com.ssafy.enjoytrip.common.util.SecurityUtils;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.CreateTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.UpdateTripostRequest;
@@ -9,9 +10,9 @@ import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,13 +52,12 @@ public class TripostController {
     @Operation(summary = "여행 게시글 생성", description = "새 여행 게시글을 생성한다.")
     public ResponseEntity<CreateTripostResponse> createTripost(
             @RequestBody CreateTripostRequest request) {
-        // TODO: 유저정보 시큐리티에게 받기
-        String uid = "1234";
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
 
         CreateTripostUseCase.Command command = TripostMapper.toCreateTripostCommand(uid, request);
         CreateTripostUseCase.Result result = createTripostUseCase.createTripost(command);
         CreateTripostResponse response = TripostMapper.toCreateTripostResponse(result);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @PutMapping("/{tripost_id}")

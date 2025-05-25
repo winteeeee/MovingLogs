@@ -3,9 +3,9 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostCommentDao.java">
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostCommentDao">
     <insert id="insert">
-        INSERT INTO TRIPOST_COMMENT (
+        INSERT INTO tripost_comment (
             ID,
             TRIPOST_ID,
             UID,
@@ -27,7 +27,7 @@
     </insert>
 
     <update id="update">
-        UPDATE TRIPOST_COMMENT
+        UPDATE tripost_comment
         SET
             CONTENT = #{tripostComment.content},
             IS_DELETED = #{tripostComment.isDeleted},
@@ -45,8 +45,8 @@
             TC.IS_DELETED AS is_deleted,
             TC.CREATED_AT AS created_at,
             TC.UPDATED_AT AS updated_at
-        FROM TRIPOST_COMMENT TC
-            JOIN USER U ON TC.UID = U.UID
+        FROM tripost_comment TC
+            JOIN user U ON TC.UID = U.UID
         WHERE TC.ID = #{id.id}
     </select>
 
@@ -60,8 +60,8 @@
             TC.IS_DELETED AS is_deleted,
             TC.CREATED_AT AS created_at,
             TC.UPDATED_AT AS updated_at
-        FROM TRIPOST_COMMENT TC
-            JOIN USER U ON TC.UID = U.UID
+        FROM tripost_comment TC
+            JOIN user U ON TC.UID = U.UID
         WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
         LIMIT #{limit}
         OFFSET #{offset}
@@ -69,7 +69,7 @@
 
     <select id="selectTotalCount">
         SELECT COUNT(*)
-        FROM TRIPOST_COMMENT
+        FROM tripost_comment
         WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
     </select>
 </mapper>

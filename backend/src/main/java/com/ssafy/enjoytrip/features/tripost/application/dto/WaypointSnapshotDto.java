@@ -15,7 +15,7 @@ public class WaypointSnapshotDto {
     private String attractionId;
     private String attractionName;
     private Integer seq;
-    // TODO 지도에 경로를 표현하기 위한 값 등등 필요
-
+    private Double latitude;
+    private Double longitude;
     private List<WaypointImageDto> images;
 }

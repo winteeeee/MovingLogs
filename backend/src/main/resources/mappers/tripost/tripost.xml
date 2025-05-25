@@ -3,10 +3,10 @@
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostDao.java">
+<mapper namespace="com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostDao">
     <!-- INSERT -->
     <insert id="insert">
-        INSERT INTO TRIPOST (
+        INSERT INTO tripost (
             ID,
             UID,
             TITLE,
@@ -36,22 +36,22 @@
 
     <!-- UPDATE -->
     <update id="update">
-        UPDATE TRIPOST
+        UPDATE tripost
         SET
-            TITLE = #{title},
-            DESCRIPTION = #{description},
-            CONTENT = #{content},
-            COMMENT_COUNT = #{commentCount},
-            LIKE_COUNT = #{likeCount},
-            VIEW_COUNT = #{viewCount},
-            IS_DELETED = #{isDeleted},
-            UPDATED_AT = #{updatedAt}
-        WHERE ID = #{id.id}
+            TITLE = #{tripost.title},
+            DESCRIPTION = #{tripost.description},
+            CONTENT = #{tripost.content},
+            COMMENT_COUNT = #{tripost.commentCount},
+            LIKE_COUNT = #{tripost.likeCount},
+            VIEW_COUNT = #{tripost.viewCount},
+            IS_DELETED = #{tripost.isDeleted},
+            UPDATED_AT = #{tripost.updatedAt}
+        WHERE ID = #{tripost.id.id}
     </update>
 
     <!-- VIEW COUNT 일괄 업데이트 -->
     <update id="updateAllViewCount">
-        UPDATE TRIPOST
+        UPDATE tripost
         SET VIEW_COUNT =
             CASE ID
             <foreach collection="tripostViewCountList" item="item">
@@ -66,7 +66,7 @@
 
     <!-- LIKE COUNT 재계산 -->
     <update id="recountAllLikeCountById">
-        UPDATE TRIPOST
+        UPDATE tripost
         SET LIKE_COUNT = (
             SELECT COUNT(*) FROM TRIPOST_LIKE L
             WHERE L.TRIPOST_ID = TRIPOST.ID
@@ -79,7 +79,7 @@
 
     <!-- COMMENT COUNT 재계산 -->
     <update id="recountCommentCountById">
-        UPDATE TRIPOST
+        UPDATE tripost
         SET COMMENT_COUNT = (
             SELECT COUNT(*) FROM TRIPOST_COMMENT
             WHERE TRIPOST_ID = #{tripostId.id} AND IS_DELETED = FALSE
@@ -154,6 +154,7 @@
                         'images', (
                             SELECT JSON_ARRAYAGG(
                                 JSON_OBJECT(
+                                    'imageId', I.ID,
                                     'thumbnailUrl', I.THUMBNAIL_URL,
                                     'imageUrl', I.IMAGE_URL,
                                     'seq', WSI.SEQ
@@ -165,10 +166,10 @@
                         )
                     )
                 )
-                FROM WAYPOINT_SNAPSHOT WS
+                FROM waypoint_snapshot WS
                 WHERE WS.TRIPOST_ID = T.ID
             )                   as `waypoints`
-        FROM TRIPOST T JOIN USER U ON T.UID = U.UID
+        FROM tripost T JOIN user U ON T.UID = U.UID
         WHERE T.ID = #{tripost.id}
     </select>
 
@@ -194,7 +195,7 @@
                         <!-- TODO waypoint의 경로 관련 컬럼 추가  -->
                     )
                 )
-                FROM WAYPOINT_SNAPSHOT WS
+                FROM waypoint_snapshot WS
                 WHERE WS.TRIPOST_ID = T.ID
             ) AS waypoints,
             (
@@ -205,12 +206,11 @@
                         'seq', WSI.SEQ
                     )
                 )
-                FROM WAYPOINT_SNAPSHOT_IMAGE WSI
-                JOIN WAYPOINT_SNAPSHOT WS ON WSI.WAYPOINT_ID = WS.ID
+                FROM waypoint_snapshot_image WSI
+                JOIN waypoint_snapshot WS ON WSI.WAYPOINT_ID = WS.ID
                 WHERE WS.TRIPOST_ID = T.ID
             )                       as `images`
-        FROM TRIPOST T
-        JOIN USER U ON T.UID = U.UID
+        FROM tripost T JOIN user U ON T.UID = U.UID
         <where>
             <choose>
                 <when test="criteria.type == 'TITLE'">
@@ -220,7 +220,7 @@
                     AND T.CONTENT LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
                 <when test="criteria.type == 'AUTHOR'">
-                    AND U.NAME LIKE CONCAT('%', #{criteria.query}, '%')
+                    AND T.NAME LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
             </choose>
         </where>
@@ -232,7 +232,7 @@
     <!-- 총 개수 조회 -->
     <select id="selectTotalCount" parameterType="map" resultType="long">
         SELECT COUNT(*)
-        FROM TRIPOST T
+        FROM tripost T JOIN user U ON T.UID = U.UID
         <where>
             <choose>
                 <when test="criteria.type == 'TITLE'">

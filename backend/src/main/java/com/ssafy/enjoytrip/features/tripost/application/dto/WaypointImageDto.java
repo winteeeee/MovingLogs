@@ -6,6 +6,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class WaypointImageDto {
+    private String imageId;
     private String thumbnailUrl;
     private String imageUrl;
     private Integer seq;
