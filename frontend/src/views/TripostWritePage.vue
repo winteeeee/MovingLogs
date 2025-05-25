@@ -16,29 +16,30 @@
       </div>
 
       <div class="form-group">
+        <label for="post-title">머리말</label>
+        <textarea
+          type="text"
+          id="post-description"
+          v-model="postData.description"
+          class="form-control"
+          placeholder="머리말을 입력하세요"
+        />
+      </div>
+
+      <div class="form-group">
         <label for="post-content">내용</label>
         <CKEditor v-model="postData.content" @change="onEditorChange" @ready="onEditorReady" />
       </div>
 
-      <PostWriteTagForm :tags="postData.tags" @add-tag="addTag" @remove-tag="removeTag" />
-
-      <PostWriteRouteEditor
-        :route-data="postData.route"
-        @route-change="updateRoute"
-        @update:coordinates="updateCoordinates"
+      <TripostWriteWaypointsCard
+        :waypoint-list="plan.waypointList"
       />
 
-      <PostWriteRouteImageUploader
-        :route-data="postData.route"
-        :route-images="routeImages"
+
+      <TripostWriteRouteImageUploader
+        :waypoints="postData.waypoints"
         @image-added="handleRouteImageAdded"
         @image-removed="handleRouteImageRemoved"
-      />
-
-      <PostWriteImageUploader
-        :images="previewImages"
-        @image-added="handleImageAdded"
-        @image-removed="handleImageRemoved"
       />
 
       <div class="form-actions">
@@ -53,12 +54,23 @@
 
 <script setup>
 import { ref, reactive, onMounted, defineProps } from 'vue'
-import PostWriteTagForm from '@/components/post-write/PostWriteTagForm.vue'
-import PostWriteRouteEditor from '@/components/post-write/PostWriteRouteEditor.vue'
-import PostWriteRouteImageUploader from '@/components/post-write/PostWriteRouteImageUploader.vue'
-import PostWriteImageUploader from '@/components/post-write/PostWriteImageUploader.vue'
+import TripostWriteWaypointsCard from '@/components/post-write/TripostWriteWaypointsCard.vue'
+import TripostWriteRouteImageUploader from '@/components/post-write/TripostWriteRouteImageUploader.vue'
 import CKEditor from '@/components/common/CKEditor.vue'
+import api from '@/api/axios.js'
 
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
+
+const plan = ref({})
+const isEditing = ref(false)
+const isAdmin = ref(false) // 실제 구현 시 사용자 권한에 따라 설정
+const postData = reactive({
+  id: '',
+  title: '',
+  description: '',
+  content: '',
+  waypoints: [],
+})
 
 
 const props = defineProps({
@@ -76,7 +88,7 @@ onMounted(() => {
   console.log(props);
 
   if (props.planId) {
-    // 기존 여행 정보 가져오기
+    loadPlan(props.planId);
   } else if (props.editPostId) {
 
   } else {
@@ -84,21 +96,25 @@ onMounted(() => {
   }
 });
 
-const isEditing = ref(false)
-const isAdmin = ref(false) // 실제 구현 시 사용자 권한에 따라 설정
-const includeRoute = ref(false)
-const postData = reactive({
-  type: 'free',
-  title: '',
-  content: '',
-  route: {
-    departure: '',
-    destination: '',
-    waypoints: [''],
-    coordinates: [],
-  },
-  tags: [],
-})
+async function loadPlan(planId) {
+  // 기존 여행 정보 가져오기
+  const response = await api.get(`${serverUrl}/api/v1/plans/${planId}`);
+  plan.value = response.data;
+
+  postData.waypoints = plan.value.waypointList.map((waypoint) => {
+    return {
+      id: waypoint.id.id,
+      title: waypoint.title,
+      latitude: waypoint.latitude,
+      longitude: waypoint.longitude,
+      images: []
+    }
+  });
+
+  console.log(plan.value)
+  console.log(postData.waypoints)
+}
+
 const previewImages = ref([])
 const routeImages = reactive({
   departure: [],
@@ -119,27 +135,14 @@ function fetchPostData() {
   setTimeout(() => {
     // 실제 구현 시 API에서 게시글 데이터를 가져옴
     const dummyPost = {
-      id: props.editPostId,
-      type: 'free',
-      title: '서울에서 부산까지 3박 4일 여행 후기',
-      content:
-        '<p>서울에서 출발해 부산까지 3박 4일 동안 여행했습니다. 중간에 대전과 경주를 들렀는데, 특히 경주의 역사 유적지가 인상적이었습니다.</p><p>불국사와 석굴암은 꼭 방문해볼 만한 곳입니다. 경주 시내에서는 첨성대와 안압지도 볼 수 있었습니다.</p>',
-      route: {
-        departure: '서울',
-        destination: '부산',
-        waypoints: ['대전', '경주'],
-        coordinates: [
-          { lat: 37.5665, lng: 126.978 }, // 서울
-          { lat: 36.3504, lng: 127.3845 }, // 대전
-          { lat: 35.8562, lng: 129.2247 }, // 경주
-          { lat: 35.1796, lng: 129.0756 }, // 부산
-        ],
-      },
-      tags: ['서울', '부산', '경주', '로드트립', '여행후기'],
+      id: '',
+      title: '',
+      description: '',
+      content: '',
+      waypoints: [],
     }
 
     Object.assign(postData, dummyPost)
-    includeRoute.value = true
   }, 500)
 }
 
@@ -154,42 +157,15 @@ function onEditorReady(editorInstance) {
   editor.value = editorInstance
 }
 
-function addTag(tag) {
-  if (!postData.tags.includes(tag)) {
-    postData.tags.push(tag)
-  }
+function handleRouteImageAdded({ waypointIndex, image }) {
+  postData.waypoints[waypointIndex].images.push(image)
+  console.log(`이미지 추가됨: ${waypointIndex}`, image)
 }
 
-function removeTag(index) {
-  postData.tags.splice(index, 1)
-}
-
-function updateRoute(routeData) {
-  Object.assign(postData.route, routeData)
-}
-
-function updateCoordinates(coordinates) {
-  postData.route.coordinates = coordinates
-}
-
-function handleRouteImageAdded({ pointType, image }) {
-  // 이미지 추가 이벤트 처리
-  console.log(`이미지 추가됨: ${pointType}`, image)
-}
-
-function handleRouteImageRemoved({ pointType, index, image }) {
+function handleRouteImageRemoved({ waypointIndex, index, image }) {
   // 이미지 제거 이벤트 처리
-  console.log(`이미지 제거됨: ${pointType}`, image)
-}
-
-function handleImageAdded(image) {
-  // 일반 이미지 추가 이벤트 처리
-  console.log('이미지 추가됨:', image)
-}
-
-function handleImageRemoved({ index, image }) {
-  // 일반 이미지 제거 이벤트 처리
-  console.log('이미지 제거됨:', image)
+  postData.waypoints[waypointIndex].images.splice(index, 1);
+  console.log(`이미지 제거됨: ${waypointIndex}`, image)
 }
 
 function cancelPost() {
@@ -204,10 +180,15 @@ function goToBoard() {
   // router.push({ name: 'BoardMainPage' });
 }
 
-function submitPost() {
+async function submitPost() {
   // 유효성 검사
   if (!postData.title.trim()) {
     alert('제목을 입력해주세요.')
+    return
+  }
+
+  if (!postData.description.trim()) {
+    alert('머리말을 입력해주세요.')
     return
   }
 
@@ -216,56 +197,44 @@ function submitPost() {
     return
   }
 
-  if (!postData.route.departure.trim()) {
-    alert('출발지를 입력해주세요.')
-    return
-  }
-
-  if (!postData.route.destination.trim()) {
-    alert('도착지를 입력해주세요.')
-    return
-  }
-
-  // 이미지 업로드 처리
-  const formData = new FormData()
-
-  // 게시글 데이터
-  formData.append('title', postData.title)
-  formData.append('content', postData.content)
-  formData.append('type', postData.type)
-  formData.append('tags', JSON.stringify(postData.tags))
-
-  // 경로 정보
-  if (includeRoute.value) {
-    formData.append('route', JSON.stringify(postData.route))
-
-    // 경로별 이미지 처리
-    Object.keys(routeImages).forEach((pointType) => {
-      routeImages[pointType].forEach((image, index) => {
-        formData.append(`routeImages[${pointType}][${index}]`, image.file)
-        formData.append(`routeImagesAlt[${pointType}][${index}]`, image.alt || '')
-        if (image.location) {
-          formData.append(
-            `routeImagesLocation[${pointType}][${index}]`,
-            JSON.stringify(image.location),
-          )
-        }
-      })
-    })
-  } else {
-    // 일반 이미지 처리
-    previewImages.value.forEach((image, index) => {
-      formData.append(`images[${index}]`, image.file)
-      formData.append(`imagesAlt[${index}]`, image.alt || '')
-      if (image.location) {
-        formData.append(`imagesLocation[${index}]`, JSON.stringify(image.location))
+  const waypoints = postData.waypoints.map((waypoint, index) => {
+    const images = waypoint.images.map((image, index) => {
+      return {
+        imageId: image.imageId,
+        seq: index
       }
     })
+    return {
+      attractionId: waypoint.id,
+      latitude: waypoint.latitude,
+      longitude: waypoint.longitude,
+      images: images,
+      seq: index,
+    }
+  })
+
+  // TODO 게시글 데이터
+  const data = {
+    title: postData.title,
+    description: postData.description,
+    content: postData.content,
+    waypoints: waypoints,
   }
 
+  try {
+    const response = await api.post(`/api/v1/triposts`, data);
+    console.log(response.data)
+  } catch (e) {
+    console.error('Error:', e);
+    alert('게시글 등록 중 오류가 발생했습니다.');
+  }
+
+  console.log(waypoints)
+  // 경로 정보
+
+  // 경로별 이미지 처리
+
   // API 호출
-  console.log('게시글 제출:', postData)
-  console.log('이미지 데이터:', includeRoute.value ? routeImages : previewImages.value)
 
   // 실제 구현 시 API 호출
   // const url = isEditing.value ? `/api/posts/${props.editPostId}` : '/api/posts';
@@ -286,16 +255,16 @@ function submitPost() {
   // });
 
   // 임시 처리
-  setTimeout(() => {
-    alert(isEditing.value ? '게시글이 수정되었습니다.' : '게시글이 등록되었습니다.')
-    goToBoard()
-  }, 1000)
+  // setTimeout(() => {
+  //   alert(isEditing.value ? '게시글이 수정되었습니다.' : '게시글이 등록되었습니다.')
+  //   goToBoard()
+  // }, 1000)
 }
 </script>
 
 <style scoped>
 .post-write-container {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
   font-family: 'Noto Sans KR', sans-serif;
