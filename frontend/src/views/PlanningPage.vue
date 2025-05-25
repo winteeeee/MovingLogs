@@ -343,7 +343,7 @@ const savePlan = async () => {
   const response = await api.post(`${serverUrl}/api/v1/plans`, {
     title: planTitle.value,
     desc: planDescription.value,
-    thumbnailUrl: planWaypoints.value[0].firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
+    thumbnailUrl: planWaypoints.value.find(wp => wp.firstImage1 !== "").firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
     startDate: planStart.value,
     endDate: planEnd.value,
     attractionIds: attractionIds
