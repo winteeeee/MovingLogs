@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.eclipse.tags.shaded.org.apache.xpath.operations.Bool;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
@@ -60,6 +61,7 @@ public class TripostComment {
               tripostId,
               author,
               content,
+              false,
               clock
       );
     }
@@ -69,12 +71,14 @@ public class TripostComment {
             TripostId tripostId,
             Author author,
             String content,
+            Boolean isDeleted,
             Clock clock) {
         return TripostComment.builder()
                 .id(id)
                 .tripostId(tripostId)
                 .author(author)
                 .content(content)
+                .isDeleted(isDeleted)
                 .createdAt(LocalDateTime.now(clock))
                 .updatedAt(LocalDateTime.now(clock))
                 .build();

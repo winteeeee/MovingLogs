@@ -59,8 +59,8 @@
 
       <div ref="commentsSection">
         <PostDetailCommentSection
-          :post-id="tripost.id"
-          :comments="tripost.comments || []"
+          :tripostId="tripost.id"
+          :comments="comments"
           @add-comment="addComment"
           @add-reply="addReply"
           @delete-comment="deleteComment"
@@ -109,6 +109,7 @@ const router = useRouter()
 // 상태 정의
 const loading = ref(true)
 const tripost = reactive({})
+const comments = ref([])
 const relatedPosts = ref([])
 const liked = ref(false)
 const mapVisible = ref(false)
@@ -124,17 +125,29 @@ const props = defineProps({
 
 // 라이프사이클 훅
 onMounted(() => {
-  fetchPostData()
+  fetchTripostData()
+  fetchCommentData()
   checkLiked()
 })
 
 // 메서드
-async function fetchPostData() {
+async function fetchTripostData() {
   const response = await api.get(`/api/v1/triposts/${props.tripostId}`)
   Object.assign(tripost, response.data.tripost)
   isAuthor.value = response.data.author;
 
   loading.value = false
+}
+
+async function fetchCommentData() {
+  const response = await api.get(`/api/v1/triposts/${props.tripostId}/comments`, {
+    params: {
+      page: 1,
+      size: 100
+    }
+  });
+  comments.value = response.data.result.content
+  console.log(response.data)
 }
 
 async function checkLiked() {
@@ -234,32 +247,26 @@ function sharePost() {
   }
 }
 
-function addComment(newComment) {
-  if (!tripost.value) return
+async function addComment(newComment) {
+  if (!tripost) return
 
-  // 실제 구현 시 API 호출
-  // fetch(`/api/posts/${tripost-write.value.id}/comments`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify(newComment)
-  // })
-  // .then(response => response.json())
-  // .then(data => {
-  //   tripost-write.value.comments.push(data);
-  // })
-  // .catch(error => {
-  //   console.error('Error:', error);
-  //   alert('댓글 등록 중 오류가 발생했습니다.');
-  // });
+  try {
+    const response = await api.post(`/api/v1/triposts/${tripost.id}/comments`, {
+      tripostId: tripost.id,
+      content: newComment.content
+    })
 
-  // 임시 처리
-  tripost.value.comments.push(newComment)
+    Object.assign(newComment, response.data);
+    console.log(newComment)
+    comments.value.push(newComment)
+  } catch (error) {
+    alert("댓글 저장 실패")
+    console.log(error)
+  }
 }
 
 function addReply({ commentId, reply }) {
-  if (!tripost.value) return
+  if (!tripost) return
 
   const comment = tripost.value.comments.find((c) => c.id === commentId)
   if (comment) {
@@ -289,29 +296,20 @@ function addReply({ commentId, reply }) {
   }
 }
 
-function deleteComment(commentId) {
-  if (!tripost.value) return
+async function deleteComment(commentId) {
+  if (!tripost) return
 
-  // 실제 구현 시 API 호출
-  // fetch(`/api/comments/${commentId}`, {
-  //   method: 'DELETE'
-  // })
-  // .then(response => response.json())
-  // .then(data => {
-  //   const index = tripost-write.value.comments.findIndex(c => c.id === commentId);
-  //   if (index !== -1) {
-  //     tripost-write.value.comments.splice(index, 1);
-  //   }
-  // })
-  // .catch(error => {
-  //   console.error('Error:', error);
-  //   alert('댓글 삭제 중 오류가 발생했습니다.');
-  // });
+  try {
+    const response = await api.delete(`/api/v1/triposts/${tripost.id}/comments/${commentId}`);
+    console.log(response);
 
-  // 임시 처리
-  const index = tripost.value.comments.findIndex((c) => c.id === commentId)
-  if (index !== -1) {
-    tripost.value.comments.splice(index, 1)
+    const index = comments.value.findIndex((c) => c.id === commentId)
+    if (index !== -1) {
+      comments.value.splice(index, 1)
+    }
+  } catch (error) {
+    alert("댓글 삭제 실패")
+    console.log(error)
   }
 }
 

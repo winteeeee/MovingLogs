@@ -22,7 +22,7 @@
             #{tripostComment.content},
             #{tripostComment.isDeleted},
             #{tripostComment.createdAt},
-            #{tripostComment.updatedAt},
+            #{tripostComment.updatedAt}
         )
     </insert>
 
@@ -37,39 +37,40 @@
 
     <select id="findById">
         SELECT
-            TC.ID AS id,
-            TC.TRIPOST_ID AS tripost_id,
-            TC.UID AS uid,
-            U.NICKNAME AS name,
-            TC.CONTENT AS content,
-            TC.IS_DELETED AS is_deleted,
-            TC.CREATED_AT AS created_at,
-            TC.UPDATED_AT AS updated_at
+            TC.ID               AS id,
+            TC.TRIPOST_ID       AS tripost_id,
+            TC.UID              AS uid,
+            U.NAME              AS name,
+            TC.CONTENT          AS content,
+            TC.IS_DELETED       AS is_deleted,
+            TC.CREATED_AT       AS created_at,
+            TC.UPDATED_AT       AS updated_at
         FROM tripost_comment TC
             JOIN user U ON TC.UID = U.UID
-        WHERE TC.ID = #{id.id}
+        WHERE TC.ID = #{tripostCommentId.id}
     </select>
 
     <select id="selectPage">
         SELECT
-            TC.ID AS id,
-            TC.TRIPOST_ID AS tripost_id,
-            TC.UID AS uid,
-            U.NICKNAME AS name,
-            TC.CONTENT AS content,
-            TC.IS_DELETED AS is_deleted,
-            TC.CREATED_AT AS created_at,
-            TC.UPDATED_AT AS updated_at
+            TC.ID               AS id,
+            TC.TRIPOST_ID       AS tripost_id,
+            TC.UID              AS uid,
+            U.NAME              AS name,
+            TC.CONTENT          AS content,
+            TC.CREATED_AT       AS created_at,
+            TC.UPDATED_AT       AS updated_at
         FROM tripost_comment TC
             JOIN user U ON TC.UID = U.UID
         WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
+            AND NOT TC.IS_DELETED
         LIMIT #{limit}
         OFFSET #{offset}
     </select>
 
     <select id="selectTotalCount">
         SELECT COUNT(*)
-        FROM tripost_comment
+        FROM tripost_comment TC
         WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
+            AND NOT TC.IS_DELETED
     </select>
 </mapper>

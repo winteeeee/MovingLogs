@@ -43,7 +43,7 @@ public class TripostCommentMybatisAdapter implements
                         (String) resultMap.get("name")
                 ))
                 .content((String) resultMap.get("content"))
-                .isDeleted((Boolean) resultMap.get("is_deleted"))
+                .isDeleted(((Integer) resultMap.get("is_deleted")) == 1)
                 .createdAt((LocalDateTime) resultMap.get("created_at"))
                 .updatedAt((LocalDateTime) resultMap.get("updated_at"))
                 .build();
@@ -58,7 +58,7 @@ public class TripostCommentMybatisAdapter implements
             TripostCommentDto.builder()
                     .id((String) item.get("id"))
                     .uid((String) item.get("uid"))
-                    .name((String) item.get("name"))
+                    .authorName((String) item.get("name"))
                     .content((String) item.get("content"))
                     .createdAt((LocalDateTime) item.get("created_at"))
                     .updatedAt((LocalDateTime) item.get("updated_at"))

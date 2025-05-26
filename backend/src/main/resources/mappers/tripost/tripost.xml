@@ -84,7 +84,7 @@
             SELECT COUNT(*) FROM tripost_comment TC
             WHERE TC.TRIPOST_ID = #{tripostId.id} AND TC.IS_DELETED = FALSE
         )
-        WHERE ID = #{id.id}
+        WHERE ID = #{tripostId.id}
     </update>
 
     <!-- 단건 조회 (Tripost) -->

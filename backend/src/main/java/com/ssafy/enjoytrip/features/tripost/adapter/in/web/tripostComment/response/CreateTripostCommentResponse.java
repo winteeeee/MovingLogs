@@ -1,22 +1,19 @@
-package com.ssafy.enjoytrip.features.tripost.application.dto;
+package com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripostComment.response;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-@Setter
-@Getter
 @Builder
+@Getter
 @AllArgsConstructor
-public class TripostCommentDto {
+public class CreateTripostCommentResponse {
     private String id;
-    private String uid;
     private String authorName;
     private String content;
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
     private boolean isAuthor;
 }
