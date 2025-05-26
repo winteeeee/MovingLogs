@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -56,6 +57,15 @@ public class TripostViewCountRedisAdapter implements
         }
 
         return results;
+    }
+
+    @Override
+    public List<Optional<Long>> getViewCount(List<TripostId> tripostIds) {
+        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
+        List<String> keys = tripostIds.stream().map(this::createCountKey).toList();
+        return Objects.requireNonNull(ops.multiGet(keys)).stream()
+                .map(s -> Optional.ofNullable(s).map(Long::parseLong))
+                .toList();
     }
 
     private String createCountKey(TripostId tripostId) {

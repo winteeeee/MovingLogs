@@ -94,6 +94,15 @@ public class TripostLikeRedisAdapter implements
                 .map(Long::valueOf);
     }
 
+    @Override
+    public List<Optional<Long>> getLikeCount(List<TripostId> tripostIds) {
+        HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
+        List<String> keys = tripostIds.stream().map(TripostId::getId).toList();
+        return ops.multiGet(createLikeCountKey(), keys).stream()
+                .map(s -> Optional.ofNullable(s).map(Long::parseLong))
+                .toList();
+    }
+
 
     private String createLikedMapKey(TripostLike tripostLike) {
         return createLikedMapKey(

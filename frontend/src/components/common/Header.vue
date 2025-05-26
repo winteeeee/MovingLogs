@@ -31,12 +31,6 @@
                 >여행 커뮤니티</router-link
               >
             </li>
-            <!-- TODO 연결 -->
-            <li class="nav-item ps-3">
-              <router-link to="/routes" class="nav-link" active-class="active"
-                >공지사항</router-link
-              >
-            </li>
             <li class="nav-item ps-3">
               <router-link to="/service-intro" class="nav-link" active-class="active"
                 >서비스 소개</router-link

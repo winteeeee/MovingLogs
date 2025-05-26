@@ -63,6 +63,7 @@
             JOIN user U ON TC.UID = U.UID
         WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
             AND NOT TC.IS_DELETED
+        ORDER BY TC.CREATED_AT DESC
         LIMIT #{limit}
         OFFSET #{offset}
     </select>

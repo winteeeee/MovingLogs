@@ -64,6 +64,8 @@ public class TripostCommentService implements
 
         tripostComment.delete(clock);
         tripostCommentPort.save(tripostComment);
+        tripostPort.recountCommentCount(tripostComment.getTripostId());
+
         return new DeleteTripostCommentUseCase.Result(tripostComment.getIsDeleted());
     }
 

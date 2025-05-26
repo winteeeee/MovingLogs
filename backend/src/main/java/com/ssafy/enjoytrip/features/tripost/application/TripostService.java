@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Clock;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -130,6 +131,17 @@ class TripostService implements
 	public PageDto<TripostListItemDto> searchTriposts(SearchTripostPagedQuery.Query query) {
 		PageDto<TripostListItemDto> dto = tripostPort.getPagedTripostListItemDto(query.getType(), query.getQuery(), query.getPage(), query.getSize())
 				.orElseThrow(() -> new PageNotFoundException(query.getPage(), query.getSize()));
+		List<TripostId> tripostIds = dto.getContent().stream().map(e->new TripostId(e.getId())).toList();
+
+		List<Optional<Long>> likeCounts = cachedTripostLikePort.getLikeCount(tripostIds);
+		List<Optional<Long>> viewCounts = cachedTripostViewCountPort.getViewCount(tripostIds);
+		List<TripostListItemDto> content = dto.getContent();
+
+		for (int i=0; i<content.size(); ++i) {
+			TripostListItemDto item = content.get(i);
+			likeCounts.get(i).ifPresent(item::setLikeCount);
+			viewCounts.get(i).ifPresent(item::setViewCount);
+		}
 		return dto;
 	}
 

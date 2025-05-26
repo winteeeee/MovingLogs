@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <div class="layout">
     <Header />
-    <main>
+    <main class="content">
       <RouterView />
     </main>
     <Footer v-if="route.path !== '/planning'" />
@@ -16,6 +16,16 @@ const route = useRoute()
 </script>
 
 <style scoped>
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex: 1; /* main 영역이 남는 높이 채움 */
+}
+
 :root {
   /* 기존 디자인의 색상 변수 */
   --primary-color: #fd7e14;
