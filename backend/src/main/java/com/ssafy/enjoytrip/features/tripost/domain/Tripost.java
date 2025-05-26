@@ -36,6 +36,7 @@ public class Tripost {
 			String title,
 			String description,
 			String content,
+			List<WaypointSnapshot> waypointSnapshots,
 			Clock clock) {
 		if (this.isDeleted) {
 			throw new IllegalStateException("This tripost has already been deleted.");
@@ -56,6 +57,7 @@ public class Tripost {
         this.title = newTitle;
 		this.description = newDescription;
         this.content = newContent;
+		this.waypointSnapshots = waypointSnapshots;
         this.updatedAt = LocalDateTime.now(clock);
 	}
 	
@@ -86,7 +88,7 @@ public class Tripost {
 			String title,
 			String description,
 			String content,
-			List<WaypointSnapshot> routes,
+			List<WaypointSnapshot> waypointSnapshots,
 			Clock clock
 	) {
 		return Tripost.of(
@@ -95,7 +97,7 @@ public class Tripost {
 				title,
 				description,
 				content,
-				routes,
+				waypointSnapshots,
 				clock
 		);
 	}

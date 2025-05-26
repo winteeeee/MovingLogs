@@ -24,7 +24,11 @@ public class TripostLikeRedisAdapter implements
 
     @Override
     public Optional<Boolean> checkLiked(TripostId tripostId, Uid uid) {
-        return Optional.empty();
+        HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
+        String res = ops.get(createLikeStateKey(), createLikedMapKey(tripostId, uid));
+        return Optional.ofNullable(
+                res!=null? Boolean.parseBoolean(res):null
+        );
     }
 
     @Override
@@ -41,8 +45,13 @@ public class TripostLikeRedisAdapter implements
 
     @Override
     public void setLikeCount(TripostId tripostId, Long likeCount) {
-        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        ops.set(createLikeCountKey(tripostId), String.valueOf(likeCount));
+        HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
+        ops.put(createLikeCountKey(), tripostId.getId(), String.valueOf(likeCount));
+    }
+
+    @Override
+    public void removeAllLikeCount() {
+        stringRedisTemplate.delete(createLikeCountKey());
     }
 
     @Override
@@ -61,35 +70,41 @@ public class TripostLikeRedisAdapter implements
             states.add(new TripostLikeState(tripostId, uid, liked));
         }
 
-        stringRedisTemplate.delete(createKey(PREFIX, "liked"));
+        stringRedisTemplate.delete(createLikeStateKey());
         return states;
     }
 
     @Override
     public void incrementLikeCount(TripostId tripostId) {
-        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        ops.increment(createLikeCountKey(tripostId));
+        HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
+        ops.increment(createLikeCountKey(), tripostId.getId(), 1);
     }
 
     @Override
     public void decrementLikeCount(TripostId tripostId) {
-        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        ops.decrement(createLikeCountKey(tripostId));
+        HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
+        ops.increment(createLikeCountKey(), tripostId.getId(), -1);
     }
 
     @Override
     public Optional<Long> getLikeCount(TripostId tripostId) {
-        ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        String likeCount = ops.get(createLikeCountKey(tripostId));
+        HashOperations<String, String, String> ops = stringRedisTemplate.opsForHash();
+        String likeCount = ops.get(createLikeCountKey(), tripostId.getId());
         return Optional.ofNullable(likeCount)
                 .map(Long::valueOf);
     }
 
 
     private String createLikedMapKey(TripostLike tripostLike) {
+        return createLikedMapKey(
+                tripostLike.getTripostId(),
+                tripostLike.getUid()
+        );
+    }
+    private String createLikedMapKey(TripostId tripostId, Uid uid) {
         return createMapKey(
-                tripostLike.getTripostId().getId(),
-                tripostLike.getUid().getId()
+                tripostId.getId(),
+                uid.getId()
         );
     }
 
@@ -100,11 +115,10 @@ public class TripostLikeRedisAdapter implements
         );
     }
 
-    private String createLikeCountKey(TripostId tripostId) {
+    private String createLikeCountKey() {
         return createKey(
                 PREFIX,
-                "count",
-                tripostId.getId()
+                "count"
         );
     }
 }

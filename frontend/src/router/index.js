@@ -15,7 +15,10 @@ const routes = [
   { path: '/', component: MainPage },
   { path: '/service-intro', name: 'ServiceIntroPage', component: ServiceIntroPage },
   { path: '/tripost/board', name: 'TripostBoardPage', component: BoardMainPage},
-  { path: '/tripost/write/:planId', name: 'TripostWritePage', component: TripostWritePage, props: true },
+  { path: '/tripost/write', name: 'TripostWritePage', component: TripostWritePage, props: (route) => ({
+    planId: route.query.planId,
+    tripostId: route.query.tripostId
+  })},
   { path: '/tripost/:tripostId', name: 'TripostDetailPage', component: TripostDetailPage, props: true },
   { path: '/planning', name: 'PlanningPage', component: PlanningPage },
   // { path: '/trip/plan', component: () => import('@/domains/plan/pages/MyTravelPlanPage.vue') },

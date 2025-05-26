@@ -30,7 +30,7 @@
     <delete id="bulkDelete">
         DELETE FROM tripost_like
         WHERE (TRIPOST_ID, UID) IN
-        <foreach collection="tripostLikes" item="like" separator=",">
+        <foreach collection="tripostLikes" item="like" separator="," open="(" close=")">
             (#{like.tripostId.id}, #{like.uid.id})
         </foreach>
     </delete>

@@ -66,10 +66,10 @@
 
     <!-- LIKE COUNT 재계산 -->
     <update id="recountAllLikeCountById">
-        UPDATE tripost
+        UPDATE tripost T
         SET LIKE_COUNT = (
-            SELECT COUNT(*) FROM TRIPOST_LIKE L
-            WHERE L.TRIPOST_ID = TRIPOST.ID
+            SELECT COUNT(*) FROM tripost_like L
+            WHERE L.TRIPOST_ID = T.ID
         )
         WHERE ID IN
         <foreach collection="tripostIds" item="id" open="(" separator="," close=")">
@@ -79,10 +79,10 @@
 
     <!-- COMMENT COUNT 재계산 -->
     <update id="recountCommentCountById">
-        UPDATE tripost
+        UPDATE tripost T
         SET COMMENT_COUNT = (
-            SELECT COUNT(*) FROM TRIPOST_COMMENT
-            WHERE TRIPOST_ID = #{tripostId.id} AND IS_DELETED = FALSE
+            SELECT COUNT(*) FROM tripost_comment TC
+            WHERE TC.TRIPOST_ID = #{tripostId.id} AND TC.IS_DELETED = FALSE
         )
         WHERE ID = #{id.id}
     </update>
@@ -137,6 +137,7 @@
             T.UID               as `uid`,
             U.NAME              as `name`,
             T.TITLE             as `title`,
+            T.DESCRIPTION       as `description`,
             T.CONTENT           as `content`,
             T.COMMENT_COUNT     as `comment_count`,
             T.LIKE_COUNT        as `like_count`,
@@ -149,6 +150,8 @@
                         'id', WS.ID,
                         'attractionId', A.ID,
                         'attractionName', A.TITLE,
+                        'contentTypeName', CT.CONTENT_TYPE_NAME,
+                        'addr1', A.ADDR1,
                         'latitude', A.LATITUDE,
                         'longitude', A.LONGITUDE,
                         'seq', WS.SEQ,
@@ -161,13 +164,16 @@
                                     'seq', WSI.SEQ
                                 )
                             )
-                            FROM waypoint_snapshot_image WSI JOIN image I ON WSI.IMAGE_ID = I.ID
+                            FROM waypoint_snapshot_image WSI
+                                JOIN image I ON WSI.IMAGE_ID = I.ID
                             WHERE WSI.WAYPOINT_SNAPSHOT_ID = WS.ID
                         )
                     )
                 )
-                FROM waypoint_snapshot WS JOIN attraction A ON WS.ATTRACTION_ID = A.ID
-                WHERE WS.TRIPOST_ID = T.ID
+                FROM waypoint_snapshot WS
+                    JOIN attraction A ON WS.ATTRACTION_ID = A.ID
+                    JOIN content_type CT ON A.CONTENT_TYPE_ID = CT.CONTENT_TYPE_ID
+        WHERE WS.TRIPOST_ID = T.ID
             )                   as `waypoints`
         FROM tripost T JOIN user U ON T.UID = U.UID
         WHERE T.ID = #{tripostId.id}

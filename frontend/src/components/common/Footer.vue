@@ -6,7 +6,7 @@
         <div class="col-12 col-md-6 col-lg-4 mb-4">
           <div class="footer-logo">
             <i class="bi bi-compass"></i>
-            <span>Moving Logs</span>
+            <span> <a href="https://www.acmicpc.net/problem/23244">Moving Logs</a></span>
           </div>
           <p class="footer-description">
             Moving Logs는 자신만의 여행 경로를 쉽게 계획하고 공유할 수 있는 플랫폼입니다.
@@ -69,6 +69,11 @@
   font-size: 24px;
   margin-right: 8px;
   color: var(--primary-color);
+}
+
+.footer-logo a {
+  color: var(--primary-color);
+  text-decoration: none;
 }
 
 .footer-description {

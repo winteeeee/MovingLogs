@@ -11,6 +11,7 @@ import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
 import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshot;
+import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshotId;
 import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshotImage;
 import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.features.user.domain.Uid;
@@ -60,13 +61,24 @@ public class TripostMapper {
                 .build();
     }
 
-    public static UpdateTripostUseCase.Command toUpdateTripostCommand(String tripostId, UpdateTripostRequest request) {
+    public static UpdateTripostUseCase.Command toUpdateTripostCommand(String uid, String tripostId, UpdateTripostRequest request) {
+        List<WaypointSnapshot> waypointSnapshots = request.getWaypoints().stream().map(waypointVo -> WaypointSnapshot.of(
+                new WaypointSnapshotId(waypointVo.id()),
+                new AttractionId(waypointVo.attractionId()),
+                waypointVo.images().stream().map(waypointImageVo -> new WaypointSnapshotImage(
+                        new ImageId(waypointImageVo.imageId()),
+                        waypointImageVo.seq()
+                )).toList(),
+                waypointVo.seq()
+        )).toList();
+
         return UpdateTripostUseCase.Command.builder()
                 .tripostId(new TripostId(tripostId))
-                .uid(new Uid(request.getUid()))
+                .uid(new Uid(uid))
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .content(request.getContent())
+                .waypointSnapshots(waypointSnapshots)
                 .build();
     }
 

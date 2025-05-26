@@ -14,6 +14,8 @@ public class WaypointSnapshotDto {
     private String id;
     private String attractionId;
     private String attractionName;
+    private String contentTypeName;
+    private String addr1;
     private Integer seq;
     private Double latitude;
     private Double longitude;

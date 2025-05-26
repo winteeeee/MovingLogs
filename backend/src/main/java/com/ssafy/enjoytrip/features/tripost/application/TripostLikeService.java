@@ -52,5 +52,6 @@ class TripostLikeService implements TripostLikeUseCase {
 		tripostLikePort.createAll(creates);
 		tripostLikePort.deleteAll(deletes);
 		tripostPort.recountAllLikeCount(new ArrayList<>(updateTargets));
+		cachedTripostLikePort.removeAllLikeCount();
 	}
 }
