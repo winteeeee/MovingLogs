@@ -247,7 +247,7 @@
                     AND T.CONTENT LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
                 <when test="criteria.type.name() == 'AUTHOR'">
-                    AND T.NAME LIKE CONCAT('%', #{criteria.query}, '%')
+                    AND U.NAME LIKE CONCAT('%', #{criteria.query}, '%')
                 </when>
             </choose>
         </where>

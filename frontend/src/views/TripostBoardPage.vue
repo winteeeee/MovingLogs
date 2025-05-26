@@ -3,7 +3,7 @@
     <BoardHeader :activeTab="activeTab" @update:activeTab="activeTab = $event" />
 
     <BoardSearchFilter
-      v-model:filters="filters"
+      v-model:searchType="searchType"
       v-model:searchQuery="searchQuery"
       :mapVisible="mapVisible"
       @toggle-map="toggleMapView"
@@ -46,11 +46,7 @@ const loading = ref(true)
 const currentPage = ref(1)
 const postsPerPage = ref(10)
 const searchQuery = ref('')
-const filters = ref({
-  departure: '',
-  destination: '',
-  waypoint: '',
-})
+const searchType = ref('TITLE')
 const mapVisible = ref(false)
 const kakaoMap = ref(null)
 const isAdmin = ref(false) // Would be set based on user authentication
@@ -61,7 +57,7 @@ const fetchPosts = async () => {
   try {
     const response = await api.get(`/api/v1/triposts`, {
       params: {
-        type: "TITLE",
+        type: searchType.value,
         page: currentPage.value,
         size: postsPerPage.value,
         query: searchQuery.value,

@@ -1,12 +1,23 @@
 <template>
   <div class="search-filter-container">
     <div class="search-box">
+      <select
+        type="text"
+        v-model="localSearchType"
+        @change="updateSearchType"
+        placeholder="검색 타입"
+        class="form-control form-control-sm"
+      >
+        <option value="TITLE">제목만</option>
+        <option value="CONTENT">내용만</option>
+        <option value="AUTHOR">작성자</option>
+      </select>
       <input
         type="text"
         v-model="localSearchQuery"
         @input="updateSearchQuery"
         placeholder="검색어를 입력하세요"
-        class="form-control form-control-sm"
+        class="form-control form-control-sm search-input"
         v-on:keyup.enter="$emit('search')"
       />
       <button class="search-btn" @click="$emit('search')"><i class="bi bi-search"></i> 검색</button>
@@ -25,8 +36,8 @@
 import { defineProps, defineEmits, ref, watch } from 'vue'
 
 const props = defineProps({
-  filters: {
-    type: Object,
+  searchType: {
+    type: String,
     required: true,
   },
   searchQuery: {
@@ -39,15 +50,16 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['update:filters', 'update:searchQuery', 'toggle-map', 'search'])
+const emit = defineEmits(['update:filters', 'update:searchQuery', 'update:searchType', 'toggle-map', 'search'])
 
 const localFilters = ref({ ...props.filters })
 const localSearchQuery = ref(props.searchQuery)
+const localSearchType = ref(props.searchType)
 
 watch(
-  () => props.filters,
+  () => props.searchType,
   (newVal) => {
-    localFilters.value = { ...newVal }
+    localSearchType.value = newVal
   },
   { deep: true },
 )
@@ -59,12 +71,12 @@ watch(
   },
 )
 
-const updateFilters = () => {
-  emit('update:filters', { ...localFilters.value })
-}
-
 const updateSearchQuery = () => {
   emit('update:searchQuery', localSearchQuery.value)
+}
+
+const updateSearchType = () => {
+  emit('update:searchType', localSearchType.value)
 }
 </script>
 
@@ -100,6 +112,10 @@ const updateSearchQuery = () => {
   align-items: center;
   font-size: 18px;
   color: #6c757d;
+}
+
+.search-input {
+  width: 10rem;
 }
 
 .search-box {
