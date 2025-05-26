@@ -7,13 +7,15 @@
     <select id="findById">
         SELECT *
         FROM plan
-        WHERE id = #{id} AND is_deleted = 0;
+        WHERE id = #{id} AND is_deleted = 0
+        ORDER BY start_date DESC
     </select>
 
     <select id="findByUid">
         SELECT *
         FROM plan
         WHERE uid = #{uid} AND is_deleted = 0
+        ORDER BY start_date DESC
         LIMIT #{limit} OFFSET #{offset}
     </select>
 
