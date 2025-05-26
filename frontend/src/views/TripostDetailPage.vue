@@ -61,6 +61,7 @@
         <PostDetailCommentSection
           :tripostId="tripost.id"
           :comments="comments"
+          :comment-count="tripost.commentCount"
           @add-comment="addComment"
           @add-reply="addReply"
           @delete-comment="deleteComment"
@@ -258,30 +259,12 @@ async function addComment(newComment) {
 function addReply({ commentId, reply }) {
   if (!tripost) return
 
-  const comment = tripost.value.comments.find((c) => c.id === commentId)
+  const comment = comments.value.find((c) => c.id === commentId)
   if (comment) {
     if (!comment.replies) {
       comment.replies = []
     }
 
-    // 실제 구현 시 API 호출
-    // fetch(`/api/comments/${commentId}/replies`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify(reply)
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   comment.replies.push(data);
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    //   alert('답글 등록 중 오류가 발생했습니다.');
-    // });
-
-    // 임시 처리
     comment.replies.push(reply)
   }
 }
@@ -298,27 +281,10 @@ async function deleteComment(commentId) {
 }
 
 function deleteReply({ commentId, replyId }) {
-  if (!tripost.value) return
+  if (!tripost) return
 
-  const comment = tripost.value.comments.find((c) => c.id === commentId)
+  const comment = comments.value.find((c) => c.id === commentId)
   if (comment && comment.replies) {
-    // 실제 구현 시 API 호출
-    // fetch(`/api/replies/${replyId}`, {
-    //   method: 'DELETE'
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //   const index = comment.replies.findIndex(r => r.id === replyId);
-    //   if (index !== -1) {
-    //     comment.replies.splice(index, 1);
-    //   }
-    // })
-    // .catch(error => {
-    //   console.error('Error:', error);
-    //   alert('답글 삭제 중 오류가 발생했습니다.');
-    // });
-
-    // 임시 처리
     const index = comment.replies.findIndex((r) => r.id === replyId)
     if (index !== -1) {
       comment.replies.splice(index, 1)

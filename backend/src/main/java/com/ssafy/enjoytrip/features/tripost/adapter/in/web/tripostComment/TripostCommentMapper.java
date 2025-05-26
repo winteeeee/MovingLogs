@@ -32,6 +32,7 @@ public class TripostCommentMapper {
 
     public static CreateTripostCommentUseCase.Command toCreateTripostCommentCommend(String uid, CreateTripostCommentRequest request) {
         return CreateTripostCommentUseCase.Command.builder()
+                .parentId(new TripostCommentId(request.getParentId()))
                 .tripostId(new TripostId(request.getTripostId()))
                 .uid(new Uid(uid))
                 .content(request.getContent())

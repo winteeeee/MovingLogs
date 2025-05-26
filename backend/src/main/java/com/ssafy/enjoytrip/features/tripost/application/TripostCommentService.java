@@ -39,6 +39,7 @@ public class TripostCommentService implements
                 .orElseThrow(() -> new UserNotFoundException("유저를 찾을 수 없습니다: " + command.getUid()));
 
         TripostComment tripostComment = TripostComment.of(
+                command.getParentId(),
                 command.getTripostId(),
                 author,
                 command.getContent(),
@@ -48,6 +49,7 @@ public class TripostCommentService implements
         tripostPort.recountCommentCount(command.getTripostId());
 
         return new CreateTripostCommentUseCase.Result(
+                tripostComment.getParentId(),
                 tripostComment.getId(),
                 author.getName(),
                 tripostComment.getContent(),
@@ -77,6 +79,11 @@ public class TripostCommentService implements
 
         dto.getContent().forEach(comment -> {
             comment.setAuthor(comment.getUid().equals(query.getUid().getId()));
+            if (comment.getReplies() != null) {
+                comment.getReplies().forEach(replie -> {
+                    replie.setAuthor(replie.getUid().equals(query.getUid().getId()));
+                });
+            }
         });
         return dto;
     }

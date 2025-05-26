@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Setter
 @Getter
@@ -16,6 +17,7 @@ public class TripostCommentDto {
     private String uid;
     private String authorName;
     private String content;
+    private List<TripostCommentDto> replies;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean isAuthor;

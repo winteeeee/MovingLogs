@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class TripostComment {
     private TripostCommentId id;
+    private TripostCommentId parentId;
     private TripostId tripostId;
     private Author author;
     private String content;
@@ -52,11 +53,13 @@ public class TripostComment {
     }
 
     public static TripostComment of(
+            TripostCommentId parentId,
             TripostId tripostId,
             Author author,
             String content,
             Clock clock) {
       return TripostComment.of(
+              parentId,
               UuidFactory.newId(TripostCommentId::new),
               tripostId,
               author,
@@ -67,6 +70,7 @@ public class TripostComment {
     }
 
     public static TripostComment of(
+            TripostCommentId parentId,
             TripostCommentId id,
             TripostId tripostId,
             Author author,
@@ -75,6 +79,7 @@ public class TripostComment {
             Clock clock) {
         return TripostComment.builder()
                 .id(id)
+                .parentId(parentId)
                 .tripostId(tripostId)
                 .author(author)
                 .content(content)

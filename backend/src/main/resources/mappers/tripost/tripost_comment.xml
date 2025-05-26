@@ -7,6 +7,7 @@
     <insert id="insert">
         INSERT INTO tripost_comment (
             ID,
+            PARENT_ID,
             TRIPOST_ID,
             UID,
             CONTENT,
@@ -17,6 +18,7 @@
         VALUES
         (
             #{tripostComment.id.id},
+            #{tripostComment.parentId.id},
             #{tripostComment.tripostId.id},
             #{tripostComment.author.uid.id},
             #{tripostComment.content},
@@ -55,15 +57,34 @@
             TC.ID               AS id,
             TC.TRIPOST_ID       AS tripost_id,
             TC.UID              AS uid,
-            U.NAME              AS name,
+            U.NAME              AS authorName,
             TC.CONTENT          AS content,
             TC.CREATED_AT       AS created_at,
-            TC.UPDATED_AT       AS updated_at
+            TC.UPDATED_AT       AS updated_at,
+            (
+                SELECT JSON_ARRAYAGG(
+                    JSON_OBJECT(
+                        'id', TCC.ID,
+                        'tripostId', TCC.TRIPOST_ID,
+                        'uid', TCC.UID,
+                        'authorName', U2.NAME,
+                        'content', TCC.CONTENT,
+                        'createdAt', TCC.CREATED_AT,
+                        'updatedAt', TCC.UPDATED_AT
+                    )
+                )
+                FROM tripost_comment TCC
+                    JOIN user U2 ON TCC.UID = U2.UID
+                WHERE TC.ID = TCC.PARENT_ID
+                    AND NOT TCC.IS_DELETED
+                ORDER BY TCC.CREATED_AT ASC
+            )                   AS replies
         FROM tripost_comment TC
             JOIN user U ON TC.UID = U.UID
         WHERE TC.TRIPOST_ID = #{criteria.tripostId.id}
             AND NOT TC.IS_DELETED
-        ORDER BY TC.CREATED_AT DESC
+            AND TC.PARENT_ID IS NULL
+        ORDER BY TC.CREATED_AT ASC
         LIMIT #{limit}
         OFFSET #{offset}
     </select>

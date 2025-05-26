@@ -1,5 +1,7 @@
 package com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostCommentDao;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostCommentDto;
@@ -12,6 +14,7 @@ import com.ssafy.enjoytrip.features.user.domain.Uid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +24,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TripostCommentMybatisAdapter implements
         TripostCommentPort {
+    private static final Type TRIPOST_COMMENT_DTO_LIST_TYPE = new TypeToken<List<TripostCommentDto>>(){}.getType();
+
     private final TripostCommentDao tripostCommentDao;
+    private final Gson gson;
 
     @Override
     public TripostComment save(TripostComment tripostComment) {
@@ -54,16 +60,18 @@ public class TripostCommentMybatisAdapter implements
     public Optional<PageDto<TripostCommentDto>> getPagedTripostCommentDto(TripostId tripostId, int page, int size) {
         PageDto<Map<String, Object>> resultPage = tripostCommentDao.toPage(page, size, new TripostCommentDao.Criteria(tripostId));
 
-        List<TripostCommentDto> content = resultPage.getContent().stream().map(item->
-            TripostCommentDto.builder()
-                    .id((String) item.get("id"))
-                    .uid((String) item.get("uid"))
-                    .authorName((String) item.get("name"))
-                    .content((String) item.get("content"))
-                    .createdAt((LocalDateTime) item.get("created_at"))
-                    .updatedAt((LocalDateTime) item.get("updated_at"))
-                    .build()
-        ).toList();
+        List<TripostCommentDto> content = resultPage.getContent().stream().map(item -> {
+            List<TripostCommentDto> replies = gson.fromJson((String) item.get("replies"), TRIPOST_COMMENT_DTO_LIST_TYPE);
+            return TripostCommentDto.builder()
+                            .id((String) item.get("id"))
+                            .uid((String) item.get("uid"))
+                            .authorName((String) item.get("authorName"))
+                            .content((String) item.get("content"))
+                            .replies(replies)
+                            .createdAt((LocalDateTime) item.get("created_at"))
+                            .updatedAt((LocalDateTime) item.get("updated_at"))
+                            .build();
+        }).toList();
 
         PageDto<TripostCommentDto> tripostCommentPage = PageDto.<TripostCommentDto>builder()
                 .content(content)

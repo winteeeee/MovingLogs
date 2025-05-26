@@ -17,6 +17,7 @@ public interface CreateTripostCommentUseCase {
     @Builder
     @AllArgsConstructor
     class Command {
+        private TripostCommentId parentId;
         private TripostId tripostId;
         private Uid uid;
         private String content;
@@ -26,6 +27,7 @@ public interface CreateTripostCommentUseCase {
     @Builder
     @AllArgsConstructor
     class Result {
+        private TripostCommentId parentId;
         private TripostCommentId id;
         private String authorName;
         private String content;

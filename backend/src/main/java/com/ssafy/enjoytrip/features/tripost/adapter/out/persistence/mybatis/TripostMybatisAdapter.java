@@ -34,9 +34,7 @@ public class TripostMybatisAdapter implements
     private final TripostDao tripostDao;
     private final WaypointSnapshotImageDao waypointSnapshotImageDao;
     private final WaypointSnapshotDao waypointSnapshotDao;
-
-    // TODO: final 선언하고 GSON 컨픽 만들기
-    private Gson gson = new Gson();
+    private final Gson gson;
 
     @Override
     public Optional<PageDto<TripostListItemDto>> getPagedTripostListItemDto(SearchTripostPagedQuery.QueryType type, String query, int page, int size) {

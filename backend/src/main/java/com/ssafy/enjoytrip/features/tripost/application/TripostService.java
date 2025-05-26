@@ -8,6 +8,7 @@ import com.ssafy.enjoytrip.features.tripost.application.dto.LatestTripostDto;
 import com.ssafy.enjoytrip.features.tripost.application.exception.TripostNotFoundException;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
 import com.ssafy.enjoytrip.features.tripost.application.port.out.*;
+import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.features.tripost.domain.component.Author;
 import com.ssafy.enjoytrip.features.tripost.domain.Tripost;
 import com.ssafy.enjoytrip.features.user.application.exception.UserNotFoundException;

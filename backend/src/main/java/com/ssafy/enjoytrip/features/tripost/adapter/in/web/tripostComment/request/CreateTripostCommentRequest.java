@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class CreateTripostCommentRequest {
+    private String parentId;
     private String tripostId;
     private String content;
 }

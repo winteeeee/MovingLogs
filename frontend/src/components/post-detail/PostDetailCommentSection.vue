@@ -1,7 +1,7 @@
 <template>
   <div class="comment-section">
     <h3 class="comment-title">
-      댓글 <span class="comment-count">{{ comments.length }}</span>
+      댓글 <span class="comment-count">{{ commentCount }}</span>
     </h3>
 
     <div class="comment-form">
@@ -92,7 +92,7 @@
                       :alt="reply.author.name"
                     />
                   </div> -->
-                  <div class="author-name">{{ reply.author }}</div>
+                  <div class="author-name">{{ reply.authorName }}</div>
                 </div>
                 <div class="reply-date">{{ formatDate(reply.createdAt) }}</div>
               </div>
@@ -126,6 +126,9 @@ const props = defineProps({
   tripostId: {
     type: String,
     required: true,
+  },
+  commentCount: {
+    type: Number,
   },
   comments: {
     type: Array,
@@ -181,20 +184,34 @@ function cancelReply() {
   replyText.value = ''
 }
 
-function submitReply(commentId) {
+async function submitReply(commentId) {
   if (!replyText.value.trim()) return
 
+  console.log(commentId)
   const newReply = {
     id: "",
-    authorName: currentUser.value,
+    parentId: commentId,
+    authorName: "",
     content: replyText.value,
-    createdAt: "",
-    isAuthor: false,
+    createdAt: null,
+    author: false,
   }
 
-  emit('add-reply', { commentId, reply: newReply })
-  replyText.value = ''
-  replyFormIndex.value = null
+  try {
+    const response = await api.post(`/api/v1/triposts/${props.tripostId}/comments`, {
+      parentId: newReply.parentId,
+      tripostId: props.tripostId,
+      content: newReply.content
+    })
+
+    Object.assign(newReply, response.data);
+    emit('add-reply', { commentId, reply: newReply })
+    replyText.value = ''
+    replyFormIndex.value = null
+  } catch (error) {
+    alert("댓글 저장 실패")
+    console.log(error)
+  }
 }
 
 async function deleteComment(commentId) {
@@ -210,9 +227,16 @@ async function deleteComment(commentId) {
   }
 }
 
-function deleteReply(commentId, replyId) {
+async function deleteReply(commentId, replyId) {
   if (confirm('답글을 삭제하시겠습니까?')) {
-    emit('delete-reply', { commentId, replyId })
+    try {
+      const response = await api.delete(`/api/v1/triposts/${props.tripostId}/comments/${replyId}`);
+      console.log(response);
+      emit('delete-reply', { commentId, replyId })
+    } catch (error) {
+      alert("댓글 삭제 실패")
+      console.log(error)
+    }
   }
 }
 
