@@ -14,7 +14,7 @@ public class TripostScheduler {
     private final SyncTripostViewCountFromCacheUseCase syncViewCount;
     private final TripostLikeUseCase tripostLikeUseCase;
 
-    @Scheduled(fixedRate = 10000)
+    @Scheduled(cron = "0 0 * * * *")
     public void syncCount() {
         syncViewCount.syncViewCount();
         tripostLikeUseCase.syncLiked();
