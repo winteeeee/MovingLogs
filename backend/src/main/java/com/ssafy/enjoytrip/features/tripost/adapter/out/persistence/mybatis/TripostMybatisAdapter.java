@@ -72,11 +72,11 @@ public class TripostMybatisAdapter implements
     }
 
     @Override
-    public Optional<List<MainPageTripostDto>> getLatestTripostDto(Integer size) {
-        List<MainPageTripostDto> dtos = new ArrayList<>();
+    public Optional<List<LatestTripostDto>> getLatestTripostDto(Integer size) {
+        List<LatestTripostDto> dtos = new ArrayList<>();
         List<Map<String, Object>> resultMaps = tripostDao.findLatestTripostDetail(size);
         for (Map<String, Object> resultMap : resultMaps) {
-            MainPageTripostDto dto = MainPageTripostDto.builder()
+            LatestTripostDto dto = LatestTripostDto.builder()
                     .id((String) resultMap.get("id"))
                     .title((String) resultMap.get("title"))
                     .description((String) resultMap.get("description"))
@@ -88,6 +88,26 @@ public class TripostMybatisAdapter implements
             dtos.add(dto);
         }
         return Optional.of(dtos);
+    }
+
+    @Override
+    public Optional<List<HotTripostDto>> getHotTripostDto(Integer size) {
+        List<HotTripostDto> dtos = new ArrayList<>();
+        List<Map<String, Object>> resultMaps = tripostDao.findHotTripostDetail(size);
+        for (Map<String, Object> resultMap : resultMaps) {
+            HotTripostDto dto = HotTripostDto.builder()
+                    .id((String) resultMap.get("id"))
+                    .title((String) resultMap.get("title"))
+                    .author((String) resultMap.get("author"))
+                    .build();
+            dtos.add(dto);
+        }
+        return Optional.of(dtos);
+    }
+
+    @Override
+    public List<String> getRelatedAttractionNames(String id) {
+        return tripostDao.getRelatedAttractionNames(id);
     }
 
     @Override

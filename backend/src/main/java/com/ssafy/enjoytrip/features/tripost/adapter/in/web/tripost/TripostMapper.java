@@ -3,10 +3,7 @@ package com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost;
 import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.attraction.domain.AttractionId;
 import com.ssafy.enjoytrip.features.image.domain.ImageId;
-import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.CreateTripostRequest;
-import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchLatestTripostRequest;
-import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchTripostRequest;
-import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.UpdateTripostRequest;
+import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.*;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.response.*;
 import com.ssafy.enjoytrip.features.tripost.application.dto.*;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
@@ -118,7 +115,7 @@ public class TripostMapper {
                 .build();
     }
 
-    public static SearchLatestTripostResponse toSearchLatestTripostResponse(MainPageTripostDto dto) {
+    public static SearchLatestTripostResponse toSearchLatestTripostResponse(LatestTripostDto dto) {
         return SearchLatestTripostResponse.builder()
                 .id(dto.getId())
                 .title(dto.getTitle())
@@ -130,7 +127,29 @@ public class TripostMapper {
                 .build();
     }
 
-    public static List<SearchLatestTripostResponse> toSearchLatestTripostResponseList(List<MainPageTripostDto> dtos) {
+    public static List<SearchLatestTripostResponse> toSearchLatestTripostResponseList(List<LatestTripostDto> dtos) {
         return dtos.stream().map(TripostMapper::toSearchLatestTripostResponse).toList();
+    }
+
+    public static SearchHotTripostUseCase.Command toSearchHotTripostUseCaseCommand(SearchHotTripostRequest request) {
+        return SearchHotTripostUseCase.Command.builder()
+                .size(request.getSize())
+                .build();
+    }
+
+    public static SearchHotTripostResponse toSearchHotTripostResponse(HotTripostDto dto) {
+        int waypointLen = dto.getWaypointNames().size();
+        return SearchHotTripostResponse.builder()
+                .id(dto.getId())
+                .title(dto.getTitle())
+                .author(dto.getAuthor())
+                .startWaypoint(dto.getWaypointNames().get(0))
+                .endWaypoint(dto.getWaypointNames().get(waypointLen - 1))
+                .waypointLength(waypointLen)
+                .build();
+    }
+
+    public static List<SearchHotTripostResponse> toSearchHotTripostResponseList(List<HotTripostDto> dtos) {
+        return dtos.stream().map(TripostMapper::toSearchHotTripostResponse).toList();
     }
 }
