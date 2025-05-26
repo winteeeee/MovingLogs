@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Getter
 @AllArgsConstructor
 public class SearchLatestTripostResponse {
+    private String id;
     private String title;
     private String description;
     private LocalDate createdAt;

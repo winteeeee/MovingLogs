@@ -120,6 +120,7 @@ public class TripostMapper {
 
     public static SearchLatestTripostResponse toSearchLatestTripostResponse(MainPageTripostDto dto) {
         return SearchLatestTripostResponse.builder()
+                .id(dto.getId())
                 .title(dto.getTitle())
                 .description(dto.getDescription())
                 .createdAt(dto.getCreatedAt())

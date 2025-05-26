@@ -10,7 +10,7 @@
 
       <div class="row">
         <div class="col-md-6 col-lg-3 mb-4" v-for="post in latestPosts" :key="post.id">
-          <div class="post-card">
+          <div class="post-card" @click="moveToBoard(post.id)">
             <div class="post-thumbnail">
               <img :src="serverUrl + post.imageUrl" :alt="post.title" class="post-img" />
             </div>
@@ -37,10 +37,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import api from '@/api/axios.js'
+import { useRouter } from 'vue-router'
+
 
 // 최신 게시글 데이터
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const latestPosts = ref(null)
+const router = useRouter();
+
+function moveToBoard(id) {
+  router.push(`/tripost/${id}`)
+}
 
 onMounted(async () => {
   await loadLatestPosts()
