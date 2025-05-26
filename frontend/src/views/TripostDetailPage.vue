@@ -250,19 +250,9 @@ function sharePost() {
 async function addComment(newComment) {
   if (!tripost) return
 
-  try {
-    const response = await api.post(`/api/v1/triposts/${tripost.id}/comments`, {
-      tripostId: tripost.id,
-      content: newComment.content
-    })
-
-    Object.assign(newComment, response.data);
-    console.log(newComment)
-    comments.value.push(newComment)
-  } catch (error) {
-    alert("댓글 저장 실패")
-    console.log(error)
-  }
+  console.log(newComment)
+  comments.value.push(newComment)
+  tripost.commentCount++;
 }
 
 function addReply({ commentId, reply }) {
@@ -299,17 +289,11 @@ function addReply({ commentId, reply }) {
 async function deleteComment(commentId) {
   if (!tripost) return
 
-  try {
-    const response = await api.delete(`/api/v1/triposts/${tripost.id}/comments/${commentId}`);
-    console.log(response);
+  tripost.commentCount--;
 
-    const index = comments.value.findIndex((c) => c.id === commentId)
-    if (index !== -1) {
-      comments.value.splice(index, 1)
-    }
-  } catch (error) {
-    alert("댓글 삭제 실패")
-    console.log(error)
+  const index = comments.value.findIndex((c) => c.id === commentId)
+  if (index !== -1) {
+    comments.value.splice(index, 1)
   }
 }
 

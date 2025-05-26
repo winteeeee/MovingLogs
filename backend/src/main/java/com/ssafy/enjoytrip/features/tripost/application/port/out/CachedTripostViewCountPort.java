@@ -9,4 +9,5 @@ public interface CachedTripostViewCountPort {
     Optional<Long> createViewCount(TripostId tripostId, Long viewCount);
     Optional<Long> incrementViewCount(TripostId tripostId);
     List<TripostPort.TripostViewCount> popAllCachedViewCount();
+    List<Optional<Long>> getViewCount(List<TripostId> tripostIds);
 }

@@ -154,8 +154,21 @@ async function submitComment() {
     createdAt: null,
     author: false,
   }
-  emit('add-comment', newComment)
-  commentText.value = ''
+
+  try {
+    const response = await api.post(`/api/v1/triposts/${props.tripostId}/comments`, {
+      tripostId: props.tripostId,
+      content: newComment.content
+    })
+
+    Object.assign(newComment, response.data);
+    emit('add-comment', newComment)
+    commentText.value = ''
+  } catch (error) {
+    alert("댓글 저장 실패")
+    console.log(error)
+  }
+
 }
 
 function toggleReplyForm(index) {
@@ -184,9 +197,16 @@ function submitReply(commentId) {
   replyFormIndex.value = null
 }
 
-function deleteComment(commentId) {
+async function deleteComment(commentId) {
   if (confirm('댓글을 삭제하시겠습니까?')) {
-    emit('delete-comment', commentId)
+    try {
+      const response = await api.delete(`/api/v1/triposts/${props.tripostId}/comments/${commentId}`);
+      console.log(response);
+      emit('delete-comment', commentId)
+    } catch (error) {
+      alert("댓글 삭제 실패")
+      console.log(error)
+    }
   }
 }
 
@@ -194,10 +214,6 @@ function deleteReply(commentId, replyId) {
   if (confirm('답글을 삭제하시겠습니까?')) {
     emit('delete-reply', { commentId, replyId })
   }
-}
-
-function isCommentAuthor(comment) {
-  return comment.isAuthor;
 }
 
 function formatDate(date) {
