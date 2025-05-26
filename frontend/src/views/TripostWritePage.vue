@@ -61,7 +61,6 @@ import CKEditor from '@/components/common/CKEditor.vue'
 import api from '@/api/axios.js'
 
 const router = useRouter();
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 const plan = ref({})
 const isEditing = ref(false)

@@ -8,7 +8,7 @@
         :key="waypoint.id"
         class="route-point-images"
       >
-        <h4>{{ index + 1 }}. {{ waypoint.title }}</h4>
+        <h4>{{ index + 1 }}. {{ waypoint.attractionName }}</h4>
         <TripostWriteImageUploader
           :images="waypoint.images"
           @image-added="(image) => handleImageAdded(index, image)"
