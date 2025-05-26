@@ -314,6 +314,7 @@ onBeforeUnmount(() => {
 
 .viewer-content {
   flex: 1;
+  max-height: 80%;
   display: flex;
   align-items: center;
   justify-content: center;
