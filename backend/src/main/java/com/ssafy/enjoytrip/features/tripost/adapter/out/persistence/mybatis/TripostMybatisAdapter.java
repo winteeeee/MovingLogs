@@ -6,10 +6,7 @@ import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotDao;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.TripostDao;
 import com.ssafy.enjoytrip.features.tripost.adapter.out.persistence.mybatis.dao.WaypointSnapshotImageDao;
-import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointSnapshotDto;
-import com.ssafy.enjoytrip.features.tripost.application.dto.WaypointImageDto;
-import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
-import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
+import com.ssafy.enjoytrip.features.tripost.application.dto.*;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.SearchTripostPagedQuery;
 import com.ssafy.enjoytrip.features.tripost.application.port.out.*;
 import com.ssafy.enjoytrip.features.tripost.domain.Tripost;
@@ -72,6 +69,25 @@ public class TripostMybatisAdapter implements
                 .hasNext(resultPage.getHasNext())
                 .build();
         return Optional.of(tripostPage);
+    }
+
+    @Override
+    public Optional<List<MainPageTripostDto>> getLatestTripostDto(Integer size) {
+        List<MainPageTripostDto> dtos = new ArrayList<>();
+        List<Map<String, Object>> resultMaps = tripostDao.findLatestTripostDetail(size);
+        for (Map<String, Object> resultMap : resultMaps) {
+            MainPageTripostDto dto = MainPageTripostDto.builder()
+                    .id((String) resultMap.get("id"))
+                    .title((String) resultMap.get("title"))
+                    .description((String) resultMap.get("description"))
+                    .imageUrl((String) resultMap.get("image_url"))
+                    .commentCount((Integer) resultMap.get("comment_count"))
+                    .viewCount((Integer) resultMap.get("view_count"))
+                    .createdAt(((LocalDateTime) resultMap.get("created_at")).toLocalDate())
+                    .build();
+            dtos.add(dto);
+        }
+        return Optional.of(dtos);
     }
 
     @Override

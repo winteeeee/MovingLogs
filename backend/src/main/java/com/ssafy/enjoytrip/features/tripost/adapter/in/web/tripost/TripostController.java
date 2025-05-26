@@ -3,9 +3,11 @@ package com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost;
 import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.common.util.SecurityUtils;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.CreateTripostRequest;
+import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchLatestTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.UpdateTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.response.*;
+import com.ssafy.enjoytrip.features.tripost.application.dto.MainPageTripostDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
 import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
@@ -16,6 +18,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/${api.prefix}/${api.version}/triposts")
 @RequiredArgsConstructor
@@ -24,6 +28,7 @@ public class TripostController {
     private final CreateTripostUseCase createTripostUseCase;
     private final UpdateTripostUseCase updateTripostUseCase;
     private final DeleteTripostUseCase deleteTripostUseCase;
+    private final SearchLatestTripostUseCase searchLatestTripostUseCase;
 
     private final GetTripostByIdQuery getTripostByIdQuery;
     private final SearchTripostPagedQuery searchTripostPagedQuery;
@@ -47,6 +52,15 @@ public class TripostController {
         GetTripostByIdQuery.Query query = TripostMapper.toGetTripostByIdQuery(tripostId);
         TripostDetailDto dto = getTripostByIdQuery.findById(query);
         GetTripostResponse response = TripostMapper.toGetTripostResponse(uid, dto);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/latest")
+    @Operation(summary = "최신 여행 게시글 리스트 조회", description = "최신 여행 게시글 리스트를 조회한다")
+    public ResponseEntity<List<SearchLatestTripostResponse>> getLatestTriposts(@ModelAttribute SearchLatestTripostRequest request) {
+        SearchLatestTripostUseCase.Command command = TripostMapper.toSearchLatestTripostUseCaseCommand(request);
+        List<MainPageTripostDto> dto = searchLatestTripostUseCase.searchLatestTriposts(command);
+        List<SearchLatestTripostResponse> response = TripostMapper.toSearchLatestTripostResponseList(dto);
         return ResponseEntity.ok(response);
     }
 

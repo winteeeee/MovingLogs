@@ -4,11 +4,11 @@ import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.features.attraction.domain.AttractionId;
 import com.ssafy.enjoytrip.features.image.domain.ImageId;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.CreateTripostRequest;
+import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchLatestTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.SearchTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.request.UpdateTripostRequest;
 import com.ssafy.enjoytrip.features.tripost.adapter.in.web.tripost.response.*;
-import com.ssafy.enjoytrip.features.tripost.application.dto.TripostDetailDto;
-import com.ssafy.enjoytrip.features.tripost.application.dto.TripostListItemDto;
+import com.ssafy.enjoytrip.features.tripost.application.dto.*;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
 import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshot;
 import com.ssafy.enjoytrip.features.tripost.domain.component.WaypointSnapshotId;
@@ -110,5 +110,26 @@ public class TripostMapper {
         return SearchTripostResponse.builder()
                 .result(result)
                 .build();
+    }
+
+    public static SearchLatestTripostUseCase.Command toSearchLatestTripostUseCaseCommand(SearchLatestTripostRequest request) {
+        return SearchLatestTripostUseCase.Command.builder()
+                .size(request.getSize())
+                .build();
+    }
+
+    public static SearchLatestTripostResponse toSearchLatestTripostResponse(MainPageTripostDto dto) {
+        return SearchLatestTripostResponse.builder()
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .createdAt(dto.getCreatedAt())
+                .imageUrl(dto.getImageUrl())
+                .viewCount(dto.getViewCount())
+                .commentCount(dto.getCommentCount())
+                .build();
+    }
+
+    public static List<SearchLatestTripostResponse> toSearchLatestTripostResponseList(List<MainPageTripostDto> dtos) {
+        return dtos.stream().map(TripostMapper::toSearchLatestTripostResponse).toList();
     }
 }

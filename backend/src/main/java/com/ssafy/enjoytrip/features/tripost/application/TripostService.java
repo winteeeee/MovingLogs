@@ -3,9 +3,11 @@ package com.ssafy.enjoytrip.features.tripost.application;
 import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.exception.PageNotFoundException;
 import com.ssafy.enjoytrip.exception.UnauthorizedException;
+import com.ssafy.enjoytrip.features.tripost.application.dto.MainPageTripostDto;
 import com.ssafy.enjoytrip.features.tripost.application.exception.TripostNotFoundException;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
 import com.ssafy.enjoytrip.features.tripost.application.port.out.*;
+import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.features.tripost.domain.component.Author;
 import com.ssafy.enjoytrip.features.tripost.domain.Tripost;
 import com.ssafy.enjoytrip.features.user.application.exception.UserNotFoundException;
@@ -29,7 +31,8 @@ class TripostService implements
 		UpdateTripostUseCase,
 		SearchTripostPagedQuery,
 		GetTripostByIdQuery,
-		SyncTripostViewCountFromCacheUseCase {
+		SyncTripostViewCountFromCacheUseCase,
+		SearchLatestTripostUseCase{
 
 	private final AuthorPort authorPort;
 	private final TripostPort tripostPort;
@@ -114,6 +117,12 @@ class TripostService implements
 				);
 
 		return dto;
+	}
+
+	@Override
+	public List<MainPageTripostDto> searchLatestTriposts(SearchLatestTripostUseCase.Command command) {
+        return tripostPort.getLatestTripostDto(command.getSize())
+                .orElseThrow(() -> new TripostNotFoundException("최신 Tripost를 찾을 수 없음"));
 	}
 
 	@Override
