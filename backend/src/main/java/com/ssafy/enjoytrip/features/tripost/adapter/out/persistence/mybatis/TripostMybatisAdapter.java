@@ -97,6 +97,8 @@ public class TripostMybatisAdapter implements
                     .id((String) resultMap.get("id"))
                     .title((String) resultMap.get("title"))
                     .author((String) resultMap.get("author"))
+                    .imageUrl((String) resultMap.get("imageUrl"))
+                    .likeCount((Integer) resultMap.get("likeCount"))
                     .build();
             dtos.add(dto);
         }

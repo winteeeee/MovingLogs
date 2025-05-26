@@ -15,5 +15,7 @@ public class HotTripostDto {
     private String id;
     private String title;
     private String author;
+    private String imageUrl;
+    private Integer likeCount;
     private List<String> waypointNames;
 }

@@ -145,7 +145,9 @@ public class TripostMapper {
                 .author(dto.getAuthor())
                 .startWaypoint(dto.getWaypointNames().get(0))
                 .endWaypoint(dto.getWaypointNames().get(waypointLen - 1))
+                .imageUrl(dto.getImageUrl())
                 .waypointLength(waypointLen)
+                .likeCount(dto.getLikeCount())
                 .build();
     }
 
