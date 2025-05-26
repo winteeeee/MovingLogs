@@ -190,7 +190,7 @@ function cancelPost() {
 function goToBoard() {
   // 게시판 목록으로 이동
   console.log('게시판으로 이동')
-  // router.push({ name: 'BoardMainPage' });
+  router.push({ name: 'TripostBoardPage' });
 }
 
 async function submitPost() {
