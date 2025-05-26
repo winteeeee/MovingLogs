@@ -200,9 +200,22 @@
         SELECT
             t.id as id,
             t.title as title,
+            t.like_count as likeCount,
+            sub.image_url as imageUrl,
             u.name as author
         FROM tripost t
+        JOIN (
+            SELECT t2.id, min(i.image_url) as image_url
+            FROM tripost t2
+            JOIN waypoint_snapshot ws ON t2.id = ws.tripost_id
+            JOIN waypoint_snapshot_image wsi ON ws.id = wsi.waypoint_snapshot_id
+            JOIN image i ON i.id = wsi.image_id
+            WHERE i.image_url IS NOT NULL
+            GROUP BY t2.id
+        ) sub ON t.id = sub.id
         JOIN user u ON t.uid = u.uid
+        WHERE t.is_deleted = 0
+        ORDER BY t.like_count DESC
         LIMIT #{size};
     </select>
 

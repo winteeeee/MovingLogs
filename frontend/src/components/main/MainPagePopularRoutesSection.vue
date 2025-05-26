@@ -9,40 +9,31 @@
       </div>
 
       <div class="row">
-        <div class="col-md-6 col-lg-4 mb-4" v-for="route in popularRoutes" :key="route.id">
-          <div class="route-card">
-            <div class="route-thumbnail">
-              <img :src="route.thumbnail" :alt="route.title" class="route-img" />
-              <div class="route-overlay">
-                <span class="route-region">{{ route.region }}</span>
-                <span class="route-likes">
-                    <i class="bi bi-heart-fill"></i> {{ route.likes }}
+        <div class="col-md-6 col-lg-4 mb-4" v-for="hotPost in hotPosts" :key="hotPost.id">
+          <div class="hotPost-card" @click="moveToBoard(hotPost.id)">
+            <div class="hotPost-thumbnail">
+              <img :src="serverUrl + hotPost.imageUrl" :alt="hotPost.title" class="hotPost-img" />
+              <div class="hotPost-overlay">
+                <span class="hotPost-likes">
+                    <i class="bi bi-heart-fill"></i> {{ hotPost.likeCount }}
                   </span>
               </div>
             </div>
-            <div class="route-content">
-              <h3 class="route-title">{{ route.title }}</h3>
-              <div class="route-info">
-                <div class="route-path">
-                  <span class="route-point">{{ route.departure }}</span>
+            <div class="hotPost-content">
+              <h3 class="hotPost-title">{{ hotPost.title }}</h3>
+              <div class="hotPost-info">
+                <div class="hotPost-path">
+                  <span class="hotPost-point">{{ hotPost.startWaypoint }}</span>
                   <i class="bi bi-arrow-right"></i>
-                  <span v-if="route.waypoints.length > 0" class="route-waypoints">
-                      {{ route.waypoints.length }}개 경유지
+                  <span v-if="hotPost.waypointLength - 2 > 0" class="hotPost-waypoints">
+                      {{ hotPost.waypointLength - 2 }}개 경유지
                     </span>
-                  <i v-if="route.waypoints.length > 0" class="bi bi-arrow-right"></i>
-                  <span class="route-point">{{ route.destination }}</span>
+                  <i v-if="hotPost.waypointLength - 2 > 0" class="bi bi-arrow-right"></i>
+                  <span class="hotPost-point">{{ hotPost.endWaypoint }}</span>
                 </div>
-                <div class="route-meta">
-                    <span class="route-duration">
-                      <i class="bi bi-calendar3"></i> {{ route.duration }}
-                    </span>
-                  <span class="route-author">
-                      <img
-                        :src="route.author.avatar"
-                        :alt="route.author.name"
-                        class="author-avatar"
-                      />
-                      {{ route.author.name }}
+                <div class="hotPost-meta">
+                  <span class="hotPost-author">
+                      {{ hotPost.author }}
                     </span>
                 </div>
               </div>
@@ -55,61 +46,37 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import api from '@/api/axios.js'
+import { useRouter } from 'vue-router'
 
-// 인기 여행 경로 데이터
-const popularRoutes = ref([
-  {
-    id: 1,
-    title: '제주도 3박 4일 동쪽 여행 코스',
-    region: '제주',
-    departure: '제주공항',
-    destination: '제주공항',
-    waypoints: ['성산일출봉', '우도', '비자림', '함덕해수욕장'],
-    duration: '3박 4일',
-    likes: 245,
-    thumbnail: 'https://via.placeholder.com/400x300?text=Jeju',
-    author: {
-      name: '제주사랑',
-      avatar: 'https://via.placeholder.com/40?text=User1',
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
+const hotPosts = ref(null)
+const router = useRouter();
+
+function moveToBoard(id) {
+  router.push(`/tripost/${id}`)
+}
+
+onMounted(async () => {
+  await loadHotPosts()
+})
+
+async function loadHotPosts() {
+  const response = await api.get(`/api/v1/triposts/hot`, {
+    params: {
+      size: 3,
     },
-  },
-  {
-    id: 2,
-    title: '부산 해안도로 드라이브 코스',
-    region: '부산',
-    departure: '해운대',
-    destination: '태종대',
-    waypoints: ['광안리', '송도', '영도'],
-    duration: '1박 2일',
-    likes: 189,
-    thumbnail: 'https://via.placeholder.com/400x300?text=Busan',
-    author: {
-      name: '바다여행자',
-      avatar: 'https://via.placeholder.com/40?text=User2',
-    },
-  },
-  {
-    id: 3,
-    title: '서울 근교 당일치기 힐링 코스',
-    region: '경기',
-    departure: '서울역',
-    destination: '서울역',
-    waypoints: ['남한산성', '광주 화담숲', '이천 도자기마을'],
-    duration: '당일',
-    likes: 156,
-    thumbnail: 'https://via.placeholder.com/400x300?text=Seoul',
-    author: {
-      name: '주말탐험가',
-      avatar: 'https://via.placeholder.com/40?text=User3',
-    },
-  },
-])
+  })
+
+  hotPosts.value = response.data
+  console.log(response.data)
+}
 </script>
 
 <style scoped>
 /* 인기 여행 경로 섹션 */
-.route-card {
+.hotPost-card {
   background-color: white;
   border-radius: 8px;
   overflow: hidden;
@@ -120,48 +87,40 @@ const popularRoutes = ref([
   height: 100%;
 }
 
-.route-card:hover {
+.hotPost-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
 }
 
-.route-thumbnail {
+.hotPost-thumbnail {
   position: relative;
   height: 200px;
   overflow: hidden;
 }
 
-.route-img {
+.hotPost-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s;
 }
 
-.route-card:hover .route-img {
+.hotPost-card:hover .hotPost-img {
   transform: scale(1.05);
 }
 
-.route-overlay {
+.hotPost-overlay {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   padding: 12px;
   display: flex;
-  justify-content: space-between;
+  flex-direction: row-reverse;
 }
 
-.route-region {
-  background-color: var(--primary-color);
-  color: white;
-  padding: 4px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 500;
-}
-
-.route-likes {
+.hotPost-likes {
   background-color: rgba(0, 0, 0, 0.6);
   color: white;
   padding: 4px 10px;
@@ -172,11 +131,11 @@ const popularRoutes = ref([
   gap: 4px;
 }
 
-.route-content {
+.hotPost-content {
   padding: 20px;
 }
 
-.route-title {
+.hotPost-title {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 12px;
@@ -184,13 +143,13 @@ const popularRoutes = ref([
   line-height: 1.3;
 }
 
-.route-info {
+.hotPost-info {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
-.route-path {
+.hotPost-path {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -199,40 +158,27 @@ const popularRoutes = ref([
   color: #495057;
 }
 
-.route-point {
+.hotPost-point {
   font-weight: 500;
 }
 
-.route-waypoints {
+.hotPost-waypoints {
   color: #6c757d;
   font-size: 12px;
 }
 
-.route-meta {
+.hotPost-meta {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row-reverse;
   align-items: center;
   font-size: 13px;
   color: #6c757d;
 }
 
-.route-duration {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.route-author {
+.hotPost-author {
   display: flex;
   align-items: center;
   gap: 6px;
-}
-
-.author-avatar {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  object-fit: cover;
 }
 
 section {
