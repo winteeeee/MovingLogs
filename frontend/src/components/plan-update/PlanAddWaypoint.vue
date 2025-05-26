@@ -88,15 +88,18 @@
           >
             <div class="waypoint-thumb">
               <img
-                :src="spot.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'"
+                :src="
+                  spot.firstImage1 ||
+                  'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'
+                "
                 loading="lazy"
-              >
+              />
             </div>
             <div class="result-category">{{ spot.contentTypeName }}</div>
             <div class="result-content">
               <h4 class="result-name">{{ spot.title }}</h4>
               <p class="result-address">{{ spot.addr1 }}</p>
-              <p class="result-description">{{spot.overview}}</p>
+              <p class="result-description">{{ spot.overview }}</p>
             </div>
           </div>
         </div>
@@ -152,13 +155,13 @@ watch(
     if (isAdding.value) {
       await loadGugunData(searchFilters.sido)
     }
-  }
+  },
 )
 
 async function loadFilterData() {
   try {
-    const contentTypesResponse = await api.get(`${serverUrl}/api/v1/attractions/content-types`);
-    const sidosResponse = await api.get(`${serverUrl}/api/v1/attractions/sidos`);
+    const contentTypesResponse = await api.get(`${serverUrl}/api/v1/attractions/content-types`)
+    const sidosResponse = await api.get(`${serverUrl}/api/v1/attractions/sidos`)
 
     contentTypes.value = contentTypesResponse.data
     sidos.value = sidosResponse.data
@@ -172,11 +175,14 @@ async function loadFilterData() {
 
 async function loadGugunData(sidoName) {
   try {
-    const gugunResponse = await axios.get(`${serverUrl}/api/v1/attractions/guguns?sidoCode=${searchFilters.sido}`, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
+    const gugunResponse = await axios.get(
+      `${serverUrl}/api/v1/attractions/guguns?sidoCode=${searchFilters.sido}`,
+      {
+        headers: {
+          Authorization: `Bearer ${authStore.accessToken}`,
+        },
       },
-    })
+    )
     guguns.value = gugunResponse.data
   } catch (error) {
     console.error(`데이터 로드 실패: ${error}`)
@@ -211,19 +217,22 @@ async function searchSpots() {
   hasSearched.value = true
 
   try {
-    const params = {};
-    if (searchFilters.contentType !== null && searchFilters.contentType !== undefined) params.contentTypeId = searchFilters.contentType;
-    if (searchFilters.sido !== null && searchFilters.sido !== undefined) params.areaCode = searchFilters.sido;
-    if (searchFilters.guguns !== null && searchFilters.guguns !== undefined) params.siGunGuCode = searchFilters.guguns;
-    params.page = 1;
-    params.pageSize = 10000;
+    const params = {}
+    if (searchFilters.contentType !== null && searchFilters.contentType !== undefined)
+      params.contentTypeId = searchFilters.contentType
+    if (searchFilters.sido !== null && searchFilters.sido !== undefined)
+      params.areaCode = searchFilters.sido
+    if (searchFilters.guguns !== null && searchFilters.guguns !== undefined)
+      params.siGunGuCode = searchFilters.guguns
+    params.page = 1
+    params.pageSize = 10000
     console.log(params)
     const attractionResponse = await axios.get(`${serverUrl}/api/v1/attractions`, {
       headers: {
         Authorization: `Bearer ${authStore.accessToken}`,
       },
-      params
-    });
+      params,
+    })
 
     searchResults.value = attractionResponse.data.content
     console.log(attractionResponse.data.content)
@@ -246,17 +255,15 @@ function addSpot() {
   if (!selectedSpot.value) return
 
   const newSpot = {
-    id: {id: selectedSpot.value.id},
+    id: { id: selectedSpot.value.id },
     title: selectedSpot.value.title,
     addr1: selectedSpot.value.addr1,
     firstImage1: selectedSpot.value.firstImage1,
     overview: selectedSpot.value.overview,
-    contentTypeName: selectedSpot.value.contentTypeName
+    contentTypeName: selectedSpot.value.contentTypeName,
   }
 
   emit('add-waypoint', newSpot)
-  isAdding.value = false
-  resetForm()
 }
 
 // 폼 초기화
@@ -455,7 +462,6 @@ function resetForm() {
 
 .result-item.selected {
   background-color: #e8f0fe;
-
 }
 
 .result-item.selected::before {

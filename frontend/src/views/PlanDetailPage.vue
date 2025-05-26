@@ -16,24 +16,15 @@
         </div>
 
         <div class="header-actions">
-          <button
-            class="button button-secondary"
-            @click="goToEdit"
-          >
+          <button class="button button-secondary" @click="goToEdit">
             <span class="icon-edit"></span> 수정
           </button>
 
-          <button
-            class="button button-danger"
-            @click="confirmDelete"
-          >
+          <button class="button button-danger" @click="confirmDelete">
             <span class="icon-trash"></span> 삭제
           </button>
 
-          <button
-            class="button button-secondary"
-            @click="goToMyPlans"
-          >
+          <button class="button button-secondary" @click="goToMyPlans">
             <span class="icon-back"></span> 돌아가기
           </button>
         </div>
@@ -54,7 +45,9 @@
             <label class="info-label">여행 기간</label>
             <div class="info-value">
               {{ formatDate(plan.startDate) }} ~ {{ formatDate(plan.endDate) }}
-              <span class="duration">({{ calculateDuration(plan.startDate, plan.endDate) }}일)</span>
+              <span class="duration"
+                >({{ calculateDuration(plan.startDate, plan.endDate) }}일)</span
+              >
             </div>
           </div>
         </div>
@@ -65,6 +58,7 @@
         </div>
       </div>
 
+      <RouteMap :waypoints="plan.waypointList" :map-visible="showMap" />
       <!-- 여행 장소 목록 -->
       <div class="waypoints-card">
         <div class="card-header">
@@ -72,6 +66,10 @@
             여행 장소
             <span class="waypoint-count">{{ plan.waypointList?.length || 0 }}개 장소</span>
           </h2>
+          <button class="map-toggle-btn" @click="toggleMap">
+            <i :class="['bi', showMap ? 'bi-map-fill' : 'bi-map']"></i>
+            {{ showMap ? '지도 닫기' : '지도 보기' }}
+          </button>
         </div>
 
         <div v-if="!plan.waypointList || plan.waypointList.length === 0" class="empty-waypoints">
@@ -132,12 +130,8 @@
           <p class="warning-text">이 작업은 되돌릴 수 없습니다.</p>
         </div>
         <div class="modal-footer">
-          <button class="button button-secondary" @click="closeDeleteModal">
-            취소
-          </button>
-          <button class="button button-danger" @click="deletePlan">
-            삭제
-          </button>
+          <button class="button button-secondary" @click="closeDeleteModal">취소</button>
+          <button class="button button-danger" @click="deletePlan">삭제</button>
         </div>
       </div>
     </div>
@@ -149,20 +143,26 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios.js'
+import RouteMap from '@/components/common/RouteMap.vue'
 
 // 상태 관리
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 const plan = ref(null)
 const showDeleteModal = ref(false)
+const showMap = ref(false)
+
+function toggleMap() {
+  showMap.value = !showMap.value
+}
 
 // 여행 계획 데이터 로드
 async function loadPlanData() {
-   try {
-     const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`);
-     console.log(response.data)
-     plan.value = response.data
+  try {
+    const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`)
+    console.log(response.data)
+    plan.value = response.data
   } catch (error) {
     console.error('데이터 로드 실패:', error)
     alert('여행 계획을 불러오는 중 오류가 발생했습니다.')
@@ -195,7 +195,7 @@ async function deletePlan() {
     await api.delete(`${serverUrl}/api/v1/plans/${plan.value.id}`)
     alert('여행 계획이 삭제되었습니다.')
     showDeleteModal.value = false
-    router.back();
+    router.back()
     console.log('목록 페이지로 이동')
   } catch (error) {
     console.error('삭제 실패:', error)
@@ -261,7 +261,9 @@ onMounted(() => {
   padding: 24px;
   max-width: 1000px;
   margin: 0 auto;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
+    'Helvetica Neue', sans-serif;
   color: #333;
   background-color: #f8f9fa;
   min-height: 100vh;
@@ -470,7 +472,8 @@ onMounted(() => {
   gap: 8px;
 }
 
-.waypoint-address, .waypoint-overview {
+.waypoint-address,
+.waypoint-overview {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -528,8 +531,12 @@ onMounted(() => {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* 버튼 스타일 */
@@ -661,6 +668,23 @@ onMounted(() => {
 
 .icon-location::before {
   content: '📍';
+}
+
+.map-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background-color: #fd7e14;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.map-toggle-btn:hover {
+  background-color: #e8590c;
 }
 
 /* 반응형 디자인 */

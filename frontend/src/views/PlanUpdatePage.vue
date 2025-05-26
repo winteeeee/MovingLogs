@@ -74,8 +74,8 @@ import api from '@/api/axios.js'
 
 // 상태 관리
 const serverUrl = import.meta.env.VITE_API_SERVER_URL
-const route = useRoute();
-const router = useRouter();
+const route = useRoute()
+const router = useRouter()
 const originalPlan = ref(null)
 const plan = ref({ plan: [] })
 const isSaving = ref(false)
@@ -114,6 +114,11 @@ function updateWaypoints(updatedWaypoints) {
 
 // 장소 추가
 function addWaypoint(newWaypoint) {
+  if (plan.value.waypointList.some((wp) => wp.id.id === newWaypoint.id.id)) {
+    alert('이미 추가된 관광지입니다.')
+    return
+  }
+
   plan.value.waypointList.push({
     ...newWaypoint,
   })
@@ -137,7 +142,9 @@ function deleteWaypoint(waypoint) {
 function confirmDeleteWaypoint() {
   if (!waypointToDelete.value) return
 
-  plan.value.waypointList = plan.value.waypointList.filter((waypoint) => waypoint.id !== waypointToDelete.value.id)
+  plan.value.waypointList = plan.value.waypointList.filter(
+    (waypoint) => waypoint.id !== waypointToDelete.value.id,
+  )
 
   // 순서 재정렬
   plan.value.waypointList.forEach((waypoint, index) => {
@@ -157,15 +164,15 @@ async function savePlan() {
     id: plan.value.id,
     title: plan.value.title,
     desc: plan.value.description,
-    thumbnailUrl: plan.value.waypointList.find(wp => wp.firstImage1 !== "").firstImage1,
+    thumbnailUrl: plan.value.waypointList.find((wp) => wp.firstImage1 !== '').firstImage1,
     startDate: plan.value.startDate,
     endDate: plan.value.endDate,
-    attractionIds: plan.value.waypointList.map(item => item.id.id),
+    attractionIds: plan.value.waypointList.map((item) => item.id.id),
   }
   console.log(requestBody)
 
   try {
-    await api.put(`${serverUrl}/api/v1/plans`, requestBody);
+    await api.put(`${serverUrl}/api/v1/plans`, requestBody)
     alert('여행 계획이 저장되었습니다.')
     router.back()
   } catch (error) {
@@ -188,7 +195,7 @@ function confirmCancel() {
 // 편집 취소
 function cancelEdit() {
   console.log('편집 취소, 목록 페이지로 이동')
-  router.back();
+  router.back()
 }
 
 // 삭제 확인
@@ -215,7 +222,7 @@ async function deletePlan() {
 // 여행 계획 데이터 로드
 async function loadPlanData() {
   try {
-    const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`);
+    const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`)
     console.log('데이터 로드')
     console.log(response.data)
     plan.value = JSON.parse(JSON.stringify(response.data))
