@@ -17,6 +17,7 @@ public class TripostDetailDto {
     private String uid;
     private String name;
     private String title;
+    private String description;
     private String content;
     private List<WaypointSnapshotDto> waypoints;
     private long commentCount;

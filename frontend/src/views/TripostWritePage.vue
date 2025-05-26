@@ -28,11 +28,11 @@
 
       <div class="form-group">
         <label for="post-content">내용</label>
-        <CKEditor v-model="postData.content" @change="onEditorChange" @ready="onEditorReady" />
+        <CKEditor :value="initContent" @change="onEditorChange" @ready="onEditorReady" />
       </div>
 
       <TripostWriteWaypointsCard
-        :waypoint-list="plan.waypointList"
+        :waypoints="postData.waypoints"
       />
 
 
@@ -66,6 +66,8 @@ const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const plan = ref({})
 const isEditing = ref(false)
 const isAdmin = ref(false) // 실제 구현 시 사용자 권한에 따라 설정
+const initContent = ref("")
+
 const postData = reactive({
   id: '',
   title: '',
@@ -80,19 +82,19 @@ const props = defineProps({
     type: String,
     default: null,
   },
-  editPostId: {
-    type: Number,
+  tripostId: {
+    type: String,
     default: null,
   },
 })
 
-onMounted(() => {
+onMounted(async () => {
   console.log(props);
 
   if (props.planId) {
-    loadPlan(props.planId);
-  } else if (props.editPostId) {
-
+    await loadPlan(props.planId);
+  } else if (props.tripostId) {
+    await loadTripost(props.tripostId)
   } else {
 
   }
@@ -100,13 +102,15 @@ onMounted(() => {
 
 async function loadPlan(planId) {
   // 기존 여행 정보 가져오기
-  const response = await api.get(`${serverUrl}/api/v1/plans/${planId}`);
+  const response = await api.get(`/api/v1/plans/${planId}`);
   plan.value = response.data;
 
   postData.waypoints = plan.value.waypointList.map((waypoint) => {
     return {
-      id: waypoint.id.id,
-      title: waypoint.title,
+      attractionId: waypoint.id.id,
+      attractionName: waypoint.title,
+      addr1: waypoint.addr1,
+      contentTypeName: waypoint.contentTypeName,
       latitude: waypoint.latitude,
       longitude: waypoint.longitude,
       images: []
@@ -115,6 +119,20 @@ async function loadPlan(planId) {
 
   console.log(plan.value)
   console.log(postData.waypoints)
+}
+
+async function loadTripost(tripostId) {
+  // 기존 게시글 가져오기
+  const response = await api.get(`/api/v1/triposts/${tripostId}`);
+  Object.assign(postData, response.data.tripost);
+  postData.waypoints.forEach(waypoint => {
+    if (!waypoint.images) {
+      waypoint.images = [];
+    }
+  });
+
+  initContent.value = postData.content;
+  isEditing.value = true;
 }
 
 const editor = ref(null)
@@ -201,7 +219,8 @@ async function submitPost() {
       }
     })
     return {
-      attractionId: waypoint.id,
+      id: waypoint.id,
+      attractionId: waypoint.attractionId,
       latitude: waypoint.latitude,
       longitude: waypoint.longitude,
       images: images,
@@ -216,47 +235,27 @@ async function submitPost() {
     waypoints: waypoints,
   }
 
-  try {
-    const response = await api.post(`/api/v1/triposts`, data);
-    console.log(response.data)
-    alert('게시글이 등록되었습니다.');
-    router.push({ name: 'TripostBoardPage' });
-
-  } catch (e) {
-    console.error('Error:', e);
-    alert('게시글 등록 중 오류가 발생했습니다.');
+  if (isEditing.value) {
+    try {
+      const response = await api.put(`/api/v1/triposts/${postData.id}`, data);
+      console.log(response.data)
+      alert('게시글이 수정되었습니다.');
+      router.push({ name: 'TripostBoardPage' });
+    } catch (e) {
+      console.error('Error:', e);
+      alert('게시글 등록 중 오류가 발생했습니다.');
+    }
+  } else {
+    try {
+      const response = await api.post(`/api/v1/triposts`, data);
+      console.log(response.data)
+      alert('게시글이 등록되었습니다.');
+      router.push({ name: 'TripostBoardPage' });
+    } catch (e) {
+      console.error('Error:', e);
+      alert('게시글 등록 중 오류가 발생했습니다.');
+    }
   }
-
-  console.log(waypoints)
-  // 경로 정보
-
-  // 경로별 이미지 처리
-
-  // API 호출
-
-  // 실제 구현 시 API 호출
-  // const url = isEditing.value ? `/api/posts/${props.editPostId}` : '/api/posts';
-  // const method = isEditing.value ? 'PUT' : 'POST';
-
-  // fetch(url, {
-  //   method: method,
-  //   body: formData
-  // })
-  // .then(response => response.json())
-  // .then(data => {
-  //   alert(isEditing.value ? '게시글이 수정되었습니다.' : '게시글이 등록되었습니다.');
-  //   router.push({ name: 'PostDetailPage', params: { id: data.id } });
-  // })
-  // .catch(error => {
-  //   console.error('Error:', error);
-  //   alert('게시글 등록 중 오류가 발생했습니다.');
-  // });
-
-  // 임시 처리
-  // setTimeout(() => {
-  //   alert(isEditing.value ? '게시글이 수정되었습니다.' : '게시글이 등록되었습니다.')
-  //   goToBoard()
-  // }, 1000)
 }
 </script>
 

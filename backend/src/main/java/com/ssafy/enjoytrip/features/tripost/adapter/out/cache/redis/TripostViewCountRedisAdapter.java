@@ -31,8 +31,11 @@ public class TripostViewCountRedisAdapter implements
     @Override
     public Optional<Long> incrementViewCount(TripostId tripostId) {
         ValueOperations<String, String> ops = stringRedisTemplate.opsForValue();
-        Long incremented = ops.increment(createCountKey(tripostId));
-        return Optional.of(incremented);
+        Long incremented = null;
+        if (stringRedisTemplate.hasKey(createCountKey(tripostId))) {
+            incremented = ops.increment(createCountKey(tripostId));
+        }
+        return Optional.ofNullable(incremented);
     }
 
     @Override

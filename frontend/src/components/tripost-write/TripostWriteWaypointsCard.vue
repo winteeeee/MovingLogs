@@ -1,21 +1,21 @@
 <template>
   <div class="waypoints-card">
-    <h3>여행 경로 ({{ waypointList?.length }}개 장소)</h3>
+    <h3>여행 경로 ({{ waypoints?.length }}개 장소)</h3>
 
-    <div v-if="waypointList" class="waypoints-timeline">
+    <div v-if="waypoints" class="waypoints-timeline">
       <div
-        v-for="(waypoint, index) in waypointList"
+        v-for="(waypoint, index) in waypoints"
         :key="waypoint.id"
         class="timeline-item"
       >
         <div class="timeline-marker">
           <div class="marker-number">{{ index + 1 }}</div>
-          <div class="timeline-line" v-if="index < waypointList.length - 1"></div>
+          <div class="timeline-line" v-if="index < waypoints.length - 1"></div>
         </div>
 
         <div class="waypoint-card">
           <div class="waypoint-header">
-            <div class="waypoint-name">{{ waypoint.title }}</div>
+            <div class="waypoint-name">{{ waypoint.attractionName }}</div>
             <div class="waypoint-category">{{ waypoint.contentTypeName }}</div>
           </div>
 
@@ -49,7 +49,7 @@
 import { defineProps, onMounted, ref, watch } from 'vue'
 
 const props = defineProps({
-  waypointList: {
+  waypoints: {
     type: Object
   }
 })
@@ -62,7 +62,7 @@ const kakaoMapRef = ref(null)
 
 
 watch(
-  () => props.waypointList,
+  () => props.waypoints,
   () => {
     if (kakaoMap.value) {
       displayWaypointOnMap()
@@ -104,7 +104,7 @@ function initializeMap() {
   kakaoMap.value = new window.kakao.maps.Map(kakaoMapRef.value, mapOptions)
 
   // 기존 경로가 있으면 표시
-  if (props.waypointList && props.waypointList.length > 0) {
+  if (props.waypoints && props.waypoints.length > 0) {
     displayWaypointOnMap()
   }
 }
@@ -115,10 +115,10 @@ function updatePolyline() {
     polyline.value.setMap(null)
   }
 
-  if (props.waypointList.length < 2) return
+  if (props.waypoints.length < 2) return
 
   // 경로 좌표 생성
-  const path = props.waypointList.map(
+  const path = props.waypoints.map(
     (waypoint) => new window.kakao.maps.LatLng(waypoint.latitude, waypoint.longitude),
   )
 
@@ -138,10 +138,10 @@ function displayWaypointOnMap() {
   // 기존 마커와 폴리라인 제거
   clearMapOverlays()
 
-  if (!props.waypointList || props.waypointList.length === 0) return
+  if (!props.waypoints || props.waypoints.length === 0) return
 
   // 마커 생성
-  props.waypointList.forEach((waypoint) => {
+  props.waypoints.forEach((waypoint) => {
     const position = new window.kakao.maps.LatLng(waypoint.latitude, waypoint.longitude)
     const marker = new window.kakao.maps.Marker({
       position: position,
@@ -155,7 +155,7 @@ function displayWaypointOnMap() {
 
   // 지도 범위 재설정
   const bounds = new window.kakao.maps.LatLngBounds()
-  props.waypointList.forEach((waypoint) => {
+  props.waypoints.forEach((waypoint) => {
     bounds.extend(new window.kakao.maps.LatLng(waypoint.latitude, waypoint.longitude))
   })
   kakaoMap.value.setBounds(bounds)

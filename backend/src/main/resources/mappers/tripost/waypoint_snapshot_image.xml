@@ -14,7 +14,6 @@
         <foreach collection="waypointSnapshotImages" item="image" separator=",">
             (#{waypointSnapshotId.id}, #{image.imageId.id}, #{image.seq})
         </foreach>
-        AS new
         ON DUPLICATE KEY UPDATE
             IMAGE_ID = VALUES(IMAGE_ID)
     </insert>

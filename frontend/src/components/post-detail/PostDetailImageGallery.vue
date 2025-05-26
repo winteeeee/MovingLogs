@@ -323,6 +323,7 @@ onBeforeUnmount(() => {
 .viewer-image-container {
   height: 100%;
   max-height: 1000px;
+  max-width: 1000px;
   display: flex;
   align-items: center;
   justify-content: center;

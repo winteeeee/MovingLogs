@@ -11,6 +11,7 @@ public interface CachedTripostLikePort {
     void like(TripostLike tripostLike);
     void unlike(TripostLike tripostLike);
     void setLikeCount(TripostId tripostId, Long likeCount);
+    void removeAllLikeCount();
     Optional<Long> getLikeCount(TripostId tripostId);
     Optional<Boolean> checkLiked(TripostId tripostId, Uid uid);
     List<TripostLikeState> popAllLikeState();

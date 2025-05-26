@@ -84,8 +84,9 @@ class TripostService implements
 		}
 		tripost.update(
 				command.getTitle(),
-				command.getContent(),
 				command.getDescription(),
+				command.getContent(),
+				command.getWaypointSnapshots(),
 				clock
 		);
 		tripost = tripostPort.save(tripost);
@@ -124,7 +125,6 @@ class TripostService implements
 
 	@Override
 	public void syncViewCount() {
-		// TODO: 스캐쥴링
 		List<TripostPort.TripostViewCount> tripostViewCounts = cachedTripostViewCountPort.popAllCachedViewCount();
 		tripostPort.updateAllViewCount(tripostViewCounts);
 	}

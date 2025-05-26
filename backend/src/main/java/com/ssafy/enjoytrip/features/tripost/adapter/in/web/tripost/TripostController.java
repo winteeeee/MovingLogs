@@ -67,7 +67,9 @@ public class TripostController {
     public ResponseEntity<UpdateTripostResponse> updateTripost(
             @PathVariable("tripost_id") String tripostId,
             @RequestBody UpdateTripostRequest request) {
-        UpdateTripostUseCase.Command command = TripostMapper.toUpdateTripostCommand(tripostId, request);
+        String uid = SecurityUtils.getUserUidBySecurityContextHolder();
+
+        UpdateTripostUseCase.Command command = TripostMapper.toUpdateTripostCommand(uid, tripostId, request);
         UpdateTripostUseCase.Result result = updateTripostUseCase.updateTripost(command);
         UpdateTripostResponse response = TripostMapper.toUpdateTripostResponse(result);
         return ResponseEntity.ok(response);

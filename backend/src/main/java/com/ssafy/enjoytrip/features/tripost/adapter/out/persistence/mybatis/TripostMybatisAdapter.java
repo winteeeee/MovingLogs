@@ -114,6 +114,7 @@ public class TripostMybatisAdapter implements
                 .uid((String) resultMap.get("uid"))
                 .name((String) resultMap.get("name"))
                 .title((String) resultMap.get("title"))
+                .description((String) resultMap.get("description"))
                 .content((String) resultMap.get("content"))
                 .waypoints(waypoints)
                 .commentCount((Integer) resultMap.get("comment_count"))
@@ -173,7 +174,10 @@ public class TripostMybatisAdapter implements
 
     @Override
     public int recountAllLikeCount(List<TripostId> tripostIds) {
-        int updated = tripostDao.recountAllLikeCountById(tripostIds);
+        int updated = 0;
+        if (!tripostIds.isEmpty()) {
+            updated = tripostDao.recountAllLikeCountById(tripostIds);
+        }
         return updated;
     }
 
@@ -185,7 +189,10 @@ public class TripostMybatisAdapter implements
 
     @Override
     public int updateAllViewCount(List<TripostViewCount> tripostViewCounts) {
-        int updated = tripostDao.updateAllViewCount(tripostViewCounts);
-        return updated;
+        if (!tripostViewCounts.isEmpty()) {
+            int updated = tripostDao.updateAllViewCount(tripostViewCounts);
+            return updated;
+        }
+        return 0;
     }
 }

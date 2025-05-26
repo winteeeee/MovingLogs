@@ -22,21 +22,6 @@
 
       <div class="post-body" v-html="tripost.content"></div>
 
-      <div class="post-reactions">
-        <button class="reaction-btn" :class="{ active: liked }" @click="toggleLike">
-          <i class="bi" :class="liked ? 'bi-heart-fill' : 'bi-heart'"></i>
-          <span class="reaction-count">{{ tripost.likeCount }}</span>
-        </button>
-        <button class="reaction-btn" @click="scrollToComments">
-          <i class="bi bi-chat"></i>
-          <span class="reaction-count">{{ tripost.commentCount }}</span>
-        </button>
-        <button class="reaction-btn" @click="sharePost">
-          <i class="bi bi-share"></i>
-          <span class="reaction-text">공유</span>
-        </button>
-      </div>
-
       <PostDetailImageGallery
         v-for="(waypoint, index) in tripost.waypoints"
         :key="waypoint.id"
@@ -54,6 +39,24 @@
           </button>
         </div>
       </div>
+
+
+      <div class="post-reactions">
+        <button class="reaction-btn" :class="{ active: liked }" @click="toggleLike">
+          <i class="bi" :class="liked ? 'bi-heart-fill' : 'bi-heart'"></i>
+          <span class="reaction-count">{{ tripost.likeCount }}</span>
+        </button>
+        <button class="reaction-btn" @click="scrollToComments">
+          <i class="bi bi-chat"></i>
+          <span class="reaction-count">{{ tripost.commentCount }}</span>
+        </button>
+        <button class="reaction-btn" @click="sharePost">
+          <i class="bi bi-share"></i>
+          <span class="reaction-text">공유</span>
+        </button>
+      </div>
+
+
       <div ref="commentsSection">
         <PostDetailCommentSection
           :post-id="tripost.id"
@@ -122,6 +125,7 @@ const props = defineProps({
 // 라이프사이클 훅
 onMounted(() => {
   fetchPostData()
+  checkLiked()
 })
 
 // 메서드
@@ -131,6 +135,11 @@ async function fetchPostData() {
   isAuthor.value = response.data.author;
 
   loading.value = false
+}
+
+async function checkLiked() {
+  const response = await api.get(`/api/v1/triposts/${props.tripostId}/likes`)
+  liked.value = response.data.liked
 }
 
 function goToBoard() {
@@ -149,9 +158,12 @@ function goToTagSearch(tag) {
 }
 
 function editPost() {
-  if (tripost.value) {
-    console.log(`게시글 ${tripost.value.id} 수정`)
-    // router.push({ name: 'PostWritePage', params: { id: tripost-write.value.id } });
+  if (tripost) {
+    console.log(`게시글 ${tripost.id} 수정`)
+    router.push({
+      name: 'TripostWritePage',
+      query: {tripostId: tripost.id},
+    });
   }
 }
 
@@ -171,29 +183,28 @@ async function deletePost() {
   }
 }
 
-function toggleMap() {
-  mapVisible.value = !mapVisible.value
+async function toggleLike() {
+  if (!tripost) return
+
+  try {
+    if (liked.value) {
+      const response = await api.delete(`/api/v1/triposts/${tripost.id}/likes`);
+      console.log(response.data)
+      tripost.likeCount--
+    } else {
+      const response = await api.post(`/api/v1/triposts/${tripost.id}/likes`);
+      console.log(response.data)
+      tripost.likeCount++
+    }
+    liked.value = !liked.value
+  } catch (error) {
+    alert("좋아요 처리 실패");
+    console.log(error);
+  }
 }
 
-function toggleLike() {
-  if (!tripost.value) return
-
-  liked.value = !liked.value
-
-  if (liked.value) {
-    tripost.value.likes++
-  } else {
-    tripost.value.likes--
-  }
-
-  // 실제 구현 시 API 호출
-  // fetch(`/api/posts/${tripost-write.value.id}/like`, {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify({ liked: liked.value })
-  // });
+function toggleMap() {
+  mapVisible.value = !mapVisible.value
 }
 
 function scrollToComments() {

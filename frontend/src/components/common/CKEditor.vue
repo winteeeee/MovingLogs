@@ -27,9 +27,7 @@ const editorContainer = ref(null)
 watch(
   () => props.value,
   (newValue) => {
-    if (editor.value && newValue !== editorData.value) {
-      editor.value.setData(newValue)
-    }
+    editor.value.setData(newValue)
   },
 )
 
@@ -109,7 +107,6 @@ function createEditor() {
       // 변경 이벤트 리스너
       editor.value.model.document.on('change:data', () => {
         const data = editor.value.getData()
-        editorData.value = data
         emit('input', data)
         emit('change', data)
       })
