@@ -7,7 +7,7 @@ import lombok.Getter;
 @Builder
 @Getter
 @AllArgsConstructor
-public class SearchTripostCommentRequest {
-    private Integer page;
-    private Integer size;
+public class CreateTripostCommentRequest {
+    private String tripostId;
+    private String content;
 }

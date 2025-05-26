@@ -47,7 +47,14 @@ public class TripostCommentService implements
         tripostCommentPort.save(tripostComment);
         tripostPort.recountCommentCount(command.getTripostId());
 
-        return new CreateTripostCommentUseCase.Result(tripostComment.getId());
+        return new CreateTripostCommentUseCase.Result(
+                tripostComment.getId(),
+                author.getName(),
+                tripostComment.getContent(),
+                tripostComment.getCreatedAt(),
+                tripostComment.getUpdatedAt(),
+                tripostComment.isOwner(command.getUid())
+        );
     }
 
     @Override
@@ -65,6 +72,10 @@ public class TripostCommentService implements
         PageDto<TripostCommentDto> dto = tripostCommentPort
                 .getPagedTripostCommentDto(query.getTripostId(), query.getPage(), query.getSize())
                 .orElseThrow(() -> new PageNotFoundException(query.getPage(), query.getSize()));
+
+        dto.getContent().forEach(comment -> {
+            comment.setAuthor(comment.getUid().equals(query.getUid().getId()));
+        });
         return dto;
     }
 }

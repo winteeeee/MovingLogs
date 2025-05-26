@@ -29,13 +29,13 @@
         <div v-for="(comment, index) in comments" :key="index" class="comment-item">
           <div class="comment-header">
             <div class="comment-author">
-              <div class="author-avatar">
+              <!-- <div class="author-avatar">
                 <img
                   :src="comment.author.avatar || 'https://via.placeholder.com/30'"
                   :alt="comment.author.name"
                 />
-              </div>
-              <div class="author-name">{{ comment.author.name }}</div>
+              </div> -->
+              <div class="author-name">{{ comment.authorName }}</div>
             </div>
             <div class="comment-date">{{ formatDate(comment.createdAt) }}</div>
           </div>
@@ -49,7 +49,7 @@
               <i class="bi bi-reply"></i> 답글
             </button>
             <button
-              v-if="isCommentAuthor(comment)"
+              v-if="comment.author"
               class="delete-btn"
               @click="deleteComment(comment.id)"
             >
@@ -86,13 +86,13 @@
             >
               <div class="reply-header">
                 <div class="reply-author">
-                  <div class="author-avatar">
+                  <!-- <div class="author-avatar">
                     <img
                       :src="reply.author.avatar || 'https://via.placeholder.com/30'"
                       :alt="reply.author.name"
                     />
-                  </div>
-                  <div class="author-name">{{ reply.author.name }}</div>
+                  </div> -->
+                  <div class="author-name">{{ reply.author }}</div>
                 </div>
                 <div class="reply-date">{{ formatDate(reply.createdAt) }}</div>
               </div>
@@ -103,7 +103,7 @@
 
               <div class="reply-footer">
                 <button
-                  v-if="isCommentAuthor(reply)"
+                  v-if="reply.author"
                   class="delete-btn"
                   @click="deleteReply(comment.id, reply.id)"
                 >
@@ -120,10 +120,11 @@
 
 <script setup>
 import { ref, defineProps, defineEmits } from 'vue'
+import api from '@/api/axios'
 
 const props = defineProps({
-  postId: {
-    type: Number,
+  tripostId: {
+    type: String,
     required: true,
   },
   comments: {
@@ -143,17 +144,16 @@ const currentUser = ref({
   avatar: 'https://via.placeholder.com/30?text=User',
 })
 
-function submitComment() {
+async function submitComment() {
   if (!commentText.value.trim()) return
 
   const newComment = {
-    id: Date.now(), // 임시 ID
+    id: "",
+    authorName: "",
     content: commentText.value,
-    author: currentUser.value,
-    createdAt: new Date(),
-    replies: [],
+    createdAt: null,
+    author: false,
   }
-
   emit('add-comment', newComment)
   commentText.value = ''
 }
@@ -172,10 +172,11 @@ function submitReply(commentId) {
   if (!replyText.value.trim()) return
 
   const newReply = {
-    id: Date.now(), // 임시 ID
+    id: "",
+    authorName: currentUser.value,
     content: replyText.value,
-    author: currentUser.value,
-    createdAt: new Date(),
+    createdAt: "",
+    isAuthor: false,
   }
 
   emit('add-reply', { commentId, reply: newReply })
@@ -196,7 +197,7 @@ function deleteReply(commentId, replyId) {
 }
 
 function isCommentAuthor(comment) {
-  return comment.author.id === currentUser.value.id
+  return comment.isAuthor;
 }
 
 function formatDate(date) {
