@@ -265,6 +265,7 @@ function addReply({ commentId, reply }) {
       comment.replies = []
     }
 
+    tripost.commentCount++;
     comment.replies.push(reply)
   }
 }
@@ -278,6 +279,7 @@ async function deleteComment(commentId) {
   if (index !== -1) {
     comments.value.splice(index, 1)
   }
+  tripost.commentCount--;
 }
 
 function deleteReply({ commentId, replyId }) {
