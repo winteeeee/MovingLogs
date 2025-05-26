@@ -72,9 +72,11 @@
                 </div>
 
                 <div class="search-input-group">
-<!--                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />-->
+                  <!--                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />-->
                   <button class="btn btn-search" @click="search">검색</button>
-                  <button class="btn btn-ai" @click="aiRecommend"><i class="bi bi-robot"></i> AI 추천</button>
+                  <button class="btn btn-ai" @click="aiRecommend">
+                    <i class="bi bi-robot"></i> AI 추천
+                  </button>
                 </div>
               </div>
             </div>
@@ -95,7 +97,10 @@
                 >
                   <div class="place-image">
                     <img
-                      :src="place.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'"
+                      :src="
+                        place.firstImage1 ||
+                        'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'
+                      "
                       :alt="place.title"
                     />
                   </div>
@@ -117,14 +122,28 @@
               </div>
             </div>
           </div>
-          <div class="ai-recommend-panel" v-if="showAiPanel">
+          <div class="ai-recommend-panel" v-if="showAiPanel.value">
+            <div class="ai-toggle" @click="closeAiPanel">
+              <i class="bi bi-chevron-left"></i>
+            </div>
+
             <h3>AI 추천 여행지</h3>
             <ul>
-              <li v-for="rec in aiRecommendations" :key="rec.id">
+              <li v-for="rec in aiRecommendations" :key="rec.id" @click="showPlaceDetail(rec)">
+                <img
+                  :src="
+                    rec.firstImage1
+                      ? rec.firstImage1
+                      : 'https://img.freepik.com/premium-vector/no-photo-av…e-coming-soon-web-site-mobile-app_87543-18055.jpg'
+                  "
+                />
                 <strong>{{ rec.title }}</strong>
                 <p class="reason">{{ rec.reason }}</p>
-                <button class="btn btn-ai" @click="addToRoute(rec)">
+                <button class="btn btn-ai" @click="addToRoute(rec)" v-if="!isInRoute(rec.id)">
                   경로에 추가
+                </button>
+                <button class="btn btn-danger w-100" v-else @click="removeFromRoute(rec.id)">
+                  경로에서 제거
                 </button>
               </li>
             </ul>
@@ -144,7 +163,8 @@
               <div class="detail-image">
                 <img
                   :src="
-                    selectedPlace.firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'
+                    selectedPlace.firstImage1 ||
+                    'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg'
                   "
                   :alt="selectedPlace.title"
                 />
@@ -211,7 +231,12 @@
             <div class="plan-form">
               <div class="form-group">
                 <label>여행 계획 이름</label>
-                <input type="text" class="form-control" v-model="planTitle" placeholder="예: 서울 3박 4일 여행" />
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="planTitle"
+                  placeholder="예: 서울 3박 4일 여행"
+                />
               </div>
 
               <div class="form-row">
@@ -297,131 +322,143 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import Draggable from 'vuedraggable'
 import api from '@/api/axios.js'
 
-const router = useRouter();
-const route = useRoute();
+const router = useRouter()
+const route = useRoute()
 
-const contentTypeList = ref([]);
-const sidoList = ref([]);
-const gugunList = ref([]);
+const contentTypeList = ref([])
+const sidoList = ref([])
+const gugunList = ref([])
 
-const sidoSelected = ref("");
-const gugunSelected = ref("");
-const contentTypeSelected = ref("");
+const sidoSelected = ref('')
+const gugunSelected = ref('')
+const contentTypeSelected = ref('')
 
 // 검색 결과 데이터
-const searchResults = ref([]);
-const aiRecommendations = ref([]);
-const showAiPanel = computed(() => aiRecommendations.value.length > 0);
+const searchResults = ref([])
+const aiRecommendations = ref([])
+const aiPanelOpen = ref(false)
+const showAiPanel = computed(() => aiRecommendations.value.length > 0 && aiPanelOpen)
 
 // 경로에 추가된 장소들
-const planTitle = ref("");
-const planStart = ref("");
-const planEnd = ref("");
-const planDescription = ref("");
-const planWaypoints = ref([]);
+const planTitle = ref('')
+const planStart = ref('')
+const planEnd = ref('')
+const planDescription = ref('')
+const planWaypoints = ref([])
 
 watch([sidoSelected, gugunSelected, contentTypeSelected], () => {
-  aiRecommendations.value = [];
-});
+  aiRecommendations.value = []
+})
 
 const savePlan = async () => {
   if (!planTitle.value.trim()) {
-    alert("제목을 입력하세요.");
-    return;
+    alert('제목을 입력하세요.')
+    return
   }
   if (!planStart.value) {
-    alert("시작일을 선택하세요.");
-    return;
+    alert('시작일을 선택하세요.')
+    return
   }
   if (!planEnd.value) {
-    alert("종료일을 선택하세요.");
-    return;
+    alert('종료일을 선택하세요.')
+    return
   }
   if (!planWaypoints.value.length) {
-    alert("최소 한 개 이상의 관광지를 선택하세요.");
-    return;
+    alert('최소 한 개 이상의 관광지를 선택하세요.')
+    return
   }
 
   const attractionIds = planWaypoints.value
-    .map(e => e.id)
-    .filter(id => id !== null && id !== undefined && id !== "");
+    .map((e) => e.id)
+    .filter((id) => id !== null && id !== undefined && id !== '')
 
   if (attractionIds.length !== planWaypoints.value.length) {
-    alert("유효하지 않은 관광지가 포함되어 있습니다.");
-    return;
+    alert('유효하지 않은 관광지가 포함되어 있습니다.')
+    return
   }
 
   // 모두 통과하면 API 호출
   const response = await api.post(`/api/v1/plans`, {
     title: planTitle.value,
     desc: planDescription.value,
-    thumbnailUrl: planWaypoints.value.find(wp => wp.firstImage1 !== "").firstImage1 || 'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
+    thumbnailUrl:
+      planWaypoints.value.find((wp) => wp.firstImage1 !== '').firstImage1 ||
+      'https://img.freepik.com/premium-vector/no-photo-available-vector-icon-default-image-symbol-picture-coming-soon-web-site-mobile-app_87543-18055.jpg',
     startDate: planStart.value,
     endDate: planEnd.value,
-    attractionIds: attractionIds
-  });
+    attractionIds: attractionIds,
+  })
 
-  alert("여행 계획이 생성되었습니다");
-  router.push({ name: 'MyTripPlanPage' });
-};
+  alert('여행 계획이 생성되었습니다')
+  router.push({ name: 'MyTripPlanPage' })
+}
 
 onMounted(async () => {
-  const contTypeRes = await api.get(`/api/v1/attractions/content-types`);
-  contentTypeList.value = contTypeRes.data;
+  const contTypeRes = await api.get(`/api/v1/attractions/content-types`)
+  contentTypeList.value = contTypeRes.data
 
-  const sidoRes = await api.get(`/api/v1/attractions/sidos`);
-  sidoList.value = sidoRes.data;
+  const sidoRes = await api.get(`/api/v1/attractions/sidos`)
+  sidoList.value = sidoRes.data
 
   if (route.query.sidoCode !== undefined) {
-      sidoSelected.value = route.query.sidoCode;
-      await search()
+    sidoSelected.value = route.query.sidoCode
+    await search()
   }
-});
+})
 
-watch(sidoSelected, async ()=>{
-  const response = await api.get(`/api/v1/attractions/guguns?sidoCode=${sidoSelected.value}`);
-  gugunList.value = response.data;
-  gugunSelected.value = "";
-});
+watch(sidoSelected, async () => {
+  const response = await api.get(`/api/v1/attractions/guguns?sidoCode=${sidoSelected.value}`)
+  gugunList.value = response.data
+  gugunSelected.value = ''
+})
 
 watch(planStart, () => {
-  if (planEnd.value !== "" && (new Date(planStart.value)) > (new Date(planEnd.value))) {
-    planStart.value = "";
-    alert("여행 시작일은 종료일보다 뒤일 수 없습니다");
+  if (planEnd.value !== '' && new Date(planStart.value) > new Date(planEnd.value)) {
+    planStart.value = ''
+    alert('여행 시작일은 종료일보다 뒤일 수 없습니다')
   }
 })
 
 watch(planEnd, () => {
-  if (planStart.value !== "" && (new Date(planStart.value)) > (new Date(planEnd.value))) {
-    planEnd.value = "";
-    alert("여행 종료일은 시작일보다 앞일 수 없습니다");
+  if (planStart.value !== '' && new Date(planStart.value) > new Date(planEnd.value)) {
+    planEnd.value = ''
+    alert('여행 종료일은 시작일보다 앞일 수 없습니다')
   }
 })
 
 const aiRecommend = async () => {
-  if (!sidoSelected.value || !gugunSelected.value || !contentTypeSelected.value) {
-    alert('AI 추천 서비스는 지역, 시군구, 관광지 종류를 모두 선택해야 이용할 수 있습니다.');
-    return;
+  if (aiRecommendations.value.length > 0 && aiPanelOpen.value === false) {
+    if (aiPanelOpen.value === false) {
+      aiPanelOpen.value = true
+    }
+    return
   }
 
+  if (!sidoSelected.value || !gugunSelected.value || !contentTypeSelected.value) {
+    alert('AI 추천 서비스는 지역, 시군구, 관광지 종류를 모두 선택해야 이용할 수 있습니다.')
+    return
+  }
+
+  await search()
   const response = await api.post(`/api/v1/ai/attractions/recommendations`, {
     contentTypeCode: contentTypeSelected.value,
     areaCode: sidoSelected.value,
     guGunCode: gugunSelected.value,
-  });
+  })
 
-  aiRecommendations.value = response.data.recommendations;
+  aiRecommendations.value = response.data.recommendations
+  aiPanelOpen.value = true
 }
 
 const search = async () => {
   if (!sidoSelected.value) {
-    alert("지역을 선택하세요.");
-    return;
+    alert('지역을 선택하세요.')
+    return
   }
 
   const response = await api.get(`/api/v1/attractions`, {
@@ -430,222 +467,218 @@ const search = async () => {
       areaCode: sidoSelected.value,
       siGunGuCode: gugunSelected.value,
       page: 1,
-      pageSize: 500
-    }
-  });
-  searchResults.value = response.data.content;
-  updateSearchResultMarkers();
+      pageSize: 500,
+    },
+  })
+  searchResults.value = response.data.content
+  updateSearchResultMarkers()
 }
 
 // 드래그 상태
-const drag = ref(false);
+const drag = ref(false)
 
 // 사이드바 상태
-const detailPanelOpen = ref(false);
+const detailPanelOpen = ref(false)
 
 // 선택된 장소 정보
-const selectedPlace = ref(null);
+const selectedPlace = ref(null)
 
 // 지도 관련 변수
-const mapContainer = ref(null);
-let map = null;
-let markers = [];
-let searchMarkers = [];
-let polyline = null;
-let highlightedMarker = null;
-
-
+const mapContainer = ref(null)
+let map = null
+let markers = []
+let searchMarkers = []
+let polyline = null
+let highlightedMarker = null
 
 // 장소 상세 정보 표시
-const showPlaceDetail = (place, move=true) => {
-  if (selectedPlace.value && selectedPlace.value.id === place.id && detailPanelOpen.value) {
-    closeDetailPanel();
-    return;
-  }
-
-  selectedPlace.value = place;
-  detailPanelOpen.value = true;
-  highlightMarker(place);
+const showPlaceDetail = (place, move = true) => {
+  selectedPlace.value = searchResults.value.find((sr) => sr.id === place.id)
+  detailPanelOpen.value = true
+  highlightMarker(place)
 
   // 지도 중심 이동
   if (move) {
-    map.setCenter(new window.kakao.maps.LatLng(place.latitude, place.longitude));
-    map.setLevel(5);
+    map.setCenter(new window.kakao.maps.LatLng(place.latitude, place.longitude))
+    map.setLevel(5)
   }
-};
+}
 
 // 상세 정보 패널 닫기
 const closeDetailPanel = () => {
-  detailPanelOpen.value = false;
-  resetMarkerHighlight();
-};
+  detailPanelOpen.value = false
+  resetMarkerHighlight()
+}
+
+const closeAiPanel = () => {
+  aiPanelOpen.value = false
+}
 
 // 마커 관련 함수들
 const highlightMarker = (place) => {
-  if (!map) return;
+  if (!map) return
 
   // 기존 하이라이트 마커 제거
-  resetMarkerHighlight();
+  resetMarkerHighlight()
 
   // 하이라이트 마커 생성
-  const position = new window.kakao.maps.LatLng(place.latitude, place.longitude);
+  const position = new window.kakao.maps.LatLng(place.latitude, place.longitude)
 
   highlightedMarker = new window.kakao.maps.Marker({
     position: position,
     map: map,
-    zIndex: 1
-  });
-};
+    zIndex: 1,
+  })
+}
 
 const resetMarkerHighlight = () => {
   if (highlightedMarker) {
-    highlightedMarker.setMap(null);
+    highlightedMarker.setMap(null)
     if (highlightedMarker.infoWindow) {
-      highlightedMarker.infoWindow.close();
+      highlightedMarker.infoWindow.close()
     }
-    highlightedMarker = null;
+    highlightedMarker = null
   }
-};
-
+}
 
 // 검색 결과 마커 업데이트
 const updateSearchResultMarkers = () => {
-  if (!map) return;
+  if (!map) return
 
   // 기존 검색 결과 마커 제거
-  searchMarkers.forEach(marker => {
+  searchMarkers.forEach((marker) => {
     if (marker.overlay) {
-      marker.overlay.setMap(null);
+      marker.overlay.setMap(null)
     }
     if (marker.marker) {
-      marker.marker.setMap(null);
+      marker.marker.setMap(null)
     }
-  });
-  searchMarkers = [];
+  })
+  searchMarkers = []
 
-  if (searchResults.value.length === 0) return;
+  if (searchResults.value.length === 0) return
 
   // 마커들을 저장할 배열
-  const markers = [];
+  const markers = []
 
   // 새 검색 결과 마커 생성
   searchResults.value.forEach((place) => {
-    const position = new window.kakao.maps.LatLng(place.latitude, place.longitude);
+    const position = new window.kakao.maps.LatLng(place.latitude, place.longitude)
 
     // 커스텀 마커 생성
-    const content = document.createElement('div');
-    content.className = 'search-pin-marker';
+    const content = document.createElement('div')
+    content.className = 'search-pin-marker'
 
-    const pinMarker  = document.createElement('div');
-    pinMarker.className = 'pin-marker';
+    const pinMarker = document.createElement('div')
+    pinMarker.className = 'pin-marker'
 
-    const pinCircle = document.createElement('div');
-    const pinLabel = document.createElement('div');
-    pinCircle.className = 'pin-circle';
+    const pinCircle = document.createElement('div')
+    const pinLabel = document.createElement('div')
+    pinCircle.className = 'pin-circle'
     pinCircle.innerHTML = `<i class="pin-icon"></i>`
-    pinLabel.className = 'pin-label';
-    pinLabel.innerText = place.title;
+    pinLabel.className = 'pin-label'
+    pinLabel.innerText = place.title
 
-    pinMarker.appendChild(pinCircle);
-    pinMarker.appendChild(pinLabel);
-    content.appendChild(pinMarker);
+    pinMarker.appendChild(pinCircle)
+    pinMarker.appendChild(pinLabel)
+    content.appendChild(pinMarker)
 
     // 마커 클릭 이벤트
-    pinCircle.addEventListener('click', function() {
-      showPlaceDetail(place, false);
-    });
-    pinLabel.addEventListener('click', function() {
-      showPlaceDetail(place, false);
-    });
+    pinCircle.addEventListener('click', function () {
+      showPlaceDetail(place, false)
+    })
+    pinLabel.addEventListener('click', function () {
+      showPlaceDetail(place, false)
+    })
 
     const customOverlay = new window.kakao.maps.CustomOverlay({
       position: position,
       content: content,
       yAnchor: 0.1,
-      zIndex: 1
-    });
+      zIndex: 1,
+    })
 
     searchMarkers.push({
       overlay: customOverlay,
-      place: place
-    });
-  });
+      place: place,
+    })
+  })
 
   // 커스텀 오버레이들을 지도에 표시
-  searchMarkers.forEach(markerData => {
-    markerData.overlay.setMap(map);
-  });
+  searchMarkers.forEach((markerData) => {
+    markerData.overlay.setMap(map)
+  })
 
   // 검색 결과가 있으면 지도 범위 조정
   if (searchResults.value.length > 0) {
-    const bounds = new window.kakao.maps.LatLngBounds();
-    searchResults.value.forEach(place => {
+    const bounds = new window.kakao.maps.LatLngBounds()
+    searchResults.value.forEach((place) => {
       if (isValidRange(place.latitude, place.longitude)) {
-        bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
+        bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude))
       }
-    });
-    map.setBounds(bounds);
+    })
+    map.setBounds(bounds)
   }
-};
+}
 
 function isValidRange(latitude, longitude) {
-  return (33 <= latitude && latitude <= 39) && (123 <= longitude && longitude <= 132);
+  return 33 <= latitude && latitude <= 39 && 123 <= longitude && longitude <= 132
 }
 
 // 텍스트 포맷팅
 const formatOverview = (text) => {
-  if (!text) return '';
-  return text.replace(/\n/g, '<br>');
-};
+  if (!text) return ''
+  return text.replace(/\n/g, '<br>')
+}
 
 // 경로 관련 함수들
 const isInRoute = (placeId) => {
-  return planWaypoints.value.some(p => p.id === placeId);
-};
+  return planWaypoints.value.some((p) => p.id === placeId)
+}
 
 const addToRoute = (place) => {
-  const exists = planWaypoints.value.some(p => p.id === place.id);
+  const exists = planWaypoints.value.some((p) => p.id === place.id)
   if (!exists) {
-    planWaypoints.value.push(place);
-    updateMapMarkers();
+    planWaypoints.value.push(place)
+    updateMapMarkers()
   }
-};
+}
 
 const removeFromRoute = (placeId) => {
-  const index = planWaypoints.value.findIndex(p => p.id === placeId);
+  const index = planWaypoints.value.findIndex((p) => p.id === placeId)
   if (index !== -1) {
-    planWaypoints.value.splice(index, 1);
-    updateMapMarkers();
+    planWaypoints.value.splice(index, 1)
+    updateMapMarkers()
   }
-};
+}
 
 const clearRoute = () => {
   if (confirm('모든 경로를 삭제하시겠습니까?')) {
-    planWaypoints.value = [];
-    updateMapMarkers();
+    planWaypoints.value = []
+    updateMapMarkers()
   }
-};
+}
 
 // 지도 마커 및 경로선 업데이트
 const updateMapMarkers = () => {
-  if (!map) return;
+  if (!map) return
 
   // 기존 마커 및 경로선 제거
-  markers.forEach(marker => marker.setMap(null));
-  markers = [];
+  markers.forEach((marker) => marker.setMap(null))
+  markers = []
 
   if (polyline) {
-    polyline.setMap(null);
-    polyline = null;
+    polyline.setMap(null)
+    polyline = null
   }
 
   // 새 마커 생성
   planWaypoints.value.forEach((place, index) => {
-    const position = new window.kakao.maps.LatLng(place.latitude, place.longitude);
+    const position = new window.kakao.maps.LatLng(place.latitude, place.longitude)
 
     // 커스텀 오버레이 생성
-    const content = document.createElement('div');
-    content.className = 'highlight-marker';
+    const content = document.createElement('div')
+    content.className = 'highlight-marker'
     content.style = `
     position: relative;
     width: auto;
@@ -653,111 +686,115 @@ const updateMapMarkers = () => {
   `
     content.innerHTML = `
       <div class="speech-bubble">
-        <div class="speech-bubble-content">${index+1}. ${place.title}</div>
+        <div class="speech-bubble-content">${index + 1}. ${place.title}</div>
         <div class="speech-bubble-arrow"></div>
       </div>
-    `;
+    `
 
     // 마커 클릭 이벤트
-    content.addEventListener('click', function() {
-      showPlaceDetail(place);
-    });
+    content.addEventListener('click', function () {
+      showPlaceDetail(place)
+    })
 
     const marker = new window.kakao.maps.CustomOverlay({
       position: position,
       content: content,
       map: map,
       yAnchor: 1.1,
-      zIndex: 10 // 마커보다 높게
-    });
+      zIndex: 10, // 마커보다 높게
+    })
 
-    markers.push(marker);
-  });
+    markers.push(marker)
+  })
 
   // 경로선 그리기
   if (planWaypoints.value.length > 1) {
-    const path = planWaypoints.value.map(place =>
-      new window.kakao.maps.LatLng(place.latitude, place.longitude)
-    );
+    const path = planWaypoints.value.map(
+      (place) => new window.kakao.maps.LatLng(place.latitude, place.longitude),
+    )
 
     polyline = new window.kakao.maps.Polyline({
       path: path,
       strokeWeight: 3,
       strokeColor: '#FF6B35',
       strokeOpacity: 0.8,
-      strokeStyle: 'solid'
-    });
+      strokeStyle: 'solid',
+    })
 
-    polyline.setMap(map);
+    polyline.setMap(map)
   }
 
-  resetMap();
+  resetMap()
 
   // 선택된 장소가 있으면 하이라이트 마커 다시 표시
   if (selectedPlace.value && detailPanelOpen.value) {
-    highlightMarker(selectedPlace.value);
+    highlightMarker(selectedPlace.value)
   }
-};
+}
 
 // 지도 관련 함수들
 const zoomIn = () => {
   if (map) {
-    const currentZoom = map.getLevel();
-    map.setLevel(currentZoom - 1);
+    const currentZoom = map.getLevel()
+    map.setLevel(currentZoom - 1)
   }
-};
+}
 
 const zoomOut = () => {
   if (map) {
-    const currentZoom = map.getLevel();
-    map.setLevel(currentZoom + 1);
+    const currentZoom = map.getLevel()
+    map.setLevel(currentZoom + 1)
   }
-};
+}
 
 const resetMap = () => {
   if (map) {
     // 모든 마커가 보이도록 지도 범위 조
     if (planWaypoints.value.length > 0) {
-      const bounds = new window.kakao.maps.LatLngBounds();
-      planWaypoints.value.forEach(place => {
-        bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude));
-      });
-      map.setBounds(bounds);
-      map.setLevel(map.getLevel()+1)
+      const bounds = new window.kakao.maps.LatLngBounds()
+      planWaypoints.value.forEach((place) => {
+        bounds.extend(new window.kakao.maps.LatLng(place.latitude, place.longitude))
+      })
+      map.setBounds(bounds)
+      map.setLevel(map.getLevel() + 1)
     }
   }
-};
+}
 
 // 경로 변경 감지
-watch(planWaypoints, () => {
-  updateMapMarkers();
-}, { deep: true });
+watch(
+  planWaypoints,
+  () => {
+    updateMapMarkers()
+  },
+  { deep: true },
+)
 
 // 지도 초기화
 onMounted(() => {
   if (window.kakao && window.kakao.maps) {
-    initMap();
+    initMap()
   } else {
-    console.error('Kakao Maps API is not loaded');
+    console.error('Kakao Maps API is not loaded')
   }
-});
+})
 
 const initMap = () => {
-  const container = mapContainer.value;
+  const container = mapContainer.value
   const options = {
     center: new window.kakao.maps.LatLng(37.566826, 126.978656),
-    level: 8
-  };
+    level: 8,
+  }
 
-  map = new window.kakao.maps.Map(container, options);
+  map = new window.kakao.maps.Map(container, options)
 
   // 초기 마커 및 경로선 설정
-  updateMapMarkers();
-};
+  updateMapMarkers()
+}
 
 onUnmounted(() => {
-  map = null;
-});
+  map = null
+})
 </script>
 
 <style scoped>
@@ -1126,6 +1163,135 @@ onUnmounted(() => {
 
 .toggle-route-btn.is-remove i {
   transform: rotate(45deg);
+}
+
+.ai-recommend-panel {
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-left: 1px solid #eee;
+  border-radius: 8px;
+  max-width: 330px;
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  position: relative;
+}
+
+/* Panel title */
+.ai-recommend-panel h3 {
+  padding: 20px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+/* Recommendation list */
+.ai-recommend-panel ul {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 16px; /* 필요 시 li 간격 조절 */
+  margin: 0;
+  padding: 20px;
+  list-style: none;
+}
+
+.ai-recommend-panel ul li {
+  margin-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.ai-recommend-panel ul li:hover {
+  cursor: pointer;
+}
+
+.ai-recommend-panel ul li:last-child {
+  margin-bottom: 0;
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+/* Recommendation title */
+.ai-recommend-panel ul li strong {
+  display: block;
+  font-size: 1rem;
+  color: #222222;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.ai-recommend-panel ul li img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 3px;
+}
+
+/* Reason text */
+.ai-recommend-panel ul li .reason {
+  font-size: 0.875rem;
+  color: #666666;
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.reason-title {
+  font-size: 0.875rem;
+  color: #666666;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Buttons */
+.ai-recommend-panel .btn {
+  display: inline-block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  padding: 8px 14px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.ai-recommend-panel .btn-search {
+  width: 100%;
+  background-color: #ff6b35;
+  color: #ffffff;
+}
+
+.ai-toggle {
+  position: absolute;
+  top: 50%;
+  right: -13px;
+  transform: translateY(-50%);
+  width: 26px;
+  height: 70px;
+  background-color: #28a745;
+  border: none;
+  border-radius: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  color: white;
+  font-size: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.ai-toggle:hover {
+  background-color: #28a745;
+  transform: translateY(-50%) scale(1.05);
 }
 
 /* 상세 정보 패널 */
@@ -1667,7 +1833,6 @@ onUnmounted(() => {
   border-top: 8px solid #ff6b35;
 }
 
-
 /* 검색 결과 핀 마커 스타일 */
 .search-pin-marker {
   position: relative;
@@ -1710,10 +1875,10 @@ onUnmounted(() => {
   color: #000000;
   cursor: pointer;
   text-shadow:
-  -1px -1px 0 white,
-  1px -1px 0 white,
-  -1px  1px 0 white,
-  1px  1px 0 white;
+    -1px -1px 0 white,
+    1px -1px 0 white,
+    -1px 1px 0 white,
+    1px 1px 0 white;
   padding: 2px 6px;
   border-radius: 4px;
   font-size: 11px;
@@ -1722,98 +1887,6 @@ onUnmounted(() => {
   max-width: 120px;
   overflow: hidden;
   text-overflow: ellipsis;
-}
-
-.ai-recommend-panel {
-  display: flex;
-  flex-direction: column;
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-  padding: 20px;
-  max-width: 330px;
-  font-family: "Helvetica Neue", Arial, sans-serif;
-}
-
-/* Panel title */
-.ai-recommend-panel h3 {
-  margin: 0 0 16px;
-  font-size: 1.25rem;
-  color: #333333;
-  border-bottom: 2px solid #f5f5f5;
-  padding-bottom: 8px;
-}
-
-/* Recommendation list */
-.ai-recommend-panel ul {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 16px;      /* 필요 시 li 간격 조절 */
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.ai-recommend-panel ul li {
-  margin-bottom: 16px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid #f0f0f0;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding: 12px 0; /* 위아래 여백 */
-  border-bottom: 1px solid #f0f0f0;
-}
-
-.ai-recommend-panel ul li:last-child {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-}
-
-/* Recommendation title */
-.ai-recommend-panel ul li strong {
-  display: block;
-  font-size: 1rem;
-  color: #222222;
-  margin-bottom: 6px;
-}
-
-/* Reason text */
-.ai-recommend-panel ul li .reason {
-  font-size: 0.875rem;
-  color: #666666;
-  line-height: 1.4;
-  margin-bottom: 12px;
-}
-
-.reason-title {
-  font-size: 0.875rem;
-  color: #666666;
-  line-height: 1.4;
-  margin: 0;
-}
-
-/* Buttons */
-.ai-recommend-panel .btn {
-  display: inline-block;
-  font-size: 0.875rem;
-  font-weight: 600;
-  text-decoration: none;
-  padding: 8px 14px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
-}
-
-.ai-recommend-panel .btn-search {
-  width: 100%;
-  background-color: #ff6b35;
-  color: #ffffff;
 }
 
 /* Responsive adjustments */
