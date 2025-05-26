@@ -260,6 +260,8 @@ function addSpot() {
     addr1: selectedSpot.value.addr1,
     firstImage1: selectedSpot.value.firstImage1,
     overview: selectedSpot.value.overview,
+    latitude: selectedSpot.value.latitude,
+    longitude: selectedSpot.value.longitude,
     contentTypeName: selectedSpot.value.contentTypeName,
   }
 

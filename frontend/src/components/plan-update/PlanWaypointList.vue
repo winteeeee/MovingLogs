@@ -1,8 +1,14 @@
 <template>
   <div class="plan-waypoint-list">
     <h2 class="section-title">
-      여행 장소
-      <span class="waypoint-count">{{ waypointList.length }}개 장소</span>
+      <div>
+        여행 장소
+        <span class="waypoint-count">{{ waypointList.length }}개 장소</span>
+      </div>
+      <button class="map-toggle-btn" @click="toggleMap">
+        <i :class="['bi', showMap ? 'bi-map-fill' : 'bi-map']"></i>
+        {{ showMap ? '지도 닫기' : '지도 보기' }}
+      </button>
     </h2>
 
     <div v-if="waypointList.length === 0" class="empty-waypointList">
@@ -28,12 +34,12 @@
         @end="onDragEnd"
       >
         <template #item="{ element, index }">
-            <PlanWaypointItem
-              :waypoint="element"
-              :index="index"
-              @edit="$emit('edit-waypoint', $event)"
-              @delete="$emit('delete-waypoint', $event)"
-            />
+          <PlanWaypointItem
+            :waypoint="element"
+            :index="index"
+            @edit="$emit('edit-waypoint', $event)"
+            @delete="$emit('delete-waypoint', $event)"
+          />
         </template>
       </Draggable>
     </div>
@@ -50,26 +56,39 @@ const props = defineProps({
     type: Array,
     default: () => [],
   },
+
+  showMap: {
+    type: Boolean,
+    default: false,
+  },
 })
 
-const emit = defineEmits(['update:waypointList', 'edit-waypoint', 'delete-waypoint'])
+const emit = defineEmits(['update:waypointList', 'edit-waypoint', 'delete-waypoint', 'toggle-map'])
 
 // local copy for draggable
 const localList = ref([...props.waypointList])
 
 // props 변경 감지 시 localList 동기화
-watch(() => props.waypointList, newList => {
-  localList.value = [...newList]
-}, { deep: true })
+watch(
+  () => props.waypointList,
+  (newList) => {
+    localList.value = [...newList]
+  },
+  { deep: true },
+)
 
 // 드래그가 끝났을 때 순서 업데이트
 function onDragEnd() {
   // order 재정렬
   const updated = localList.value.map((waypoint, idx) => ({
     ...waypoint,
-    order: idx
+    order: idx,
   }))
   emit('update:waypointList', updated)
+}
+
+function toggleMap() {
+  emit('toggleMap')
 }
 </script>
 
@@ -90,6 +109,7 @@ function onDragEnd() {
   padding-bottom: 12px;
   border-bottom: 1px solid #e9ecef;
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -192,5 +212,22 @@ function onDragEnd() {
 
 .drag-handle {
   cursor: grab;
+}
+
+.map-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 12px;
+  background-color: #fd7e14;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.map-toggle-btn:hover {
+  background-color: #e8590c;
 }
 </style>

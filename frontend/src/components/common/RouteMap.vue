@@ -34,6 +34,17 @@ watch(
   },
 )
 
+watch(
+  () => props.waypoints,
+  () => {
+    console.log(props.waypoints)
+    initializeMap()
+  },
+  {
+    deep: true,
+  },
+)
+
 function initializeMap() {
   if (!routeMapRef.value) return
 
@@ -106,7 +117,7 @@ function displayRouteOnMap() {
 
     // 마커 클릭 이벤트
     window.kakao.maps.event.addListener(marker, 'click', () => {
-      const pointName = props.waypoints[index].attractionName
+      const pointName = props.waypoints[index].attractionName || props.waypoints[index].title
       const infowindow = new window.kakao.maps.InfoWindow({
         content: `<div style="padding:5px; font-size:12px;">${pointName}</div>`,
       })

@@ -14,12 +14,15 @@
       <!-- 기본 정보 영역 -->
       <PlanBasicInfo :plan="plan" @update:plan="updatePlanBasicInfo" />
 
+      <RouteMap :waypoints="plan.waypointList" :map-visible="showMap" />
       <!-- 여행 장소 목록 -->
       <PlanWaypointList
         :waypointList="plan.waypointList"
+        :show-map="showMap"
         @update:waypointList="updateWaypoints"
         @edit-waypoint="editWaypoint"
         @delete-waypoint="deleteWaypoint"
+        @toggle-map="toggleMap"
       />
 
       <!-- 장소 추가 영역 -->
@@ -67,6 +70,7 @@ import PlanUpdateHeader from '@/components/plan-update/PlanUpdateHeader.vue'
 import PlanBasicInfo from '@/components/plan-update/PlanBasicInfo.vue'
 import PlanWaypointList from '@/components/plan-update/PlanWaypointList.vue'
 import PlanAddWaypoint from '@/components/plan-update/PlanAddWaypoint.vue'
+import RouteMap from '@/components/common/RouteMap.vue'
 import ConfirmModal from '@/components/plan-update/ConfirmModal.vue'
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
@@ -83,6 +87,11 @@ const showCancelModal = ref(false)
 const showDeleteWaypointModal = ref(false)
 const showDeletePlanModal = ref(false)
 const waypointToDelete = ref(null)
+const showMap = ref(false)
+
+function toggleMap() {
+  showMap.value = !showMap.value
+}
 
 // 변경 사항 감지
 const hasChanges = computed(() => {
