@@ -3,11 +3,11 @@ package com.ssafy.enjoytrip.features.tripost.application;
 import com.ssafy.enjoytrip.common.dto.PageDto;
 import com.ssafy.enjoytrip.exception.PageNotFoundException;
 import com.ssafy.enjoytrip.exception.UnauthorizedException;
-import com.ssafy.enjoytrip.features.tripost.application.dto.MainPageTripostDto;
+import com.ssafy.enjoytrip.features.tripost.application.dto.HotTripostDto;
+import com.ssafy.enjoytrip.features.tripost.application.dto.LatestTripostDto;
 import com.ssafy.enjoytrip.features.tripost.application.exception.TripostNotFoundException;
 import com.ssafy.enjoytrip.features.tripost.application.port.in.*;
 import com.ssafy.enjoytrip.features.tripost.application.port.out.*;
-import com.ssafy.enjoytrip.features.tripost.domain.TripostId;
 import com.ssafy.enjoytrip.features.tripost.domain.component.Author;
 import com.ssafy.enjoytrip.features.tripost.domain.Tripost;
 import com.ssafy.enjoytrip.features.user.application.exception.UserNotFoundException;
@@ -33,7 +33,8 @@ class TripostService implements
 		SearchTripostPagedQuery,
 		GetTripostByIdQuery,
 		SyncTripostViewCountFromCacheUseCase,
-		SearchLatestTripostUseCase{
+		SearchLatestTripostUseCase,
+		SearchHotTripostUseCase {
 
 	private final AuthorPort authorPort;
 	private final TripostPort tripostPort;
@@ -121,7 +122,7 @@ class TripostService implements
 	}
 
 	@Override
-	public List<MainPageTripostDto> searchLatestTriposts(SearchLatestTripostUseCase.Command command) {
+	public List<LatestTripostDto> searchLatestTriposts(SearchLatestTripostUseCase.Command command) {
         return tripostPort.getLatestTripostDto(command.getSize())
                 .orElseThrow(() -> new TripostNotFoundException("최신 Tripost를 찾을 수 없음"));
 	}
@@ -148,5 +149,20 @@ class TripostService implements
 	public void syncViewCount() {
 		List<TripostPort.TripostViewCount> tripostViewCounts = cachedTripostViewCountPort.popAllCachedViewCount();
 		tripostPort.updateAllViewCount(tripostViewCounts);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<HotTripostDto> searchHotTriposts(SearchHotTripostUseCase.Command command) {
+		//hot 들고오고
+		List<HotTripostDto> hotTripostDtos = tripostPort.getHotTripostDto(command.getSize())
+				.orElseThrow(() -> new TripostNotFoundException("최신 Tripost를 찾을 수 없음"));
+
+		//이후 waypoint 매핑
+		for (HotTripostDto dto : hotTripostDtos) {
+			List<String> names = tripostPort.getRelatedAttractionNames(dto.getId());
+			dto.setWaypointNames(names);
+		}
+		return hotTripostDtos;
 	}
 }

@@ -23,6 +23,8 @@ public interface TripostDao extends PageableSupport<Map<String, Object>, Tripost
 
     Map<String, Object> findTripostDetailById(@Param("tripostId") TripostId tripostId);
     List<Map<String, Object>> findLatestTripostDetail(Integer size);
+    List<Map<String, Object>> findHotTripostDetail(Integer size);
+    List<String> getRelatedAttractionNames(String id);
 
     record Criteria(SearchTripostPagedQuery.QueryType type, String query) {  }
 }

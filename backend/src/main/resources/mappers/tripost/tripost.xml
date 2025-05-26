@@ -196,6 +196,24 @@
         LIMIT #{size};
     </select>
 
+    <select id="findHotTripostDetail">
+        SELECT
+            t.id as id,
+            t.title as title,
+            u.name as author
+        FROM tripost t
+        JOIN user u ON t.uid = u.uid
+        LIMIT #{size};
+    </select>
+
+    <select id="getRelatedAttractionNames">
+        SELECT a.title as name
+        FROM tripost t
+        JOIN waypoint_snapshot ws ON t.id = ws.tripost_id
+        JOIN attraction a ON ws.attraction_id = a.id
+        WHERE t.id = #{id};
+    </select>
+
     <!-- 페이징 목록 조회 -->
     <select id="selectPage">
         SELECT

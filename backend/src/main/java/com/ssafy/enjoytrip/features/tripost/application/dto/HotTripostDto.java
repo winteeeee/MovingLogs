@@ -3,18 +3,17 @@ package com.ssafy.enjoytrip.features.tripost.application.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.time.LocalDate;
+import java.util.List;
 
+@Setter
 @Getter
 @Builder
 @AllArgsConstructor
-public class MainPageTripostDto {
+public class HotTripostDto {
     private String id;
     private String title;
-    private String description;
-    private String imageUrl;
-    private Integer commentCount;
-    private Integer viewCount;
-    private LocalDate createdAt;
+    private String author;
+    private List<String> waypointNames;
 }
