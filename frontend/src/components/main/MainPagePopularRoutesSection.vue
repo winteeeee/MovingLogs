@@ -3,7 +3,7 @@
     <div class="container">
       <div class="section-header">
         <h2 class="section-title">인기 여행 이야기</h2>
-        <router-link to="/routes" class="view-all-link">
+        <router-link to="/tripost/board" class="view-all-link">
           전체보기 <i class="bi bi-arrow-right"></i>
         </router-link>
       </div>

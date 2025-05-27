@@ -124,8 +124,17 @@ class TripostService implements
 
 	@Override
 	public List<LatestTripostDto> searchLatestTriposts(SearchLatestTripostUseCase.Command command) {
-        return tripostPort.getLatestTripostDto(command.getSize())
+        List<LatestTripostDto> latestTripostDtos = tripostPort.getLatestTripostDto(command.getSize())
                 .orElseThrow(() -> new TripostNotFoundException("최신 Tripost를 찾을 수 없음"));
+
+		List<TripostId> tripostIds = latestTripostDtos.stream().map(e->new TripostId(e.getId())).toList();
+		List<Optional<Long>> viewCounts = cachedTripostViewCountPort.getViewCount(tripostIds);
+
+		for (int i=0; i<tripostIds.size(); ++i) {
+			LatestTripostDto item = latestTripostDtos.get(i);
+			viewCounts.get(i).ifPresent(item::setViewCount);
+		}
+		return latestTripostDtos;
 	}
 
 	@Override
@@ -163,6 +172,13 @@ class TripostService implements
 		for (HotTripostDto dto : hotTripostDtos) {
 			List<String> names = tripostPort.getRelatedAttractionNames(dto.getId());
 			dto.setWaypointNames(names);
+		}
+
+		List<TripostId> tripostIds = hotTripostDtos.stream().map(e->new TripostId(e.getId())).toList();
+		List<Optional<Long>> likeCounts = cachedTripostLikePort.getLikeCount(tripostIds);
+		for (int i=0; i<tripostIds.size(); ++i) {
+			HotTripostDto item = hotTripostDtos.get(i);
+			likeCounts.get(i).ifPresent(item::setLikeCount);
 		}
 		return hotTripostDtos;
 	}

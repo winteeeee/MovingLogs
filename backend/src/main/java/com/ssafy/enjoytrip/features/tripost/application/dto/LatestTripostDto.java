@@ -3,10 +3,12 @@ package com.ssafy.enjoytrip.features.tripost.application.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class LatestTripostDto {
@@ -14,7 +16,7 @@ public class LatestTripostDto {
     private String title;
     private String description;
     private String imageUrl;
-    private Integer commentCount;
-    private Integer viewCount;
+    private long commentCount;
+    private long viewCount;
     private LocalDate createdAt;
 }

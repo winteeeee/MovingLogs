@@ -15,5 +15,5 @@ public class SearchHotTripostResponse {
     private String endWaypoint;
     private String imageUrl;
     private Integer waypointLength;
-    private Integer likeCount;
+    private long likeCount;
 }

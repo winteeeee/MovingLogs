@@ -10,6 +10,7 @@ import LoginSuccessPage from '@/views/LoginSuccessPage.vue'
 import MyTripPlanPage from '@/views/MyTripPlanPage.vue'
 import PlanDetailPage from '@/views/PlanDetailPage.vue'
 import ServiceIntroPage from '@/views/ServiceIntroPage.vue'
+import MyTripostPage from '@/views/MyTripostPage.vue'
 
 const routes = [
   { path: '/', component: MainPage },
@@ -19,6 +20,7 @@ const routes = [
     planId: route.query.planId,
     tripostId: route.query.tripostId
   })},
+  { path: '/tripost/mypost', name: 'MyTripostPage', component: MyTripostPage},
   { path: '/tripost/:tripostId', name: 'TripostDetailPage', component: TripostDetailPage, props: true },
   { path: '/planning', name: 'PlanningPage', component: PlanningPage },
   // { path: '/trip/plan', component: () => import('@/domains/plan/pages/MyTravelPlanPage.vue') },

@@ -15,6 +15,6 @@ public class SearchLatestTripostResponse {
     private String description;
     private LocalDate createdAt;
     private String imageUrl;
-    private Integer viewCount;
-    private Integer commentCount;
+    private long viewCount;
+    private long commentCount;
 }

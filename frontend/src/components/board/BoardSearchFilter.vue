@@ -13,7 +13,7 @@
         <option value="AUTHOR">작성자</option>
       </select>
       <input
-        type="text"
+        type="search"
         v-model="localSearchQuery"
         @input="updateSearchQuery"
         placeholder="검색어를 입력하세요"

@@ -61,7 +61,7 @@
                 </li>
                 <li>
                   <!-- TODO 연결 -->
-                  <router-link to="/bookmarks" class="dropdown-item">
+                  <router-link to="/tripost/mypost" class="dropdown-item">
                     <i class="bi bi-bookmark"></i> 작성한 게시글
                   </router-link>
                 </li>
