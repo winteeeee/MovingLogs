@@ -28,8 +28,8 @@ public class AttractionMyBatisAdapter implements
     private final SidoDao sidoDao;
 
     @Override
-    public List<Attraction> searchAttractionsWithPaging(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize) {
-        List<Map<String, Object>> resultMaps = attractionDao.findByContentByIdAndAreaCodeAndSiGunGuCode(contentTypeId, areaCode, siGunGuCode, pageSize, (long) (page - 1) * pageSize);
+    public List<Attraction> searchAttractionsWithPaging(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize, String query) {
+        List<Map<String, Object>> resultMaps = attractionDao.findByContentByIdAndAreaCodeAndSiGunGuCode(contentTypeId, areaCode, siGunGuCode, pageSize, (long) (page - 1) * pageSize, query);
         return makeAttractions(resultMaps);
     }
 
@@ -47,8 +47,8 @@ public class AttractionMyBatisAdapter implements
     }
 
     @Override
-    public Long countAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode) {
-        return attractionDao.countByContentByIdAndAreaCodeAndSiGunGuCode(contentTypeId, areaCode, siGunGuCode);
+    public Long countAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode, String query) {
+        return attractionDao.countByContentByIdAndAreaCodeAndSiGunGuCode(contentTypeId, areaCode, siGunGuCode, query);
     }
 
     @Override

@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 public interface SearchAttractionUseCase {
-    PageDto<Result> searchAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize);
+    PageDto<Result> searchAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize, String query);
 
     @Getter
     @Builder

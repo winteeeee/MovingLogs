@@ -24,11 +24,17 @@ public class AttractionService implements SearchAttractionUseCase, SearchContent
 
     @Override
     @Transactional(readOnly = true)
-    public PageDto<SearchAttractionUseCase.Result> searchAttractions(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer page, Integer pageSize) {
+    public PageDto<SearchAttractionUseCase.Result> searchAttractions(
+            Long contentTypeId,
+            Long areaCode,
+            Long siGunGuCode,
+            Integer page,
+            Integer pageSize,
+            String query) {
         List<SearchAttractionUseCase.Result> content = AttractionServiceMapper.toSearchAttractionUseCaseResultList(
-                searchAttractionPort.searchAttractionsWithPaging(contentTypeId, areaCode, siGunGuCode, page, pageSize)
+                searchAttractionPort.searchAttractionsWithPaging(contentTypeId, areaCode, siGunGuCode, page, pageSize, query)
         );
-        Long totalElements = countAttractionPort.countAttractions(contentTypeId, areaCode, siGunGuCode);
+        Long totalElements = countAttractionPort.countAttractions(contentTypeId, areaCode, siGunGuCode, query);
         int totalPages = (int) Math.ceil((double) totalElements / pageSize);
 
         return new PageDto<>(

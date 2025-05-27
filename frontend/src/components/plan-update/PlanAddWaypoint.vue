@@ -58,6 +58,12 @@
             </select>
           </div>
 
+
+          <div class="filter-group">
+            <label for="category" class="filter-label">관광지 이름</label>
+            <input type="search" class="filter-select" placeholder="검색어를 입력하세요" v-model="searchQuery" v-on:keyup.enter="searchSpots">
+          </div>
+
           <button class="search-button" @click="searchSpots" :disabled="isSearching">
             <span class="icon-search"></span>
             {{ isSearching ? '검색 중...' : '검색' }}
@@ -136,6 +142,7 @@ const hasSearched = ref(false)
 const searchKeyword = ref('')
 const searchResults = ref([])
 const selectedSpot = ref(null)
+const searchQuery = ref('')
 
 // 검색 필터
 const searchFilters = reactive({
@@ -224,6 +231,9 @@ async function searchSpots() {
       params.areaCode = searchFilters.sido
     if (searchFilters.guguns !== null && searchFilters.guguns !== undefined)
       params.siGunGuCode = searchFilters.guguns
+    if (searchQuery.value !== null && searchQuery.value !== undefined) {
+      params.query = searchQuery.value
+    }
     params.page = 1
     params.pageSize = 10000
     console.log(params)

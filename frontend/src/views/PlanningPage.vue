@@ -72,7 +72,7 @@
                 </div>
 
                 <div class="search-input-group">
-                  <!--                  <input type="text" class="form-control" placeholder="검색어를 입력하세요" />-->
+                  <input type="search" class="form-control" placeholder="검색어를 입력하세요" v-model="searchQuery" v-on:keyup.enter="search" />
                   <button class="btn btn-search" @click="search">검색</button>
                   <button class="btn btn-ai" @click="aiRecommend">
                     <i class="bi bi-robot"></i> AI 추천
@@ -337,6 +337,7 @@ const gugunList = ref([])
 const sidoSelected = ref('')
 const gugunSelected = ref('')
 const contentTypeSelected = ref('')
+const searchQuery = ref('')
 
 // 검색 결과 데이터
 const searchResults = ref([])
@@ -466,6 +467,7 @@ const search = async () => {
       contentTypeId: contentTypeSelected.value,
       areaCode: sidoSelected.value,
       siGunGuCode: gugunSelected.value,
+      query: searchQuery.value,
       page: 1,
       pageSize: 500,
     },

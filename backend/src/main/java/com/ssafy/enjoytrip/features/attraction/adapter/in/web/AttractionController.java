@@ -59,10 +59,11 @@ public class AttractionController {
     public ResponseEntity<PageDto<AttractionResponse>> findAttractions(@RequestParam(required = false) Long contentTypeId,
                                                                        @RequestParam(required = false) Long areaCode,
                                                                        @RequestParam(required = false) Long siGunGuCode,
+                                                                       @RequestParam(required = false) String query,
                                                                        @RequestParam Integer page,
                                                                        @RequestParam(defaultValue = "5") Integer pageSize) {
         return ResponseEntity.ok(
-                AttractionControllerMapper.toAttractionResponsePageDto(searchAttractionUseCase.searchAttractions(contentTypeId, areaCode, siGunGuCode, page, pageSize))
+                AttractionControllerMapper.toAttractionResponsePageDto(searchAttractionUseCase.searchAttractions(contentTypeId, areaCode, siGunGuCode, page, pageSize, query))
         );
     }
 }

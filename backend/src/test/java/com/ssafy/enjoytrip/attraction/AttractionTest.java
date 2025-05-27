@@ -42,6 +42,7 @@ public class AttractionTest {
                 12L,
                 7L,
                 1L,
+                "",
                 1,
                 5
         );

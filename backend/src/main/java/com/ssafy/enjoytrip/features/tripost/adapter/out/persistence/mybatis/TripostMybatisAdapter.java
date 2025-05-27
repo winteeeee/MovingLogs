@@ -189,6 +189,8 @@ public class TripostMybatisAdapter implements
                 if (!snapshot.getImages().isEmpty()) {
                     waypointSnapshotImageDao.bulkUpsert(snapshot.getId(), snapshot.getImages());
                 }
+            } else {
+                maxSeqBySnapshot.put(snapshot.getId(), -1);
             }
         });
         List<WaypointSnapshotImageDao.Param> deleteParams = new ArrayList<>();

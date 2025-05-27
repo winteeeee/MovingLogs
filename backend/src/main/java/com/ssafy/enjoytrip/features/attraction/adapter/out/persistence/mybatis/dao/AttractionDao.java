@@ -7,8 +7,8 @@ import java.util.Map;
 
 @Mapper
 public interface AttractionDao {
-    List<Map<String, Object>> findByContentByIdAndAreaCodeAndSiGunGuCode(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer limit, Long offset);
+    List<Map<String, Object>> findByContentByIdAndAreaCodeAndSiGunGuCode(Long contentTypeId, Long areaCode, Long siGunGuCode, Integer limit, Long offset, String query);
     List<Map<String, Object>> findByContentByIdAndAreaCodeAndSiGunGuCodeLimit(Long contentTypeId, Long areaCode, Long siGunGuCode, Long limit);
-    Long countByContentByIdAndAreaCodeAndSiGunGuCode(Long contentTypeId, Long areaCode, Long siGunGuCode);
+    Long countByContentByIdAndAreaCodeAndSiGunGuCode(Long contentTypeId, Long areaCode, Long siGunGuCode, String query);
     List<Map<String, Object>> findByIds(List<String> ids);
 }
