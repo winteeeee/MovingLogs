@@ -5,8 +5,6 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 public interface PageableSupport<T, C> {
     List<T> selectPage(@Param("limit") int limit, @Param("offset") int offset, @Param("criteria") C criteria);
