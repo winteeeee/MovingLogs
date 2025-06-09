@@ -33,6 +33,7 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
     private final SaveRefreshTokenPort saveRefreshTokenPort;
     private final SearchRefreshTokenPort searchRefreshTokenPort;
     private final SearchUserPort searchUserPort;
+    private final JwtUtils jwtUtils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -74,7 +75,7 @@ public class JWTVerificationFilter extends OncePerRequestFilter {
                 또한 여기서 값이 반환되므로 현재 들어온 요청이 이 필터를 통과하면 안됨
                 따라서 doFilter 하지 않고 그대로 반환
                  */
-                JwtUtils.responseWithJwtToken(response, accessToken, user.getName());
+                jwtUtils.responseWithJwtToken(response, accessToken, user.getName());
                 return;
             }
         }

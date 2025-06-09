@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    //JwtUtil에서도 사용하기 위해 public
-    public static final String FRONTEND_URL = "http://localhost:5173";
+    @Value("${server.allowed-origin}")
+    public String allowedOrigin;
 
     @Value("${upload.image.location}")
     private String baseLocation;
@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
-                .allowedOrigins(FRONTEND_URL)
+                .allowedOrigins(allowedOrigin)
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);

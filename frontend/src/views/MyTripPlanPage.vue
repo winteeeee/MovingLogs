@@ -65,7 +65,6 @@ import Pagination from '@/components/common/Pagination.vue'
 import { useRouter } from 'vue-router'
 import api from '@/api/axios.js'
 
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const router = useRouter()
 
 // 상태 관리
@@ -206,7 +205,7 @@ async function deletePlan() {
   if (!planToDelete.value) return
 
   console.log('여행 계획 삭제:', planToDelete.value.id)
-  await api.delete(`${serverUrl}/api/v1/plans/${planToDelete.value.id}`)
+  await api.delete(`/api/v1/plans/${planToDelete.value.id}`)
   // 모달 닫기
   closeDeleteModal()
 
@@ -218,7 +217,7 @@ async function deletePlan() {
 // 데이터 로드
 async function loadTravelPlans() {
   isLoading.value = true
-  const response = await api.get(`${serverUrl}/api/v1/plans`, {
+  const response = await api.get(`/api/v1/plans`, {
     params: {
       page: currentPage.value,
       pageSize: itemsPerPage,

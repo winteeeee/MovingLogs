@@ -181,7 +181,7 @@ async function savePlan() {
   console.log(requestBody)
 
   try {
-    await api.put(`${serverUrl}/api/v1/plans`, requestBody)
+    await api.put(`/api/v1/plans`, requestBody)
     alert('여행 계획이 저장되었습니다.')
     router.back()
   } catch (error) {
@@ -231,7 +231,7 @@ async function deletePlan() {
 // 여행 계획 데이터 로드
 async function loadPlanData() {
   try {
-    const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`)
+    const response = await api.get(`/api/v1/plans/${route.params.id}`)
     console.log('데이터 로드')
     console.log(response.data)
     plan.value = JSON.parse(JSON.stringify(response.data))

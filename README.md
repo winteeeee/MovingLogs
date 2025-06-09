@@ -1,5 +1,8 @@
 # EnjoyTrip_Final_구미3반_백대환_한성민
 
+## 배치 다이어그램
+![Deployment Diagram.png](img/DeploymentDiagram.png)
+
 ## 요구사항 정의서(Usecase Diagram)
 ![UsecaseDiagram.png](img/UsecaseDiagram.png)
 

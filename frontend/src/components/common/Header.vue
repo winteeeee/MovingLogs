@@ -89,24 +89,19 @@
 
 <script setup>
 import { useAuthStore } from '@/stores/authStore.js'
-import axios from 'axios'
+import api from '@/api/axios'
 import { router } from '@/router/index.js'
 
 const authStore = useAuthStore()
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 function login() {
-  window.location.href = `${serverUrl}/oauth2/authorization/kakao`
+  window.location.href = `/oauth2/authorization/kakao`
 }
 
 function logout() {
   console.log('로그아웃 처리')
-  axios
-    .post(`${serverUrl}/api/v1/auth/logout`, null, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
-    })
+  api
+    .post(`/api/v1/auth/logout`)
     .then((res) => {
       console.log('로그아웃 성공: ', res.data)
     })

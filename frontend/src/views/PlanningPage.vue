@@ -726,8 +726,6 @@ const updateMapMarkers = () => {
     polyline.setMap(map)
   }
 
-  resetMap()
-
   // 선택된 장소가 있으면 하이라이트 마커 다시 표시
   if (selectedPlace.value && detailPanelOpen.value) {
     highlightMarker(selectedPlace.value)

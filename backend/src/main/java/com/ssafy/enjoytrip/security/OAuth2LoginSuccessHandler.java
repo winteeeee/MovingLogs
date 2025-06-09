@@ -23,6 +23,7 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
     private final JwtTokenProvider jwtTokenProvider;
     private final SearchUserPort searchUserPort;
     private final SaveRefreshTokenPort saveRefreshTokenPort;
+    private final JwtUtils jwtUtils;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
@@ -33,6 +34,6 @@ public class OAuth2LoginSuccessHandler extends SimpleUrlAuthenticationSuccessHan
         String accessToken = jwtTokenProvider.createAccessToken(user);
         String refreshToken = jwtTokenProvider.createRefreshToken(user);
         saveRefreshTokenPort.saveRefreshToken(accessToken, refreshToken);
-        JwtUtils.redirectWithJwtToken(response, accessToken, user.getName());
+        jwtUtils.redirectWithJwtToken(response, accessToken, user.getName());
     }
 }

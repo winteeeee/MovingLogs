@@ -160,7 +160,7 @@ function toggleMap() {
 // 여행 계획 데이터 로드
 async function loadPlanData() {
   try {
-    const response = await api.get(`${serverUrl}/api/v1/plans/${route.params.id}`)
+    const response = await api.get(`/api/v1/plans/${route.params.id}`)
     console.log(response.data)
     plan.value = response.data
   } catch (error) {
@@ -192,7 +192,7 @@ function closeDeleteModal() {
 // 여행 계획 삭제
 async function deletePlan() {
   try {
-    await api.delete(`${serverUrl}/api/v1/plans/${plan.value.id}`)
+    await api.delete(`/api/v1/plans/${plan.value.id}`)
     alert('여행 계획이 삭제되었습니다.')
     showDeleteModal.value = false
     router.back()

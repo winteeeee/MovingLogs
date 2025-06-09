@@ -141,7 +141,7 @@ async function handleFileChange(event) {
   }
 
   try {
-    const response = await api.post(`${serverUrl}/api/v1/images`, formData);
+    const response = await api.post(`/api/v1/images`, formData);
 
     // TODO 주석 삭제
     console.log(response);

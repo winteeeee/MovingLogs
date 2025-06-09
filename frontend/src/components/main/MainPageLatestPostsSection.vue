@@ -39,9 +39,9 @@ import { ref, onMounted } from 'vue'
 import api from '@/api/axios.js'
 import { useRouter } from 'vue-router'
 
+const serverUrl = import.meta.env.VITE_API_SERVER_URL
 
 // 최신 게시글 데이터
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const latestPosts = ref(null)
 const router = useRouter();
 

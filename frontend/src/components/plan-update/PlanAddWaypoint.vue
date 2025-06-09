@@ -131,7 +131,6 @@ import api from '@/api/axios.js'
 const emit = defineEmits(['add-spot'])
 
 // 상태 관리
-const serverUrl = import.meta.env.VITE_API_SERVER_URL
 const authStore = useAuthStore()
 const contentTypes = ref(null)
 const sidos = ref(null)
@@ -167,8 +166,8 @@ watch(
 
 async function loadFilterData() {
   try {
-    const contentTypesResponse = await api.get(`${serverUrl}/api/v1/attractions/content-types`)
-    const sidosResponse = await api.get(`${serverUrl}/api/v1/attractions/sidos`)
+    const contentTypesResponse = await api.get(`/api/v1/attractions/content-types`)
+    const sidosResponse = await api.get(`/api/v1/attractions/sidos`)
 
     contentTypes.value = contentTypesResponse.data
     sidos.value = sidosResponse.data
@@ -182,14 +181,7 @@ async function loadFilterData() {
 
 async function loadGugunData(sidoName) {
   try {
-    const gugunResponse = await axios.get(
-      `${serverUrl}/api/v1/attractions/guguns?sidoCode=${searchFilters.sido}`,
-      {
-        headers: {
-          Authorization: `Bearer ${authStore.accessToken}`,
-        },
-      },
-    )
+    const gugunResponse = await api.get(`/api/v1/attractions/guguns?sidoCode=${searchFilters.sido}`)
     guguns.value = gugunResponse.data
   } catch (error) {
     console.error(`데이터 로드 실패: ${error}`)
@@ -237,10 +229,7 @@ async function searchSpots() {
     params.page = 1
     params.pageSize = 10000
     console.log(params)
-    const attractionResponse = await axios.get(`${serverUrl}/api/v1/attractions`, {
-      headers: {
-        Authorization: `Bearer ${authStore.accessToken}`,
-      },
+    const attractionResponse = await api.get(`/api/v1/attractions`, {
       params,
     })
 
