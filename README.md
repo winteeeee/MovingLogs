@@ -1,4 +1,10 @@
-# EnjoyTrip_Final_구미3반_백대환_한성민
+# MovingLogs
+
+## 개발인원
+| 이름  | 역할                        |
+|-----|---------------------------|
+| 백대환 | 이미지, 게시판 기능 구현, 기타 인프라 세팅 |
+| 한성민 | AI, 관광지, 시큐리티, 여행계획 기능 구현 |
 
 ## 배치 다이어그램
 ![Deployment Diagram.png](img/DeploymentDiagram.png)
